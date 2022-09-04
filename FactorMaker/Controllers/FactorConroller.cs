@@ -148,5 +148,24 @@ namespace FactorMaker.Controllers
             return result;
         }
 
+        [HttpGet("CalculateFactorById")]
+        public Result<TotalFactorViewModel> CalculateFactorById(Guid id)
+        {
+            var result = new Result<TotalFactorViewModel>();
+            result.Data = FactorService.CalculateFactorById(id);
+            result.IsSuccessful = true;
+
+            return result;
+        }
+
+        [HttpGet("CalculateFactorByIdAsync")]
+        public async Task<Result<TotalFactorViewModel>> CalculateFactorByIdAsync(Guid id)
+        {
+            var result = new Result<TotalFactorViewModel>();
+            result.Data = await FactorService.CalculateFactorByIdAsync(id);
+            result.IsSuccessful = true;
+
+            return result;
+        }
     }
 }
