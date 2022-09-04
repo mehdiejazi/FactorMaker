@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Common;
 using Data;
 using FactorMaker.Services;
@@ -9,7 +6,6 @@ using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -75,7 +71,7 @@ namespace FactorMaker
                             System.Convert.ToInt32(Configuration.GetSection(key: "DatabaseProvider").Value),
 
                         ConnectionString =
-                            Configuration.GetSection(key: "ConnectionStrings").GetSection(key: "AratimeConnectionString").Value,
+                            Configuration.GetSection(key: "ConnectionStrings").GetSection(key: "FactorMakerConnectionString").Value,
                     };
                 return new UnitOfWork(options: options);
             });
