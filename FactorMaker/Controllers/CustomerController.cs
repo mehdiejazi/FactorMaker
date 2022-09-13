@@ -1,8 +1,10 @@
 ﻿using Common;
+using FactorMaker.Infrastructure.Attributes;
 using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,6 +12,7 @@ using ViewModels;
 
 namespace FactorMaker.Controllers
 {
+    [Authorize()]
     public class CustomerController : BaseApiController
     {
         private CustomerController() : base()

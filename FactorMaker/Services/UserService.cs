@@ -7,15 +7,61 @@ using Resources;
 using System.Collections.Generic;
 using ViewModels;
 using FactorMaker.Services.ServicesIntefaces;
+using ViewModels.Authentication;
+using Microsoft.Extensions.Options;
+using FactorMaker.Infrastructure.ApplicationSettings;
+using FactorMaker.Infrastructure;
 
 namespace FactorMaker.Services
 {
     public class UserService : BaseServiceWithDatabase, IUserService
     {
-        public UserService(IUnitOfWork unitOfWork) : base(unitOfWork)
+        protected Main MainSettings { get; }
+        public UserService(IUnitOfWork unitOfWork, IOptions<Main> options) : base(unitOfWork)
         {
-
+            MainSettings = options.Value;
         }
+
+        public LoginResponseViewModel Login(LoginRequestViewModel loginRequest)
+        {
+            if (loginRequest == null) return null;
+
+            if (string.IsNullOrWhiteSpace(loginRequest.UserName)) return null;
+            if (string.IsNullOrWhiteSpace(loginRequest.Password)) return null;
+
+            User foundUser = UnitOfWork.UserRepository.GetByUserName(loginRequest.UserName);
+            if (foundUser == null) return null;
+
+            if (string.Compare(foundUser.Password, JwtUtility.HashSHA1(loginRequest.Password), false) != 0)
+                return null;
+
+            string token = JwtUtility.GenerateJwtToken(foundUser, MainSettings);
+
+            var loginResponse = new LoginResponseViewModel(foundUser, token);
+
+            return loginResponse;
+        }
+
+        public async Task<LoginResponseViewModel> LoginAsync(LoginRequestViewModel loginRequest)
+        {
+            if (loginRequest == null) return null;
+
+            if (string.IsNullOrWhiteSpace(loginRequest.UserName)) return null;
+            if (string.IsNullOrWhiteSpace(loginRequest.Password)) return null;
+
+            User foundUser = await UnitOfWork.UserRepository.GetByUserNameAsync(loginRequest.UserName);
+            if (foundUser == null) return null;
+
+            if (string.Compare(foundUser.Password, loginRequest.Password, false) != 0)
+                return null;
+
+            string token = JwtUtility.GenerateJwtToken(foundUser, MainSettings);
+
+            var loginResponse = new LoginResponseViewModel(foundUser, token);
+
+            return loginResponse;
+        }
+
 
         public User Insert(string firstName, string lastName, string nationalCode,
             string userName, string password, bool isActive)
@@ -32,6 +78,9 @@ namespace FactorMaker.Services
                     IsActive = isActive
 
                 };
+
+                user.Password = JwtUtility.HashSHA1(user.Password);
+
                 UnitOfWork.UserRepository.Insert(user);
                 UnitOfWork.Save();
 
@@ -59,6 +108,10 @@ namespace FactorMaker.Services
                     IsActive = isActive
 
                 };
+
+                user.Password = JwtUtility.HashSHA1(user.Password);
+
+
                 await UnitOfWork.UserRepository.InsertAsync(user);
                 await UnitOfWork.SaveAsync();
 

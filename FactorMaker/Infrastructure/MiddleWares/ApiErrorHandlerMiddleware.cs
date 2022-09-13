@@ -6,22 +6,22 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Threading.Tasks;
 
-namespace Infrastructure
+namespace Infrastructure.Middlewares
 {
     public class ApiErrorHandlerMiddleware
     {
-        private readonly RequestDelegate _next;
+        protected RequestDelegate Next { get; }
 
         public ApiErrorHandlerMiddleware(RequestDelegate next)
         {
-            _next = next;
+            Next = next;
         }
 
         public async Task Invoke(HttpContext context)
         {
             try
             {
-                await _next(context);
+                await Next(context);
             }
             catch (Exception error)
             {

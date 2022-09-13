@@ -1,4 +1,5 @@
 ﻿using Common;
+using FactorMaker.Infrastructure.Attributes;
 using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,7 @@ using ViewModels;
 
 namespace FactorMaker.Controllers
 {
+    [Authorize()]
     public class FactorItemController : BaseApiController
     {
         private FactorItemController() : base()

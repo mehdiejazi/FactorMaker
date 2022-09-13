@@ -4,6 +4,7 @@ using Data;
 using FactorMaker.Services;
 using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
+using Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

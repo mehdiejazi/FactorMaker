@@ -3,11 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels;
+using ViewModels.Authentication;
 
 namespace FactorMaker.Services.ServicesIntefaces
 {
     public interface IUserService
     {
+        LoginResponseViewModel Login(LoginRequestViewModel loginRequest);
+        Task<LoginResponseViewModel> LoginAsync(LoginRequestViewModel loginRequest);
         void DeleteById(Guid id);
         Task DeleteByIdAsync(Guid id);
         ICollection<User> GetAll();

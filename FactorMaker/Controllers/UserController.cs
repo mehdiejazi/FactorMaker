@@ -1,12 +1,15 @@
 ﻿using Common;
+using FactorMaker.Infrastructure.Attributes;
 using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels;
+using ViewModels.Authentication;
 using User = Models.User;
 
 namespace FactorMaker.Controllers
@@ -23,6 +26,43 @@ namespace FactorMaker.Controllers
         }
         private IUserService UserService { get; }
 
+        [HttpPost("Login")]
+        public Result<LoginResponseViewModel> Login(LoginRequestViewModel loginRequest)
+        {
+            var response = UserService.Login(loginRequest);
+
+            var result = new Result<LoginResponseViewModel>();
+            result.Data = response;
+            result.IsSuccessful = true;
+
+            if (response == null)
+            {
+                result.IsSuccessful = false;
+                result.AddErrorMessage(Resources.ErrorMessages.LoginFailed);
+            }
+
+            return result;
+        }
+
+        [HttpPost("LoginAsync")]
+        public async Task<Result<LoginResponseViewModel>> LoginAsync(LoginRequestViewModel loginRequest)
+        {
+            var response = await UserService.LoginAsync(loginRequest);
+
+            var result = new Result<LoginResponseViewModel>();
+            result.Data = response;
+            result.IsSuccessful = true;
+
+            if (response == null)
+            {
+                result.IsSuccessful = false;
+                result.AddErrorMessage(Resources.ErrorMessages.LoginFailed);
+            }
+
+            return result;
+        }
+
+        [Authorize(RoleType = RoleType.Administrator)]
         [HttpGet("DeleteById")]
         public Result DeleteById(Guid id)
         {
@@ -34,6 +74,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
+        [Authorize(RoleType = RoleType.Administrator)]
         [HttpGet("DeleteByIdAsync")]
         public async Task<Result> DeleteByIdAsync(Guid id)
         {
@@ -45,6 +86,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
+        [Authorize(RoleType = RoleType.Administrator)]
         [HttpGet("GetAll")]
         public Result<ICollection<User>> GetAll()
         {
@@ -55,6 +97,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
+        [Authorize(RoleType = RoleType.Administrator)]
         [HttpGet("GetAllAsync")]
         public async Task<Result<ICollection<User>>> GetAllAsync()
         {
@@ -65,6 +108,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
+        [Authorize(RoleType = RoleType.Administrator)]
         [HttpGet("GetById")]
         public Result<User> GetById(Guid id)
         {
@@ -75,6 +119,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
+        [Authorize(RoleType = RoleType.Administrator)]
         [HttpGet("GetByIdAsync")]
         public async Task<Result<User>> GetByIdAsync(Guid id)
         {
@@ -85,6 +130,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
+        [Authorize(RoleType = RoleType.Administrator)]
         [HttpPost("Insert")]
         public Result<UserViewModel> Insert(UserViewModel userViewModel)
         {
@@ -111,6 +157,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
+        [Authorize(RoleType = RoleType.Administrator)]
         [HttpPost("InsertAsync")]
         public async Task<Result<UserViewModel>> InsertAsync(UserViewModel userViewModel)
         {
@@ -136,6 +183,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
+        [Authorize(RoleType = RoleType.Administrator)]
         [HttpPost("Update")]
         public Result<UserViewModel> Update(UserViewModel userViewModel)
         {
@@ -161,6 +209,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
+        [Authorize(RoleType = RoleType.Administrator)]
         [HttpPost("UpdateAsync")]
         public async Task<Result<UserViewModel>> UpdateAsync(UserViewModel userViewModel)
         {
