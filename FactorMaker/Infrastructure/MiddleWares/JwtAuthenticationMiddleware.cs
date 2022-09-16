@@ -2,8 +2,6 @@
 using FactorMaker.Services.ServicesIntefaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,13 +9,13 @@ namespace FactorMaker.Infrastructure.MiddleWares
 {
     public class JwtAuthenticationMiddleware
     {
-        public JwtAuthenticationMiddleware(RequestDelegate next, Main mainSettings)
+        public JwtAuthenticationMiddleware(RequestDelegate next, AuthSettings authSettings)
         {
             Next = next;
-            MainSettings = mainSettings;
+            AuthSettings = authSettings;
         }
         protected RequestDelegate Next { get; }
-        protected Main MainSettings { get; }
+        protected AuthSettings AuthSettings { get; }
         public async Task Invoke(HttpContext context, IUserService userService)
         {
             var requsetHeaders = context.Request.Headers["Authorization"];
@@ -30,7 +28,7 @@ namespace FactorMaker.Infrastructure.MiddleWares
             if (string.IsNullOrWhiteSpace(token) == false)
             {
                 JwtUtility.AttachUserToContextByToken(context: context,
-                    userService: userService, token: token, secretKey: MainSettings.SecretKey);
+                userService: userService, token: token, secretKey: AuthSettings.SecretKey);
             }
 
             await Next(context);
@@ -39,7 +37,7 @@ namespace FactorMaker.Infrastructure.MiddleWares
 
     public static class ApiErrorHandlerMiddlewareExtensions
     {
-        public static IApplicationBuilder JwtAuthenticationMiddleware(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseJwtAuthenticationMiddleware(this IApplicationBuilder builder)
         {
             return builder.UseMiddleware<JwtAuthenticationMiddleware>();
         }

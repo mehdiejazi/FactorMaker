@@ -30,7 +30,7 @@ namespace FactorMaker.Infrastructure
                 return sb.ToString();
             }
         }
-        public static string GenerateJwtToken(User user, Main mainSettings)
+        public static string GenerateJwtToken(User user, AuthSettings mainSettings)
         {
             byte[] key = Encoding.ASCII.GetBytes(mainSettings.SecretKey);
 

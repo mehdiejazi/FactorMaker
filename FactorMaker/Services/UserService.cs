@@ -11,13 +11,14 @@ using ViewModels.Authentication;
 using Microsoft.Extensions.Options;
 using FactorMaker.Infrastructure.ApplicationSettings;
 using FactorMaker.Infrastructure;
+using Models.Enums;
 
 namespace FactorMaker.Services
 {
     public class UserService : BaseServiceWithDatabase, IUserService
     {
-        protected Main MainSettings { get; }
-        public UserService(IUnitOfWork unitOfWork, IOptions<Main> options) : base(unitOfWork)
+        protected AuthSettings MainSettings { get; }
+        public UserService(IUnitOfWork unitOfWork, IOptions<AuthSettings> options) : base(unitOfWork)
         {
             MainSettings = options.Value;
         }
@@ -64,7 +65,7 @@ namespace FactorMaker.Services
 
 
         public User Insert(string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive)
+            string userName, string password, bool isActive,RoleType role)
         {
             try
             {
@@ -75,8 +76,8 @@ namespace FactorMaker.Services
                     NationalCode = nationalCode,
                     UserName = userName,
                     Password = password,
-                    IsActive = isActive
-
+                    IsActive = isActive,
+                    Role = role
                 };
 
                 user.Password = JwtUtility.HashSHA1(user.Password);
@@ -94,7 +95,7 @@ namespace FactorMaker.Services
         }
 
         public async Task<User> InsertAsync(string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive)
+            string userName, string password, bool isActive, RoleType role)
         {
             try
             {
@@ -105,8 +106,8 @@ namespace FactorMaker.Services
                     NationalCode = nationalCode,
                     UserName = userName,
                     Password = password,
-                    IsActive = isActive
-
+                    IsActive = isActive,
+                    Role = role
                 };
 
                 user.Password = JwtUtility.HashSHA1(user.Password);

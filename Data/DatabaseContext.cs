@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Models;
+using System;
 
 namespace Data
 {
@@ -8,10 +9,20 @@ namespace Data
         public DatabaseContext
             (DbContextOptions<DatabaseContext> options) : base(options)
         {
-            //Database.EnsureDeleted();
-            Database.EnsureCreated();
+            try
+            {
 
-            //Database.Migrate();
+                //Database.EnsureDeleted();
+                Database.EnsureCreated();
+
+                //Database.Migrate();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
 
         private readonly DbContextOptions options;

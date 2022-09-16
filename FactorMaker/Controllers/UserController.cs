@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels;
 using ViewModels.Authentication;
-using User = Models.User;
 
 namespace FactorMaker.Controllers
 {
@@ -130,13 +129,13 @@ namespace FactorMaker.Controllers
             return result;
         }
 
-        [Authorize(RoleType = RoleType.Administrator)]
+        //[Authorize(RoleType = RoleType.Administrator)]
         [HttpPost("Insert")]
         public Result<UserViewModel> Insert(UserViewModel userViewModel)
         {
 
             var user = UserService.Insert(userViewModel.FirstName, userViewModel.LastName, userViewModel.NationalCode,
-                userViewModel.UserName, userViewModel.Password, userViewModel.IsActive);
+                userViewModel.UserName, userViewModel.Password, userViewModel.IsActive,userViewModel.Role);
 
             var returnedUserViewModel = new UserViewModel()
             {
@@ -147,7 +146,7 @@ namespace FactorMaker.Controllers
                 IsActive = user.IsActive,
                 NationalCode = user.NationalCode,
                 UserName = user.UserName,
-
+                Role = user.Role
             };
 
             var result = new Result<UserViewModel>();
@@ -162,7 +161,7 @@ namespace FactorMaker.Controllers
         public async Task<Result<UserViewModel>> InsertAsync(UserViewModel userViewModel)
         {
             var user = await UserService.InsertAsync(userViewModel.FirstName, userViewModel.LastName, userViewModel.NationalCode,
-                userViewModel.UserName, userViewModel.Password, userViewModel.IsActive);
+                userViewModel.UserName, userViewModel.Password, userViewModel.IsActive,userViewModel.Role);
 
             var returnedUserViewModel = new UserViewModel()
             {
@@ -173,7 +172,7 @@ namespace FactorMaker.Controllers
                 IsActive = user.IsActive,
                 NationalCode = user.NationalCode,
                 UserName = user.UserName,
-
+                Role = user.Role,
             };
 
             var result = new Result<UserViewModel>();

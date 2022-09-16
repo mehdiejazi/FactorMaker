@@ -1,6 +1,8 @@
 using System.Linq;
 using Common;
 using Data;
+using FactorMaker.Infrastructure.ApplicationSettings;
+using FactorMaker.Infrastructure.MiddleWares;
 using FactorMaker.Services;
 using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
@@ -60,9 +62,15 @@ namespace FactorMaker
                     });
             });
 
+            //services.Configure<Infrastructure.ApplicationSettings.AuthSettings>
+            //    (Configuration.GetSection("AuthSettings"));
+
+            services.AddSingleton(Configuration.GetSection("AuthSettings").Get<AuthSettings>());
+
+
             services.AddSingleton<MyServer>();
 
-            services.AddTransient<Data.IUnitOfWork, Data.UnitOfWork>(sp =>
+            services.AddTransient<IUnitOfWork, UnitOfWork>(sp =>
             {
                 Data.Tools.Options options =
                     new Data.Tools.Options
@@ -98,6 +106,7 @@ namespace FactorMaker
             {
                 app.UseDeveloperExceptionPage();
             }
+
             app.UseHttpsRedirection();
             app.UseApiErrorHandlerMiddleware();
 
@@ -108,11 +117,14 @@ namespace FactorMaker
                 endpoints.MapControllers();
             });
 
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Aratime Web Api Core v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FactorMaker Web Api Core v1");
             });
+
+            app.UseJwtAuthenticationMiddleware();
 
             //app.UseSqlServer
         }

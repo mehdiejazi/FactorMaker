@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Models.Enums;
 using ViewModels.Base;
 
 namespace ViewModels
@@ -10,5 +8,6 @@ namespace ViewModels
         public string UserName { get; set; }
         public string Password { get; set; }
         public bool IsActive { get; set; }
+        public RoleType Role { get; set; }
     }
 }

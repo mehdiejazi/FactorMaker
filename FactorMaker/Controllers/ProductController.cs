@@ -11,7 +11,7 @@ using ViewModels;
 
 namespace FactorMaker.Controllers
 {
-    [Authorize()]
+    [Authorize]
     public class ProductController : BaseApiController
     {
         private ProductController() : base()

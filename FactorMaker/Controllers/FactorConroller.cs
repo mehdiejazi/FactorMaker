@@ -12,7 +12,7 @@ using ViewModels;
 
 namespace FactorMaker.Controllers
 {
-    [Authorize()]
+    [Authorize]
 
     public class FactorConroller : BaseApiController
     {
