@@ -26,6 +26,28 @@ namespace FactorMaker.Controllers
         }
         private IFactorService FactorService { get; }
 
+
+        [HttpGet("GetAll")]
+        public Result<ICollection<Factor>> GetAll()
+        {
+            var result = new Result<ICollection<Factor>>();
+            result.Data = FactorService.GetAll();
+            result.IsSuccessful = true;
+
+            return result;
+        }
+
+        [HttpGet("GetAllAsync")]
+        public async Task<Result<ICollection<Factor>>> GetAllAsync()
+        {
+            var result = new Result<ICollection<Factor>>();
+            result.Data = await FactorService.GetAllAsync();
+            result.IsSuccessful = true;
+
+            return result;
+        }
+
+
         [HttpGet("DeleteById")]
         public Result DeleteById(Guid id)
         {
@@ -43,26 +65,6 @@ namespace FactorMaker.Controllers
             await FactorService.DeleteByIdAsync(id);
 
             var result = new Result();
-            result.IsSuccessful = true;
-
-            return result;
-        }
-
-        [HttpGet("GetAll")]
-        public Result<ICollection<Factor>> GetAll()
-        {
-            var result = new Result<ICollection<Factor>>();
-            result.Data = FactorService.GetAll();
-            result.IsSuccessful = true;
-
-            return result;
-        }
-
-        [HttpGet("GetAllAsync")]
-        public async Task<Result<ICollection<Factor>>> GetAllAsync()
-        {
-            var result = new Result<ICollection<Factor>>();
-            result.Data = await FactorService.GetAllAsync();
             result.IsSuccessful = true;
 
             return result;

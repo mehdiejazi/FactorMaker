@@ -10,5 +10,7 @@ namespace Data
         IFactorRepository FactorRepository { get; }
         IProductRepository ProductRepository { get; }
         IUserRepository UserRepository { get; }
+        IRoleRepository RoleRepository { get; }
+        IActionPermissionRepository ActionPermissionRepository { get; }
     }
 }

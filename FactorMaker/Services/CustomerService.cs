@@ -120,12 +120,12 @@ namespace FactorMaker.Services
         {
             try
             {
-                User user = UnitOfWork.UserRepository.GetById(id);
+                Customer customer = UnitOfWork.CustomerRepository.GetById(id);
 
-                if (user == null)
+                if (customer == null)
                     throw new NullReferenceException(typeof(Customer) + " " + ErrorMessages.NotFound);
 
-                UnitOfWork.UserRepository.Delete(user);
+                UnitOfWork.CustomerRepository.Delete(customer);
                 UnitOfWork.Save();
 
 
@@ -141,7 +141,7 @@ namespace FactorMaker.Services
         {
             try
             {
-                Customer customer = UnitOfWork.CustomerRepository.GetById(id);
+                Customer customer = await UnitOfWork.CustomerRepository.GetByIdAsync(id);
 
                 if (customer == null)
                     throw new NullReferenceException(typeof(Customer) + " " + ErrorMessages.NotFound);

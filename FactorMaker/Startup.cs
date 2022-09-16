@@ -5,13 +5,13 @@ using FactorMaker.Infrastructure.ApplicationSettings;
 using FactorMaker.Infrastructure.MiddleWares;
 using FactorMaker.Services;
 using FactorMaker.Services.ServicesIntefaces;
-using Infrastructure;
 using Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 namespace FactorMaker
 {
@@ -62,10 +62,19 @@ namespace FactorMaker
                     });
             });
 
-            //services.Configure<Infrastructure.ApplicationSettings.AuthSettings>
+            //services.Configure<AuthSettings>
             //    (Configuration.GetSection("AuthSettings"));
 
-            services.AddSingleton(Configuration.GetSection("AuthSettings").Get<AuthSettings>());
+            //services.AddSingleton(Configuration.GetSection("AuthSettings").Get<AuthSettings>());
+            //service.AddSingleton(configuration.GetSection("WeirdService").Get<WeirdService>();
+
+
+            AuthSettings _authSettings = new AuthSettings();
+            Configuration.GetSection("AuthSettings").Bind(_authSettings);// bind is necessary
+             services.AddSingleton<AuthSettings>(_authSettings);
+
+            //  services.AddSingleton<AuthSettings>(Configuration.GetSection("AuthSettings").Get<AuthSettings>());
+
 
 
             services.AddSingleton<MyServer>();
@@ -90,12 +99,34 @@ namespace FactorMaker
             services.AddScoped<IFactorItemService, FactorItemService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IActionPermissionService, ActionPermissionService>();
+            services.AddScoped<IRoleService, RoleService>();
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 { Title = "FactorMaker Web Api Core", Version = "v1" });
                 c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First()); //This line
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please insert JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                   {
+                     new OpenApiSecurityScheme
+                     {
+                       Reference = new OpenApiReference
+                       {
+                         Type = ReferenceType.SecurityScheme,
+                         Id = "Bearer"
+                       }
+                      },
+                      new string[] { }
+                    }
+                  });
             });
         }
 
@@ -109,6 +140,7 @@ namespace FactorMaker
 
             app.UseHttpsRedirection();
             app.UseApiErrorHandlerMiddleware();
+            app.UseJwtAuthenticationMiddleware();
 
             app.UseRouting();
             app.UseCors(policyName: OTHERS_CORS_POLICY);
@@ -124,7 +156,7 @@ namespace FactorMaker
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "FactorMaker Web Api Core v1");
             });
 
-            app.UseJwtAuthenticationMiddleware();
+
 
             //app.UseSqlServer
         }

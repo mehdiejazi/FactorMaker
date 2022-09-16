@@ -16,13 +16,19 @@ namespace FactorMaker.Services.ServicesIntefaces
         Task DeleteByIdAsync(Guid id);
         ICollection<User> GetAll();
         Task<ICollection<User>> GetAllAsync();
+        ICollection<User> GetActive();
+        Task<ICollection<User>> GetActiveAsync();
+        ICollection<User> GetInActive();
+        Task<ICollection<User>> GetInActiveAsync();
         User GetById(Guid id);
         Task<User> GetByIdAsync(Guid id);
-        User Insert(string firstName, string lastName, string nationalCode, 
-            string userName, string password, bool isActive, RoleType role);
+        User Insert(string firstName, string lastName, string nationalCode,
+            string userName, string password, bool isActive, Guid roleId);
         Task<User> InsertAsync(string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive, RoleType role);
-        UserViewModel Update(Guid id, string firstName, string lastName, string nationalCode, string userName, string password, bool isActive);
-        Task<UserViewModel> UpdateAsync(Guid id, string firstName, string lastName, string nationalCode, string userName, string password, bool isActive);
+            string userName, string password, bool isActive, Guid roleId);
+        User Update(Guid id, string firstName, string lastName, string nationalCode,
+            string userName, string password, bool isActive, Guid roleId);
+        Task<User> UpdateAsync(Guid id, string firstName, string lastName, string nationalCode,
+            string userName, string password, bool isActive, Guid roleId);
     }
 }

@@ -1,10 +1,8 @@
 ﻿using Common;
-using FactorMaker.Infrastructure.Attributes;
 using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -61,7 +59,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
-        [Authorize(RoleType = RoleType.Administrator)]
+        //[Authorize(RoleType = RoleType.Administrator)]
         [HttpGet("DeleteById")]
         public Result DeleteById(Guid id)
         {
@@ -73,7 +71,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
-        [Authorize(RoleType = RoleType.Administrator)]
+        //[Authorize(RoleType = RoleType.Administrator)]
         [HttpGet("DeleteByIdAsync")]
         public async Task<Result> DeleteByIdAsync(Guid id)
         {
@@ -85,7 +83,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
-        [Authorize(RoleType = RoleType.Administrator)]
+        //[Authorize(RoleType = RoleType.Administrator)]
         [HttpGet("GetAll")]
         public Result<ICollection<User>> GetAll()
         {
@@ -96,7 +94,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
-        [Authorize(RoleType = RoleType.Administrator)]
+        //[Authorize(RoleType = RoleType.Administrator)]
         [HttpGet("GetAllAsync")]
         public async Task<Result<ICollection<User>>> GetAllAsync()
         {
@@ -107,7 +105,52 @@ namespace FactorMaker.Controllers
             return result;
         }
 
-        [Authorize(RoleType = RoleType.Administrator)]
+        //[Authorize(RoleType = RoleType.Administrator)]
+        [HttpGet("GetActive")]
+        public Result<ICollection<User>> GetActive()
+        {
+            var result = new Result<ICollection<User>>();
+            result.Data = UserService.GetActive();
+            result.IsSuccessful = true;
+
+            return result;
+        }
+
+        //[Authorize(RoleType = RoleType.Administrator)]
+        [HttpGet("GetActiveAsync")]
+        public async Task<Result<ICollection<User>>> GetActiveAsync()
+        {
+            var result = new Result<ICollection<User>>();
+            result.Data = await UserService.GetActiveAsync();
+            result.IsSuccessful = true;
+
+            return result;
+        }
+
+        //[Authorize(RoleType = RoleType.Administrator)]
+        [HttpGet("GetInActive")]
+        public Result<ICollection<User>> GetInActive()
+        {
+            var result = new Result<ICollection<User>>();
+            result.Data = UserService.GetInActive();
+            result.IsSuccessful = true;
+
+            return result;
+        }
+
+        //[Authorize(RoleType = RoleType.Administrator)]
+        [HttpGet("GetInActiveAsync")]
+        public async Task<Result<ICollection<User>>> GetInActiveAsync()
+        {
+            var result = new Result<ICollection<User>>();
+            result.Data = await UserService.GetInActiveAsync();
+            result.IsSuccessful = true;
+
+            return result;
+        }
+
+
+        //[Authorize(RoleType = RoleType.Administrator)]
         [HttpGet("GetById")]
         public Result<User> GetById(Guid id)
         {
@@ -118,7 +161,7 @@ namespace FactorMaker.Controllers
             return result;
         }
 
-        [Authorize(RoleType = RoleType.Administrator)]
+        //[Authorize(RoleType = RoleType.Administrator)]
         [HttpGet("GetByIdAsync")]
         public async Task<Result<User>> GetByIdAsync(Guid id)
         {
@@ -135,7 +178,7 @@ namespace FactorMaker.Controllers
         {
 
             var user = UserService.Insert(userViewModel.FirstName, userViewModel.LastName, userViewModel.NationalCode,
-                userViewModel.UserName, userViewModel.Password, userViewModel.IsActive,userViewModel.Role);
+                userViewModel.UserName, userViewModel.Password, userViewModel.IsActive, userViewModel.RoleId);
 
             var returnedUserViewModel = new UserViewModel()
             {
@@ -146,7 +189,8 @@ namespace FactorMaker.Controllers
                 IsActive = user.IsActive,
                 NationalCode = user.NationalCode,
                 UserName = user.UserName,
-                Role = user.Role
+                RoleId = user.Role.Id,
+                RoleName = user.Role.RolName,
             };
 
             var result = new Result<UserViewModel>();
@@ -156,12 +200,12 @@ namespace FactorMaker.Controllers
             return result;
         }
 
-        [Authorize(RoleType = RoleType.Administrator)]
+        //[Authorize(RoleType = RoleType.Administrator)]
         [HttpPost("InsertAsync")]
         public async Task<Result<UserViewModel>> InsertAsync(UserViewModel userViewModel)
         {
             var user = await UserService.InsertAsync(userViewModel.FirstName, userViewModel.LastName, userViewModel.NationalCode,
-                userViewModel.UserName, userViewModel.Password, userViewModel.IsActive,userViewModel.Role);
+                userViewModel.UserName, userViewModel.Password, userViewModel.IsActive,userViewModel.RoleId);
 
             var returnedUserViewModel = new UserViewModel()
             {
@@ -172,7 +216,8 @@ namespace FactorMaker.Controllers
                 IsActive = user.IsActive,
                 NationalCode = user.NationalCode,
                 UserName = user.UserName,
-                Role = user.Role,
+                RoleId = user.Role.Id,
+                RoleName = user.Role.RolName,
             };
 
             var result = new Result<UserViewModel>();
@@ -182,12 +227,13 @@ namespace FactorMaker.Controllers
             return result;
         }
 
-        [Authorize(RoleType = RoleType.Administrator)]
+        //[Authorize(RoleType = RoleType.Administrator)]
         [HttpPost("Update")]
         public Result<UserViewModel> Update(UserViewModel userViewModel)
         {
             var user = UserService.Update(userViewModel.Id, userViewModel.FirstName, userViewModel.LastName,
-                userViewModel.NationalCode, userViewModel.UserName, userViewModel.Password, userViewModel.IsActive);
+                userViewModel.NationalCode, userViewModel.UserName, userViewModel.Password, 
+                userViewModel.IsActive, userViewModel.RoleId);
 
             var returnedUserViewModel = new UserViewModel()
             {
@@ -198,7 +244,8 @@ namespace FactorMaker.Controllers
                 IsActive = user.IsActive,
                 NationalCode = user.NationalCode,
                 UserName = user.UserName,
-
+                RoleId = user.Role.Id,
+                RoleName = user.Role.RolName,
             };
 
             var result = new Result<UserViewModel>();
@@ -208,15 +255,29 @@ namespace FactorMaker.Controllers
             return result;
         }
 
-        [Authorize(RoleType = RoleType.Administrator)]
+        //[Authorize(RoleType = RoleType.Administrator)]
         [HttpPost("UpdateAsync")]
         public async Task<Result<UserViewModel>> UpdateAsync(UserViewModel userViewModel)
         {
-            var returneUserViewModel = await UserService.UpdateAsync(userViewModel.Id, userViewModel.FirstName, userViewModel.LastName,
-                userViewModel.NationalCode, userViewModel.UserName, userViewModel.Password, userViewModel.IsActive);
+            var user = await UserService.UpdateAsync(userViewModel.Id, userViewModel.FirstName, userViewModel.LastName,
+                userViewModel.NationalCode, userViewModel.UserName, userViewModel.Password, 
+                userViewModel.IsActive, userViewModel.RoleId);
+
+            var returnedUserViewModel = new UserViewModel()
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                InsertDateTime = user.InsertDateTime,
+                IsActive = user.IsActive,
+                NationalCode = user.NationalCode,
+                UserName = user.UserName,
+                RoleId = user.Role.Id,
+                RoleName = user.Role.RolName,
+            };
 
             var result = new Result<UserViewModel>();
-            result.Data = returneUserViewModel;
+            result.Data = returnedUserViewModel;
             result.IsSuccessful = true;
 
             return result;

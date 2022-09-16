@@ -268,6 +268,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unauthorized Action Access.
+        /// </summary>
+        public static string UnauthorizedActionAccess {
+            get {
+                return ResourceManager.GetString("UnauthorizedActionAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unexpected Error!.
         /// </summary>
         public static string UnexpectedError {

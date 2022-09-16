@@ -17,10 +17,10 @@ namespace FactorMaker.Services
 {
     public class UserService : BaseServiceWithDatabase, IUserService
     {
-        protected AuthSettings MainSettings { get; }
-        public UserService(IUnitOfWork unitOfWork, IOptions<AuthSettings> options) : base(unitOfWork)
+        protected AuthSettings AuthSettings { get; }
+        public UserService(IUnitOfWork unitOfWork, AuthSettings authSettings) : base(unitOfWork)
         {
-            MainSettings = options.Value;
+            AuthSettings = authSettings;
         }
 
         public LoginResponseViewModel Login(LoginRequestViewModel loginRequest)
@@ -36,7 +36,7 @@ namespace FactorMaker.Services
             if (string.Compare(foundUser.Password, JwtUtility.HashSHA1(loginRequest.Password), false) != 0)
                 return null;
 
-            string token = JwtUtility.GenerateJwtToken(foundUser, MainSettings);
+            string token = JwtUtility.GenerateJwtToken(foundUser, AuthSettings);
 
             var loginResponse = new LoginResponseViewModel(foundUser, token);
 
@@ -56,7 +56,7 @@ namespace FactorMaker.Services
             if (string.Compare(foundUser.Password, loginRequest.Password, false) != 0)
                 return null;
 
-            string token = JwtUtility.GenerateJwtToken(foundUser, MainSettings);
+            string token = JwtUtility.GenerateJwtToken(foundUser, AuthSettings);
 
             var loginResponse = new LoginResponseViewModel(foundUser, token);
 
@@ -65,10 +65,15 @@ namespace FactorMaker.Services
 
 
         public User Insert(string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive,RoleType role)
+            string userName, string password, bool isActive, Guid roleId)
         {
             try
             {
+
+                Role role = UnitOfWork.RoleRepository.GetById(roleId);
+                if (role == null)
+                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
+
                 User user = new User
                 {
                     FirstName = firstName,
@@ -77,7 +82,7 @@ namespace FactorMaker.Services
                     UserName = userName,
                     Password = password,
                     IsActive = isActive,
-                    Role = role
+                    Role = role,
                 };
 
                 user.Password = JwtUtility.HashSHA1(user.Password);
@@ -95,10 +100,14 @@ namespace FactorMaker.Services
         }
 
         public async Task<User> InsertAsync(string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive, RoleType role)
+            string userName, string password, bool isActive, Guid roleId)
         {
             try
             {
+                Role role = await UnitOfWork.RoleRepository.GetByIdAsync(roleId);
+                if (role == null)
+                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
+
                 User user = new User
                 {
                     FirstName = firstName,
@@ -107,11 +116,10 @@ namespace FactorMaker.Services
                     UserName = userName,
                     Password = password,
                     IsActive = isActive,
-                    Role = role
+                    Role = role,
                 };
 
                 user.Password = JwtUtility.HashSHA1(user.Password);
-
 
                 await UnitOfWork.UserRepository.InsertAsync(user);
                 await UnitOfWork.SaveAsync();
@@ -125,15 +133,18 @@ namespace FactorMaker.Services
             }
         }
 
-        public UserViewModel Update(Guid id, string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive)
+        public User Update(Guid id, string firstName, string lastName, string nationalCode,
+            string userName, string password, bool isActive, Guid roleId)
         {
             try
             {
                 User user = UnitOfWork.UserRepository.GetById(id);
-
                 if (user == null)
                     throw new NullReferenceException(typeof(User) + " " + ErrorMessages.NotFound);
+
+                Role role = UnitOfWork.RoleRepository.GetById(roleId);
+                if (role == null)
+                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
 
                 user.FirstName = firstName;
                 user.LastName = lastName;
@@ -144,20 +155,8 @@ namespace FactorMaker.Services
 
                 UnitOfWork.UserRepository.Update(user);
                 UnitOfWork.Save();
-
-                var returnedUserViewModel = new UserViewModel()
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    InsertDateTime = user.InsertDateTime,
-                    IsActive = user.IsActive,
-                    NationalCode = user.NationalCode,
-                    UserName = user.UserName,
-
-                };
-
-                return returnedUserViewModel;
+               
+                return user;
 
             }
             catch (Exception ex)
@@ -167,15 +166,18 @@ namespace FactorMaker.Services
             }
         }
 
-        public async Task<UserViewModel> UpdateAsync(Guid id, string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive)
+        public async Task<User> UpdateAsync(Guid id, string firstName, string lastName, string nationalCode,
+            string userName, string password, bool isActive, Guid roleId)
         {
             try
             {
-                User user = UnitOfWork.UserRepository.GetById(id);
-
+                User user = await UnitOfWork.UserRepository.GetByIdAsync(id);
                 if (user == null)
                     throw new NullReferenceException(typeof(User) + " " + ErrorMessages.NotFound);
+
+                Role role = await UnitOfWork.RoleRepository.GetByIdAsync(roleId);
+                if (role == null)
+                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
 
                 user.FirstName = firstName;
                 user.LastName = lastName;
@@ -187,19 +189,7 @@ namespace FactorMaker.Services
                 await UnitOfWork.UserRepository.UpdateAsync(user);
                 await UnitOfWork.SaveAsync();
 
-                var returnedUserViewModel = new UserViewModel()
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    InsertDateTime = user.InsertDateTime,
-                    IsActive = user.IsActive,
-                    NationalCode = user.NationalCode,
-                    UserName = user.UserName,
-
-                };
-
-                return returnedUserViewModel;
+                return user;
 
             }
             catch (Exception ex)
@@ -309,6 +299,67 @@ namespace FactorMaker.Services
             try
             {
                 var users = await UnitOfWork.UserRepository.GetAllAsync();
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public ICollection<User> GetActive()
+        {
+            try
+            {
+                var users = UnitOfWork.UserRepository.GetActive();
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<ICollection<User>> GetActiveAsync()
+        {
+            try
+            {
+                var users = await UnitOfWork.UserRepository.GetActiveAsync();
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public ICollection<User> GetInActive()
+        {
+
+            try
+            {
+                var users = UnitOfWork.UserRepository.GetInActive();
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<ICollection<User>> GetInActiveAsync()
+        {
+            try
+            {
+                var users = await UnitOfWork.UserRepository.GetInActiveAsync();
 
                 return users;
             }

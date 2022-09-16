@@ -186,6 +186,9 @@
   <data name="UnauthorizedAccess" xml:space="preserve">
     <value>Unauthorized access </value>
   </data>
+  <data name="UnauthorizedActionAccess" xml:space="preserve">
+    <value>Unauthorized Action Access</value>
+  </data>
   <data name="UnexpectedError" xml:space="preserve">
     <value>Unexpected Error!</value>
   </data>

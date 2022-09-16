@@ -7,6 +7,6 @@ namespace Models
     {
         public string RolName { get; set; }
         public string Description { get; set; }
-        public virtual ICollection<Action> ActionPermissions { get; set; }
+        public virtual ICollection<RoleActionPermission> RoleActionPermissions { get; set; }
     }
 }

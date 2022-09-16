@@ -75,8 +75,6 @@ namespace Data
             }
         }
 
-
-
         private IUserRepository _userRepository;
         public IUserRepository UserRepository
         {
@@ -92,6 +90,34 @@ namespace Data
             }
         }
 
+        private IRoleRepository _roleRepository;
+        public IRoleRepository RoleRepository
+        {
+            get
+            {
+                if (_roleRepository == null)
+                {
+                    _roleRepository =
+                        new RoleRepository(DatabaseContext);
+                }
 
+                return _roleRepository;
+            }
+        }
+
+        private IActionPermissionRepository _actionPermissionRepository;
+        public IActionPermissionRepository ActionPermissionRepository
+        {
+            get
+            {
+                if (_actionPermissionRepository == null)
+                {
+                    _actionPermissionRepository =
+                        new ActionPermissionRepository(DatabaseContext);
+                }
+
+                return _actionPermissionRepository;
+            }
+        }
     }
 }

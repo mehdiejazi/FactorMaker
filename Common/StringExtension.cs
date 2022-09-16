@@ -1,8 +1,8 @@
 ﻿namespace Common
 {
-    public static class String
+    public static class StringExtension
     {
-        static String()
+        static StringExtension()
         {
         }
 

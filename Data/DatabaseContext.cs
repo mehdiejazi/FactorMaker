@@ -34,8 +34,18 @@ namespace Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<RoleActionPermission>()
+                .HasKey(ra => new { ra.ActionPermissionId, ra.RoleId });
 
+            builder.Entity<RoleActionPermission>()
+                .HasOne(ra => ra.ActionPermission)
+                .WithMany(ap => ap.RoleActionPermission)
+                .HasForeignKey(bc => bc.ActionPermissionId);
 
+            builder.Entity<RoleActionPermission>()
+                .HasOne(r => r.Role)
+                .WithMany(ap => ap.RoleActionPermissions)
+                .HasForeignKey(bc => bc.RoleId);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -45,6 +55,9 @@ namespace Data
         public DbSet<FactorItem> FactorItems { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<RoleActionPermission> RoleActionPermission { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<ActionPermission> ActionPermissions { get; set; }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Models.Enums;
+using System;
 using ViewModels.Base;
 
 namespace ViewModels
@@ -8,6 +9,7 @@ namespace ViewModels
         public string UserName { get; set; }
         public string Password { get; set; }
         public bool IsActive { get; set; }
-        public RoleType Role { get; set; }
+        public Guid RoleId { get; set; }
+        public string RoleName { get; set; }
     }
 }
