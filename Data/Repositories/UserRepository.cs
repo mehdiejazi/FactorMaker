@@ -38,7 +38,7 @@ namespace Data.Repositories
             var user = DbSet
                 .Where(u => u.Id.Equals(Id))
                 .Include(u => u.Role)
-                .ThenInclude(p=>p.RoleActionPermissions)
+                .ThenInclude(p => p.RoleActionPermissions)
                 .ThenInclude(a => a.ActionPermission)
                 .FirstOrDefault();
 
@@ -59,13 +59,22 @@ namespace Data.Repositories
 
         public User GetByUserName(string userName)
         {
-            var user = DbSet.Where(u => u.UserName.ToLower() == userName.ToLower()).FirstOrDefault();
+            var user = DbSet
+                .Where(u => u.UserName.ToLower() == userName.ToLower())
+                .Include(u => u.Role)
+                .ThenInclude(p => p.RoleActionPermissions)
+                .ThenInclude(a => a.ActionPermission)
+                .FirstOrDefault();
             return user;
         }
 
         public async Task<User> GetByUserNameAsync(string userName)
         {
-            var user = await DbSet.Where(u => u.UserName.ToLower() == userName.ToLower())
+            var user = await DbSet
+                .Where(u => u.UserName.ToLower() == userName.ToLower())
+                .Include(u => u.Role)
+                .ThenInclude(p => p.RoleActionPermissions)
+                .ThenInclude(a => a.ActionPermission)
                 .FirstOrDefaultAsync();
             return user;
         }

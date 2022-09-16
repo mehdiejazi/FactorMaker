@@ -1,7 +1,5 @@
 ﻿using Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ViewModels.Authentication
 {
@@ -25,6 +23,7 @@ namespace ViewModels.Authentication
             FirstName = user.FirstName;
             LastName = user.LastName;
             FullName = user.FullName;
+            Role = user.Role;
 
         }
 
@@ -34,5 +33,6 @@ namespace ViewModels.Authentication
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName { get; set; }
+        public Role Role { get; set; }
     }
 }

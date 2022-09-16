@@ -27,6 +27,11 @@ namespace FactorMaker.Infrastructure.Attributes
                 return;
             }
 
+            if (user.Role.RolName == "Programmer")
+            {
+                return;
+            }
+
             var path = context.HttpContext.Request.Path.Value;
 
             var urlIsAthurized = 

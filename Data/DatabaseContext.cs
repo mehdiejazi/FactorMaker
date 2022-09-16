@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using System;
+using System.Linq;
+using System.Reflection;
 
 namespace Data
 {
@@ -12,7 +15,7 @@ namespace Data
             try
             {
 
-                //Database.EnsureDeleted();
+                Database.EnsureDeleted();
                 Database.EnsureCreated();
 
                 //Database.Migrate();
@@ -34,6 +37,8 @@ namespace Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+
             builder.Entity<RoleActionPermission>()
                 .HasKey(ra => new { ra.ActionPermissionId, ra.RoleId });
 
@@ -46,10 +51,34 @@ namespace Data
                 .HasOne(r => r.Role)
                 .WithMany(ap => ap.RoleActionPermissions)
                 .HasForeignKey(bc => bc.RoleId);
+
+
+            Role programmerRole = new Role()
+            {
+                Id  = Guid.NewGuid(),
+                RolName = "Programmer",
+                Description = "Full access Programmer.",
+                RoleActionPermissions = null
+            };
+            builder.Entity<Role>().HasData(new[] { programmerRole });
+
+            User user = new User()
+            {
+                UserName = "Programmer",
+                Password = Utilities.HashSHA1("prog123"),
+                FirstName = "Programmer",
+                LastName = "Programmer",
+                IsActive = true,
+                NationalCode = "00000000",
+                RoleId = programmerRole.Id,
+            };
+            builder.Entity<User>().HasData(new[] { user });
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }
+
+
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Factor> Factors { get; set; }
         public DbSet<FactorItem> FactorItems { get; set; }

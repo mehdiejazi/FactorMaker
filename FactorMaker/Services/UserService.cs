@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using FactorMaker.Infrastructure.ApplicationSettings;
 using FactorMaker.Infrastructure;
 using Models.Enums;
+using Common;
 
 namespace FactorMaker.Services
 {
@@ -33,7 +34,7 @@ namespace FactorMaker.Services
             User foundUser = UnitOfWork.UserRepository.GetByUserName(loginRequest.UserName);
             if (foundUser == null) return null;
 
-            if (string.Compare(foundUser.Password, JwtUtility.HashSHA1(loginRequest.Password), false) != 0)
+            if (string.Compare(foundUser.Password, Utilities.HashSHA1(loginRequest.Password), false) != 0)
                 return null;
 
             string token = JwtUtility.GenerateJwtToken(foundUser, AuthSettings);
@@ -69,7 +70,6 @@ namespace FactorMaker.Services
         {
             try
             {
-
                 Role role = UnitOfWork.RoleRepository.GetById(roleId);
                 if (role == null)
                     throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
@@ -85,7 +85,7 @@ namespace FactorMaker.Services
                     Role = role,
                 };
 
-                user.Password = JwtUtility.HashSHA1(user.Password);
+                user.Password = Utilities.HashSHA1(user.Password);
 
                 UnitOfWork.UserRepository.Insert(user);
                 UnitOfWork.Save();
@@ -119,7 +119,7 @@ namespace FactorMaker.Services
                     Role = role,
                 };
 
-                user.Password = JwtUtility.HashSHA1(user.Password);
+                user.Password = Utilities.HashSHA1(user.Password);
 
                 await UnitOfWork.UserRepository.InsertAsync(user);
                 await UnitOfWork.SaveAsync();
