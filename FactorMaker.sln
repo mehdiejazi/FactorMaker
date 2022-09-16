@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{DB5A562E-72B4-42F6-AACC-B02726CBD95C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactorMaker", "FactorMaker\FactorMaker.csproj", "{46105D0A-6D41-4F2A-9C77-E4CB3DBEFD7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactorMaker", "FactorMaker\FactorMaker.csproj", "{46105D0A-6D41-4F2A-9C77-E4CB3DBEFD7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,5 +1,4 @@
 ﻿using Models.Base;
-using System;
 
 namespace Models
 {
