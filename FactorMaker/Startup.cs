@@ -76,7 +76,6 @@ namespace FactorMaker
             //  services.AddSingleton<AuthSettings>(Configuration.GetSection("AuthSettings").Get<AuthSettings>());
 
 
-
             services.AddSingleton<MyServer>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork>(sp =>

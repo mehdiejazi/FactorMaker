@@ -1,4 +1,5 @@
 ﻿using Models.Tools;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -25,5 +26,9 @@ namespace Models.Base
             Name = nameof(Resources.DataDictionary.InsertDateTime))]
         public System.DateTime InsertDateTime { get; set; }
         // **********
+        public DateTime UpdateDateTime { get; set; }
+        public DateTime DeleteDateTime { get; set; }
+        public bool IsDeleted { get; set; }
+        
     }
 }

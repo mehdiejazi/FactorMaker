@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Resources;
 using System.Collections.Generic;
 using FactorMaker.Services.ServicesIntefaces;
-using ViewModels;
 using System.Linq;
+using ViewModels.Factor;
 
 namespace FactorMaker.Services
 {

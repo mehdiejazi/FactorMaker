@@ -1,8 +1,8 @@
 ﻿using ViewModels.Base;
 
-namespace ViewModels
+namespace ViewModels.Role
 {
-    public class RoleViewModel: ViewModelBase
+    public class RoleViewModel : ViewModelBase
     {
         public string RoleName { get; set; }
         public string Description { get; set; }

@@ -8,7 +8,8 @@ using Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ViewModels;
+using ViewModels.Factor;
+using ViewModels.FactorItem;
 
 namespace FactorMaker.Controllers
 {

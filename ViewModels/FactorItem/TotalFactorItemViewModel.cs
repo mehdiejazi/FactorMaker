@@ -1,4 +1,4 @@
-﻿namespace ViewModels
+﻿namespace ViewModels.FactorItem
 {
     public class TotalFactorItemViewModel
     {

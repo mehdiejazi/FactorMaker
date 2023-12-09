@@ -1,9 +1,9 @@
 ﻿using System;
 using ViewModels.Base;
 
-namespace ViewModels
+namespace ViewModels.FactorItem
 {
-    public class FactorItemViewModel: ViewModelBase
+    public class FactorItemViewModel : ViewModelBase
     {
         public Guid factorId { get; set; }
         public Guid productId { get; set; }

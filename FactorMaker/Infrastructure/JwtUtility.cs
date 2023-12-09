@@ -77,8 +77,8 @@ namespace FactorMaker.Infrastructure
                     }, out SecurityToken validatedToken);
 
                 var jwtToken = validatedToken as JwtSecurityToken;
-                
-                if(jwtToken == null)
+
+                if (jwtToken == null)
                 {
                     return;
                 }
@@ -105,5 +105,6 @@ namespace FactorMaker.Infrastructure
                 //do nothing if jwt authentication is failed
             }
         }
+
     }
 }

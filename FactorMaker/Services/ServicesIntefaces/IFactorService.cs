@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ViewModels;
+using ViewModels.Factor;
 
 namespace FactorMaker.Services.ServicesIntefaces
 {

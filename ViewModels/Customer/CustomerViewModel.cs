@@ -1,7 +1,7 @@
 ﻿using System;
 using ViewModels.Base;
 
-namespace ViewModels
+namespace ViewModels.Customer
 {
     public class CustomerViewModel : PersonViewModelBase
     {

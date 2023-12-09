@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using ViewModels.FactorItem;
 
-namespace ViewModels
+namespace ViewModels.Factor
 {
     public class TotalFactorViewModel : FactorViewModel
     {
