@@ -1,11 +1,14 @@
-﻿using FactorMaker.Services.Base;
+﻿using Common;
 using Data;
-using Models;
-using System;
-using System.Threading.Tasks;
-using Resources;
-using System.Collections.Generic;
+using FactorMaker.Services.Base;
 using FactorMaker.Services.ServicesIntefaces;
+using Mapster;
+using Models;
+using Resources;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using ViewModels.Product;
 
 namespace FactorMaker.Services
 {
@@ -15,41 +18,21 @@ namespace FactorMaker.Services
         {
 
         }
-
-        public Product Insert(string name, long price)
+        public async Task<Result<ProductViewModel>> InsertAsync(ProductViewModel viewModel)
         {
             try
             {
-                Product product = new Product()
-                {
-                    Name = name,
-                    Price = price
-                };
-                UnitOfWork.ProductRepository.Insert(product);
-                UnitOfWork.Save();
+                var result = new Result<ProductViewModel>();
 
-                return product;
-            }
-            catch (Exception ex)
-            {
+                Product product = viewModel.Adapt<Product>();
 
-                throw ex;
-            }
-        }
-
-        public async Task<Product> InsertAsync(string name, long price)
-        {
-            try
-            {
-                Product product = new Product()
-                {
-                    Name = name,
-                    Price = price
-                };
                 await UnitOfWork.ProductRepository.InsertAsync(product);
                 await UnitOfWork.SaveAsync();
 
-                return product;
+                result.Data = product.Adapt<ProductViewModel>();
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
@@ -57,49 +40,27 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
-        public Product Update(Guid id, string name, long price)
+        public async Task<Result<ProductViewModel>> UpdateAsync(ProductViewModel viewModel)
         {
             try
             {
-                Product product = UnitOfWork.ProductRepository.GetById(id);
+                var result = new Result<ProductViewModel>();
 
+                Product product = UnitOfWork.ProductRepository.GetById(viewModel.Id);
                 if (product == null)
                     throw new NullReferenceException(typeof(Product) + " " + ErrorMessages.NotFound);
 
-                product.Name = name;
-                product.Price = price;
-
-                UnitOfWork.ProductRepository.Update(product);
-                UnitOfWork.Save();
-
-                return product;
-
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<Product> UpdateAsync(Guid id, string name, long price)
-        {
-            try
-            {
-                Product product = UnitOfWork.ProductRepository.GetById(id);
-
-                if (product == null)
-                    throw new NullReferenceException(typeof(Product) + " " + ErrorMessages.NotFound);
-
-                product.Name = name;
-                product.Price = price;
-
+                product.IsDeleted = viewModel.IsDeleted;
+                product.Name = viewModel.Name;
+                product.Price = viewModel.Price;
+                
                 await UnitOfWork.ProductRepository.UpdateAsync(product);
                 await UnitOfWork.SaveAsync();
 
-                return product;
+                result.Data = product.Adapt<ProductViewModel>();
+                result.IsSuccessful = true;
 
+                return result;
             }
             catch (Exception ex)
             {
@@ -107,37 +68,22 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
-        public void DeleteById(Guid id)
+        public async Task<Result> DeleteByIdAsync(Guid id)
         {
             try
             {
-                Product product = UnitOfWork.ProductRepository.GetById(id);
+                var result = new Result();
 
-                if (product == null)
-                    throw new NullReferenceException(typeof(Product) + " " + ErrorMessages.NotFound);
-
-                UnitOfWork.ProductRepository.Delete(product);
-                UnitOfWork.Save();
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task DeleteByIdAsync(Guid id)
-        {
-            try
-            {
-                Product product = UnitOfWork.ProductRepository.GetById(id);
+                Product product = await UnitOfWork.ProductRepository.GetByIdAsync(id);
 
                 if (product == null)
                     throw new NullReferenceException(typeof(Product) + " " + ErrorMessages.NotFound);
 
                 await UnitOfWork.ProductRepository.DeleteAsync(product);
                 await UnitOfWork.SaveAsync();
+
+                result.IsSuccessful = true;
+                return result;
             }
             catch (Exception ex)
             {
@@ -145,38 +91,21 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
-        public Product GetById(Guid id)
+        public async Task<Result<ProductViewModel>> GetByIdAsync(Guid id)
         {
             try
             {
-                Product product = UnitOfWork.ProductRepository.GetById(id);
+                var result = new Result<ProductViewModel>();
 
-                if (product == null)
-                    throw new NullReferenceException(typeof(Product) + " " + ErrorMessages.NotFound);
-
-                return product;
-
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-
-        public async Task<Product> GetByIdAsync(Guid id)
-        {
-            try
-            {
                 Product product = await UnitOfWork.ProductRepository.GetByIdAsync(id);
 
                 if (product == null)
                     throw new NullReferenceException(typeof(Product) + " " + ErrorMessages.NotFound);
 
-                return product;
+                result.Data = product.Adapt<ProductViewModel>();
+                result.IsSuccessful = true;
 
+                return result;
             }
             catch (Exception ex)
             {
@@ -184,14 +113,18 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
-        public ICollection<Product> GetAll()
+        public async Task<Result<ICollection<ProductViewModel>>> GetAllAsync()
         {
             try
             {
-                var products = UnitOfWork.ProductRepository.GetAll();
+                var result = new Result<ICollection<ProductViewModel>>();
 
-                return products;
+                var list = await UnitOfWork.ProductRepository.GetAllAsync();
+
+                result.Data = list.Adapt<ICollection<ProductViewModel>>();
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
@@ -199,20 +132,24 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
-        public async Task<ICollection<Product>> GetAllAsync()
+        public async Task<Result<ICollection<ProductViewModel>>> GetByOwnerIdCategoryIdAsync(Guid ownerId, Guid categoryId)
         {
             try
             {
-                var products = await UnitOfWork.ProductRepository.GetAllAsync();
+                var result = new Result<ICollection<ProductViewModel>>();
 
-                return products;
+                var list = await UnitOfWork.ProductRepository.GetByOwnerIdCategoryIdAsync(ownerId, categoryId);
+
+                result.Data = list.Adapt<ICollection<ProductViewModel>>();
+                result.IsSuccessful = true;
+
+                return result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
-                throw ex;
+                throw;
             }
         }
+       
     }
 }

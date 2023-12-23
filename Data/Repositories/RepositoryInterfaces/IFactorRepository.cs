@@ -6,7 +6,7 @@ namespace Data.Repositories.RepositoryInterfaces
 {
     public interface IFactorRepository : Data.Base.IRepository<Factor>
     {
-        Factor GetFactorWithItemsById(Guid id);
-        Task<Factor> GetFactorWithItemsByIdAsync(Guid id);
+        Factor GetWithItemsById(Guid id);
+        Task<Factor> GetWithItemsByIdAsync(Guid id);
     }
 }

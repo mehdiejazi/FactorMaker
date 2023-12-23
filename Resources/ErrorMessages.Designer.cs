@@ -19,7 +19,7 @@ namespace Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class ErrorMessages {
@@ -84,24 +84,6 @@ namespace Resources {
         public static string ChangePasswordFailed {
             get {
                 return ResourceManager.GetString("ChangePasswordFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You did not specify username!.
-        /// </summary>
-        public static string ErrorMessage3000 {
-            get {
-                return ResourceManager.GetString("ErrorMessage3000", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You did not specify password!.
-        /// </summary>
-        public static string ErrorMessage3010 {
-            get {
-                return ResourceManager.GetString("ErrorMessage3010", resourceCulture);
             }
         }
         
@@ -232,6 +214,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You did not specify password!.
+        /// </summary>
+        public static string PasswordIsEmpty {
+            get {
+                return ResourceManager.GetString("PasswordIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Repeated password is invalid!.
         /// </summary>
         public static string RepeatedPasswordInvalid {
@@ -286,11 +277,29 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User is inactive! Contact supervisor!.
+        /// </summary>
+        public static string UserIsInactive {
+            get {
+                return ResourceManager.GetString("UserIsInactive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Username already exists!.
         /// </summary>
         public static string UsernameAlreadyExists {
             get {
                 return ResourceManager.GetString("UsernameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You did not specify username!.
+        /// </summary>
+        public static string UserNameIsEmpty {
+            get {
+                return ResourceManager.GetString("UserNameIsEmpty", resourceCulture);
             }
         }
         

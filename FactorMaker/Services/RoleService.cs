@@ -1,12 +1,14 @@
-﻿using FactorMaker.Services.Base;
+﻿using Common;
 using Data;
-using Models;
-using System;
-using System.Threading.Tasks;
-using Resources;
-using System.Collections.Generic;
+using FactorMaker.Services.Base;
 using FactorMaker.Services.ServicesIntefaces;
-using System.Linq;
+using Mapster;
+using Models;
+using Resources;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using ViewModels.Role;
 
 namespace FactorMaker.Services
 {
@@ -16,270 +18,122 @@ namespace FactorMaker.Services
         {
 
         }
-
-        public Role Insert(string roleName, string description)
+        public async Task<Result<RoleViewModel>> InsertAsync(RoleViewModel viewModel)
         {
             try
             {
-                Role role = new Role
-                {
-                    RolName = roleName,
-                    Description = description,
-                };
+                var result = new Result<RoleViewModel>();
 
-                UnitOfWork.RoleRepository.Insert(role);
-                UnitOfWork.Save();
-
-                return role;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<Role> InsertAsync(string roleName, string description)
-        {
-            try
-            {
-                Role role = new Role
-                {
-                    RolName = roleName,
-                    Description = description,
-                };
+                var role = viewModel.Adapt<Role>();
 
                 await UnitOfWork.RoleRepository.InsertAsync(role);
                 await UnitOfWork.SaveAsync();
 
-                return role;
+                result.Data = role.Adapt<RoleViewModel>();
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-
-        public Role Update(Guid id, string roleName, string description)
+        public async Task<Result<RoleViewModel>> UpdateAsync(RoleViewModel viewModel)
         {
             try
             {
-                Role role = UnitOfWork.RoleRepository.GetById(id);
+                var result = new Result<RoleViewModel>();
+                result.IsSuccessful = true;
 
+                Role role = await UnitOfWork.RoleRepository.GetByIdAsync(viewModel.Id);
                 if (role == null)
-                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(Role) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                role.RolName = roleName;
-                role.Description = description;
+                if (result.IsSuccessful == false) return result;
+
+                role.RolName = viewModel.RoleName;
+                role.Description = viewModel.Description;
+
 
                 UnitOfWork.RoleRepository.Update(role);
                 UnitOfWork.Save();
 
-                return role;
+                result.Data = role.Adapt<RoleViewModel>();
+                result.IsSuccessful = true;
 
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-        public async Task<Role> UpdateAsync(Guid id, string roleName, string description)
+        public async Task<Result> DeleteByIdAsync(Guid id)
         {
             try
             {
+                var result = new Result();
+                result.IsSuccessful = true;
+
                 Role role = await UnitOfWork.RoleRepository.GetByIdAsync(id);
-
                 if (role == null)
-                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
-
-                role.RolName = roleName;
-                role.Description = description;
-
-                UnitOfWork.RoleRepository.Update(role);
-                UnitOfWork.Save();
-
-                return role;
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public void DeleteById(Guid id)
-        {
-            try
-            {
-                Role role = UnitOfWork.RoleRepository.GetById(id);
-
-                if (role == null)
-                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
-
-                UnitOfWork.RoleRepository.Delete(role);
-                UnitOfWork.Save();
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task DeleteByIdAsync(Guid id)
-        {
-            try
-            {
-                Role role = await UnitOfWork.RoleRepository.GetByIdAsync(id);
-
-                if (role == null)
-                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(Role) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
                 await UnitOfWork.RoleRepository.DeleteAsync(role);
                 await UnitOfWork.SaveAsync();
 
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-        public Role GetById(Guid id)
+        public async Task<Result<RoleViewModel>> GetByIdAsync(Guid id)
         {
             try
             {
-                Role role = UnitOfWork.RoleRepository.GetById(id);
+                var result = new Result<RoleViewModel>();
+                result.IsSuccessful = true;
 
-                if (role == null)
-                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
-
-                return role;
-
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-
-        public async Task<Role> GetByIdAsync(Guid id)
-        {
-            try
-            {
                 Role role = await UnitOfWork.RoleRepository.GetByIdAsync(id);
-
                 if (role == null)
+                {
                     throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                return role;
+                if (result.IsSuccessful == false) return result;
 
+                result.Data = role.Adapt<RoleViewModel>();
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-        public ICollection<Role> GetAll()
+        public async Task<Result<ICollection<RoleViewModel>>> GetAllAsync()
         {
             try
             {
-                var roles = UnitOfWork.RoleRepository.GetAll();
+                var result = new Result<ICollection<RoleViewModel>>();
+                result.IsSuccessful = true;
 
-                return roles;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<ICollection<Role>> GetAllAsync()
-        {
-            try
-            {
                 var roles = await UnitOfWork.RoleRepository.GetAllAsync();
 
-                return roles;
-            }
-            catch (Exception ex)
-            {
+                result.Data = roles.Adapt<ICollection<RoleViewModel>>();
 
-                throw ex;
-            }
-        }
-
-        public Role AddActionPermission(Guid roleId, Guid actionPermissionId)
-        {
-            try
-            {
-                Role role = UnitOfWork.RoleRepository.GetById(roleId);
-                if (role == null)
-                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
-
-                ActionPermission action = UnitOfWork.ActionPermissionRepository.GetById(actionPermissionId);
-                if (action == null)
-                    throw new NullReferenceException(typeof(ActionPermission) + " " + ErrorMessages.NotFound);
-
-                if (role.RoleActionPermissions
-                    .Where(x => x.ActionPermissionId == actionPermissionId)
-                    .Count() == 0)
-                {
-
-                    role.RoleActionPermissions.Add(new RoleActionPermission()
-                    {
-                        ActionPermission = action,
-                        ActionPermissionId = action.Id,
-                        Role = role,
-                        RoleId = role.Id,
-                    });
-
-                    UnitOfWork.Save();
-                }
-                return role;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<Role> AddActionPermissionAsync(Guid roleId, Guid actionPermissionId)
-        {
-            try
-            {
-                Role role = await UnitOfWork.RoleRepository.GetByIdAsync(roleId);
-                if (role == null)
-                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
-
-                ActionPermission action = UnitOfWork.ActionPermissionRepository.GetById(actionPermissionId);
-                if (action == null)
-                    throw new NullReferenceException(typeof(ActionPermission) + " " + ErrorMessages.NotFound);
-
-                if (role.RoleActionPermissions
-                   .Where(x => x.ActionPermissionId == actionPermissionId)
-                   .Count() == 0)
-                {
-                    role.RoleActionPermissions.Add(new RoleActionPermission()
-                    {
-                        ActionPermission = action,
-                        ActionPermissionId = action.Id,
-                        Role = role,
-                        RoleId = role.Id,
-                    });
-
-                    await UnitOfWork.SaveAsync();
-                }
-                return role;
+                return result;
             }
             catch (Exception ex)
             {

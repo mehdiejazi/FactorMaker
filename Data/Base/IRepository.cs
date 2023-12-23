@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Data.Base
 {
@@ -24,8 +26,9 @@ namespace Data.Base
 
         Task<bool> DeleteByIdAsync(System.Guid id);
 
-        System.Collections.Generic.ICollection<T> GetAll();
+        ICollection<T> GetAll();
 
-        Task<System.Collections.Generic.ICollection<T>> GetAllAsync();
+        Task<ICollection<T>> GetAllAsync();
+
     }
 }

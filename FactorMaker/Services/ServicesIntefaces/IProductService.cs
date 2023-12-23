@@ -1,21 +1,18 @@
-﻿using Models;
+﻿using Common;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ViewModels.Product;
 
 namespace FactorMaker.Services.ServicesIntefaces
 {
     public interface IProductService
     {
-        void DeleteById(Guid id);
-        Task DeleteByIdAsync(Guid id);
-        ICollection<Product> GetAll();
-        Task<ICollection<Product>> GetAllAsync();
-        Product GetById(Guid id);
-        Task<Product> GetByIdAsync(Guid id);
-        Product Insert(string name, long price);
-        Task<Product> InsertAsync(string name, long price);
-        Product Update(Guid id, string name, long price);
-        Task<Product> UpdateAsync(Guid id, string name, long price);
+        Task<Result<ProductViewModel>> InsertAsync(ProductViewModel viewModel);
+        Task<Result<ProductViewModel>> UpdateAsync(ProductViewModel viewModel);
+        Task<Result> DeleteByIdAsync(Guid id);
+        Task<Result<ProductViewModel>> GetByIdAsync(Guid id);
+        Task<Result<ICollection<ProductViewModel>>> GetAllAsync();
+        Task<Result<ICollection<ProductViewModel>>> GetByOwnerIdCategoryIdAsync(Guid ownerId, Guid categoryId);
     }
 }

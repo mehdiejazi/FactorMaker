@@ -126,12 +126,6 @@
   <data name="ChangePasswordFailed" xml:space="preserve">
     <value>Change password failed!</value>
   </data>
-  <data name="ErrorMessage3000" xml:space="preserve">
-    <value>You did not specify username!</value>
-  </data>
-  <data name="ErrorMessage3010" xml:space="preserve">
-    <value>You did not specify password!</value>
-  </data>
   <data name="ErrorMessage3020_3030" xml:space="preserve">
     <value>Username and/or password is not correct!</value>
   </data>
@@ -174,6 +168,9 @@
   <data name="NotFound" xml:space="preserve">
     <value>No data has been found!</value>
   </data>
+  <data name="PasswordIsEmpty" xml:space="preserve">
+    <value>You did not specify password!</value>
+  </data>
   <data name="RepeatedPasswordInvalid" xml:space="preserve">
     <value>Repeated password is invalid!</value>
   </data>
@@ -192,8 +189,14 @@
   <data name="UnexpectedError" xml:space="preserve">
     <value>Unexpected Error!</value>
   </data>
+  <data name="UserIsInactive" xml:space="preserve">
+    <value>User is inactive! Contact supervisor!</value>
+  </data>
   <data name="UsernameAlreadyExists" xml:space="preserve">
     <value>Username already exists!</value>
+  </data>
+  <data name="UserNameIsEmpty" xml:space="preserve">
+    <value>You did not specify username!</value>
   </data>
   <data name="VerificationCodeInvalid" xml:space="preserve">
     <value>Verification code is invalid!</value>

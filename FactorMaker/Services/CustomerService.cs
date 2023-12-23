@@ -1,11 +1,15 @@
-﻿using FactorMaker.Services.Base;
+﻿using Common;
 using Data;
-using Models;
-using System;
-using System.Threading.Tasks;
-using Resources;
-using System.Collections.Generic;
+using FactorMaker.Services.Base;
 using FactorMaker.Services.ServicesIntefaces;
+using Mapster;
+using Models;
+using Resources;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using ViewModels.Customer;
 
 namespace FactorMaker.Services
 {
@@ -15,99 +19,50 @@ namespace FactorMaker.Services
         {
 
         }
-
-        public Customer Insert(string firstName, string lastName, string nationalCode)
+        public async Task<Result<CustomerViewModel>> InsertAsync(CustomerViewModel viewModel)
         {
             try
             {
-                Customer customer = new Customer
-                {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    NationalCode = nationalCode,
-                };
+                var result = new Result<CustomerViewModel>();
 
-                UnitOfWork.CustomerRepository.Insert(customer);
-                UnitOfWork.Save();
-
-                return customer;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<Customer> InsertAsync(string firstName, string lastName, string nationalCode)
-        {
-            try
-            {
-                Customer customer = new Customer
-                {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    NationalCode = nationalCode,
-                };
+                Customer customer = viewModel.Adapt<Customer>();
 
                 await UnitOfWork.CustomerRepository.InsertAsync(customer);
                 await UnitOfWork.SaveAsync();
 
-                return customer;
+                result.Data = customer.Adapt<CustomerViewModel>();
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-        public Customer Update(Guid id, string firstName, string lastName, string nationalCode)
+        public async Task<Result<CustomerViewModel>> UpdateAsync(CustomerViewModel viewModel)
         {
             try
             {
-                Customer customer = UnitOfWork.CustomerRepository.GetById(id);
+                var result = new Result<CustomerViewModel>();
+                result.IsSuccessful = true;
 
+                var customer = await UnitOfWork.CustomerRepository.GetByIdAsync(viewModel.Id);
                 if (customer == null)
-                    throw new NullReferenceException(typeof(Customer) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(Customer) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                customer.FirstName = firstName;
-                customer.LastName = lastName;
-                customer.NationalCode = nationalCode;
-
-
-                UnitOfWork.CustomerRepository.Update(customer);
-                UnitOfWork.Save();
-
-                return customer;
-
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<Customer> UpdateAsync(Guid id, string firstName, string lastName, string nationalCode)
-        {
-            try
-            {
-                Customer customer = UnitOfWork.CustomerRepository.GetById(id);
-
-                if (customer == null)
-                    throw new NullReferenceException(typeof(Customer) + " " + ErrorMessages.NotFound);
-
-                customer.FirstName = firstName;
-                customer.LastName = lastName;
-                customer.NationalCode = nationalCode;
-
+                if (result.IsSuccessful == false) return result;
 
                 await UnitOfWork.CustomerRepository.UpdateAsync(customer);
                 await UnitOfWork.SaveAsync();
 
-                return customer;
+                result.Data = customer.Adapt<CustomerViewModel>();
+                result.IsSuccessful = true;
 
+                return result;
             }
             catch (Exception ex)
             {
@@ -115,113 +70,75 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
-        public void DeleteById(Guid id)
+        public async Task<Result> DeleteByIdAsync(Guid id)
         {
             try
             {
-                Customer customer = UnitOfWork.CustomerRepository.GetById(id);
+                var result = new Result();
+                result.IsSuccessful = true;
 
+                var customer = await UnitOfWork.CustomerRepository.GetByIdAsync(viewModel.Id);
                 if (customer == null)
-                    throw new NullReferenceException(typeof(Customer) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(Customer) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                UnitOfWork.CustomerRepository.Delete(customer);
-                UnitOfWork.Save();
-
-
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task DeleteByIdAsync(Guid id)
-        {
-            try
-            {
-                Customer customer = await UnitOfWork.CustomerRepository.GetByIdAsync(id);
-
-                if (customer == null)
-                    throw new NullReferenceException(typeof(Customer) + " " + ErrorMessages.NotFound);
+                if (result.IsSuccessful == false) return result;
 
                 await UnitOfWork.CustomerRepository.DeleteAsync(customer);
                 await UnitOfWork.SaveAsync();
 
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-        public Customer GetById(Guid id)
+        public async Task<Result<CustomerViewModel>> GetByIdAsync(Guid id)
         {
             try
             {
-                Customer customer = UnitOfWork.CustomerRepository.GetById(id);
+                var result = new Result<CustomerViewModel>();
 
+                result.IsSuccessful = true;
+
+                var customer = await UnitOfWork.CustomerRepository.GetByIdAsync(id);
                 if (customer == null)
-                    throw new NullReferenceException(typeof(Customer) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(Customer) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                return customer;
+                if (result.IsSuccessful == false) return result;
 
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-
-        public async Task<Customer> GetByIdAsync(Guid id)
+        public async Task<Result<ICollection<CustomerViewModel>>> GetAllAsync()
         {
             try
             {
-                Customer customer = await UnitOfWork.CustomerRepository.GetByIdAsync(id);
+                var result = new Result<ICollection<CustomerViewModel>>();
 
-                if (customer == null)
-                    throw new NullReferenceException(typeof(Customer) + " " + ErrorMessages.NotFound);
-
-                return customer;
-
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public ICollection<Customer> GetAll()
-        {
-            try
-            {
-                var customers = UnitOfWork.CustomerRepository.GetAll();
-
-                return customers;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<ICollection<Customer>> GetAllAsync()
-        {
-            try
-            {
                 var customers = await UnitOfWork.CustomerRepository.GetAllAsync();
 
-                return customers;
+                result.Data = customers.Adapt<ICollection<CustomerViewModel>>();
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }

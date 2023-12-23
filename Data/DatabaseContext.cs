@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Models;
 using System;
-using System.Linq;
-using System.Reflection;
 
 namespace Data
 {
@@ -38,6 +36,11 @@ namespace Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<Factor>()
+                .HasMany(f => f.FactorItems)
+                .WithOne(fi => fi.Factor)
+                .HasForeignKey(fi => fi.FactorId);
 
             builder.Entity<RoleActionPermission>()
                 .HasKey(ra => new { ra.ActionPermissionId, ra.RoleId });

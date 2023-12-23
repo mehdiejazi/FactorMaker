@@ -1,129 +1,48 @@
-﻿using FactorMaker.Services.Base;
+﻿using Common;
 using Data;
-using Models;
-using System;
-using System.Threading.Tasks;
-using Resources;
-using System.Collections.Generic;
-using ViewModels;
+using FactorMaker.Services.Base;
 using FactorMaker.Services.ServicesIntefaces;
-using ViewModels.Authentication;
-using Microsoft.Extensions.Options;
-using FactorMaker.Infrastructure.ApplicationSettings;
-using FactorMaker.Infrastructure;
-using Models.Enums;
-using Common;
+using Mapster;
+using Models;
+using Resources;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using ViewModels.User;
 
 namespace FactorMaker.Services
 {
     public class UserService : BaseServiceWithDatabase, IUserService
     {
-        protected AuthSettings AuthSettings { get; }
-        public UserService(IUnitOfWork unitOfWork, AuthSettings authSettings) : base(unitOfWork)
+        public UserService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            AuthSettings = authSettings;
         }
-
-        public LoginResponseViewModel Login(LoginRequestViewModel loginRequest)
-        {
-            if (loginRequest == null) return null;
-
-            if (string.IsNullOrWhiteSpace(loginRequest.UserName)) return null;
-            if (string.IsNullOrWhiteSpace(loginRequest.Password)) return null;
-
-            User foundUser = UnitOfWork.UserRepository.GetByUserName(loginRequest.UserName);
-            if (foundUser == null) return null;
-
-            if (string.Compare(foundUser.Password, Utilities.HashSHA1(loginRequest.Password), false) != 0)
-                return null;
-
-            string token = JwtUtility.GenerateJwtToken(foundUser, AuthSettings);
-
-            var loginResponse = new LoginResponseViewModel(foundUser, token);
-
-            return loginResponse;
-        }
-
-        public async Task<LoginResponseViewModel> LoginAsync(LoginRequestViewModel loginRequest)
-        {
-            if (loginRequest == null) return null;
-
-            if (string.IsNullOrWhiteSpace(loginRequest.UserName)) return null;
-            if (string.IsNullOrWhiteSpace(loginRequest.Password)) return null;
-
-            User foundUser = await UnitOfWork.UserRepository.GetByUserNameAsync(loginRequest.UserName);
-            if (foundUser == null) return null;
-
-            if (string.Compare(foundUser.Password, loginRequest.Password, false) != 0)
-                return null;
-
-            string token = JwtUtility.GenerateJwtToken(foundUser, AuthSettings);
-
-            var loginResponse = new LoginResponseViewModel(foundUser, token);
-
-            return loginResponse;
-        }
-
-
-        public User Insert(string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive, Guid roleId)
+        public async Task<Result<UserViewModel>> InsertAsync(UserViewModel viewModel)
         {
             try
             {
-                Role role = UnitOfWork.RoleRepository.GetById(roleId);
+                var result = new Result<UserViewModel>();
+                result.IsSuccessful = true;
+
+                Role role = await UnitOfWork.RoleRepository.GetByIdAsync(viewModel.RoleId);
                 if (role == null)
-                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
-
-                User user = new User
                 {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    NationalCode = nationalCode,
-                    UserName = userName,
-                    Password = password,
-                    IsActive = isActive,
-                    Role = role,
-                };
+                    result.AddErrorMessage(typeof(Role) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                user.Password = Utilities.HashSHA1(user.Password);
+                if (result.IsSuccessful == false) return result;
 
-                UnitOfWork.UserRepository.Insert(user);
-                UnitOfWork.Save();
-
-                return user;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<User> InsertAsync(string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive, Guid roleId)
-        {
-            try
-            {
-                Role role = await UnitOfWork.RoleRepository.GetByIdAsync(roleId);
-                if (role == null)
-                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
-
-                User user = new User
-                {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    NationalCode = nationalCode,
-                    UserName = userName,
-                    Password = password,
-                    IsActive = isActive,
-                    Role = role,
-                };
+                User user = viewModel.Adapt<User>();
 
                 user.Password = Utilities.HashSHA1(user.Password);
 
                 await UnitOfWork.UserRepository.InsertAsync(user);
                 await UnitOfWork.SaveAsync();
 
+                result.Data = user.Adapt<UserViewModel>();
+                result.IsSuccessful = true;
+
                 return user;
             }
             catch (Exception ex)
@@ -132,240 +51,156 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
-        public User Update(Guid id, string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive, Guid roleId)
+        public async Task<Result<UserViewModel>> UpdateAsync(UserViewModel viewModel)
         {
             try
             {
-                User user = UnitOfWork.UserRepository.GetById(id);
+                var result = new Result<UserViewModel>();
+                result.IsSuccessful = true;
+
+                var user = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.Id);
                 if (user == null)
-                    throw new NullReferenceException(typeof(User) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(User) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                Role role = UnitOfWork.RoleRepository.GetById(roleId);
+                Role role = await UnitOfWork.RoleRepository.GetByIdAsync(viewModel.RoleId);
                 if (role == null)
-                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(Role) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                user.FirstName = firstName;
-                user.LastName = lastName;
-                user.NationalCode = nationalCode;
-                user.UserName = userName;
-                user.Password = password;
-                user.IsActive = isActive;
+                if (result.IsSuccessful == false) return result;
 
-                UnitOfWork.UserRepository.Update(user);
-                UnitOfWork.Save();
-               
-                return user;
-
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<User> UpdateAsync(Guid id, string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive, Guid roleId)
-        {
-            try
-            {
-                User user = await UnitOfWork.UserRepository.GetByIdAsync(id);
-                if (user == null)
-                    throw new NullReferenceException(typeof(User) + " " + ErrorMessages.NotFound);
-
-                Role role = await UnitOfWork.RoleRepository.GetByIdAsync(roleId);
-                if (role == null)
-                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
-
-                user.FirstName = firstName;
-                user.LastName = lastName;
-                user.NationalCode = nationalCode;
-                user.UserName = userName;
-                user.Password = password;
-                user.IsActive = isActive;
+                user.FirstName = viewModel.FirstName;
+                user.LastName = viewModel.LastName;
+                user.NationalCode = viewModel.NationalCode;
+                user.UserName = viewModel.UserName;
+                user.Password = Utilities.HashSHA1(viewModel.Password);
+                user.IsActive = viewModel.IsActive
 
                 await UnitOfWork.UserRepository.UpdateAsync(user);
                 await UnitOfWork.SaveAsync();
 
-                return user;
+                result.Data = user.Adapt<UserViewModel>();
+                result.IsSuccessful = true;
+
+                return result;
 
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-        public void DeleteById(Guid id)
+        public async Task<Result> DeleteByIdAsync(Guid id)
         {
             try
             {
-                User user = UnitOfWork.UserRepository.GetById(id);
+                Result result = new Result();
+                result.IsSuccessful = true;
 
+                User user = await UnitOfWork.UserRepository.GetByIdAsync(id);
                 if (user == null)
-                    throw new NullReferenceException(typeof(User) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(User) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                UnitOfWork.UserRepository.Delete(user);
-                UnitOfWork.Save();
-
-
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task DeleteByIdAsync(Guid id)
-        {
-            try
-            {
-                User user = UnitOfWork.UserRepository.GetById(id);
-
-                if (user == null)
-                    throw new NullReferenceException(typeof(User) + " " + ErrorMessages.NotFound);
+                if (result.IsSuccessful == false) return result;
 
                 await UnitOfWork.UserRepository.DeleteAsync(user);
                 await UnitOfWork.SaveAsync();
 
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-        public User GetById(Guid id)
+        public async Task<Result<UserViewModel>> GetByIdAsync(Guid id)
         {
             try
             {
-                User user = UnitOfWork.UserRepository.GetById(id);
+                var result = new Result<UserViewModel>();
+                result.IsSuccessful = true;
 
-                if (user == null)
-                    throw new NullReferenceException(typeof(User) + " " + ErrorMessages.NotFound);
-
-                return user;
-
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-
-        public async Task<User> GetByIdAsync(Guid id)
-        {
-            try
-            {
                 User user = await UnitOfWork.UserRepository.GetByIdAsync(id);
-
                 if (user == null)
-                    throw new NullReferenceException(typeof(User) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(User) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                return user;
+                if (result.IsSuccessful == false) return result;
+
+                result.Data = user.Adapt<UserViewModel>();
+                result.IsSuccessful = true;
+
+                return result;
 
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-        public ICollection<User> GetAll()
+        public async Task<Result<ICollection<UserViewModel>>> GetAllAsync()
         {
             try
             {
-                var users = UnitOfWork.UserRepository.GetAll();
+                var result = new Result<ICollection<UserViewModel>>();
+                result.IsSuccessful = true;
 
-                return users;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<ICollection<User>> GetAllAsync()
-        {
-            try
-            {
                 var users = await UnitOfWork.UserRepository.GetAllAsync();
 
-                return users;
+                result.Data = users.Adapt<ICollection<UserViewModel>>();
+
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-        public ICollection<User> GetActive()
+        public async Task<Result<ICollection<UserViewModel>>> GetActiveAsync()
         {
             try
             {
-                var users = UnitOfWork.UserRepository.GetActive();
+                var result = new Result<ICollection<UserViewModel>>();
+                result.IsSuccessful = true;
 
-                return users;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<ICollection<User>> GetActiveAsync()
-        {
-            try
-            {
                 var users = await UnitOfWork.UserRepository.GetActiveAsync();
 
-                return users;
+                result.Data = users.Adapt<ICollection<UserViewModel>>();
+
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-        public ICollection<User> GetInActive()
-        {
-
-            try
-            {
-                var users = UnitOfWork.UserRepository.GetInActive();
-
-                return users;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<ICollection<User>> GetInActiveAsync()
+        public async Task<Result<ICollection<UserViewModel>>> GetInActiveAsync()
         {
             try
             {
+                var result = new Result<ICollection<UserViewModel>>();
+                result.IsSuccessful = true;
+
                 var users = await UnitOfWork.UserRepository.GetInActiveAsync();
 
-                return users;
+                result.Data = users.Adapt<ICollection<UserViewModel>>();
+
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }

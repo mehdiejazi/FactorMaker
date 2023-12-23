@@ -5,15 +5,24 @@ namespace Data
 {
     public class UnitOfWork : Base.UnitOfWork, IUnitOfWork
     {
-        //public UnitOfWork() : base()
-        //{
-        //}
-
         public UnitOfWork(Tools.Options options) : base(options)
         {
         }
 
-      
+        private ICategoryRepository _categoryRepository;
+        public ICategoryRepository CategoryRepository
+        {
+            get
+            {
+                if (_categoryRepository == null)
+                {
+                    _categoryRepository =
+                        new CategoryRepository(DatabaseContext);
+                }
+
+                return _categoryRepository;
+            }
+        }
 
         private ICustomerRepository _customerRepository;
         public ICustomerRepository CustomerRepository

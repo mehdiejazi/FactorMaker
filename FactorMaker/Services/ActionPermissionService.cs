@@ -9,6 +9,9 @@ using System.Reflection;
 using System.Linq;
 using Infrastructure;
 using FactorMaker.Services.ServicesIntefaces;
+using Common;
+using ViewModels.ActionPermission;
+using Mapster;
 
 namespace FactorMaker.Services
 {
@@ -54,71 +57,49 @@ namespace FactorMaker.Services
             UnitOfWork.Save();
         }
 
-        public ActionPermission GetById(Guid id)
+        public async Task<Result<ActionPermissionViewModel>> GetByIdAsync(Guid id)
         {
             try
             {
-                ActionPermission actionPermission = UnitOfWork.ActionPermissionRepository.GetById(id);
+                var result = new Result<ActionPermissionViewModel>();
+                result.IsSuccessful = true;
 
+                var actionPermission = await UnitOfWork.ActionPermissionRepository.GetByIdAsync(id);
                 if (actionPermission == null)
-                    throw new NullReferenceException(typeof(ActionPermission) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(ActionPermission) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                return actionPermission;
+                if (result.IsSuccessful == false) return result;
 
-            }
-            catch (Exception ex)
-            {
+                result.Data = actionPermission.Adapt<ActionPermissionViewModel>();
+                result.IsSuccessful = true;
 
-                throw ex;
-            }
-        }
-
-        public async Task<ActionPermission> GetByIdAsync(Guid id)
-        {
-            try
-            {
-                ActionPermission actionPermission =
-                    await UnitOfWork.ActionPermissionRepository.GetByIdAsync(id);
-
-                if (actionPermission == null)
-                    throw new NullReferenceException(typeof(ActionPermission) + " " + ErrorMessages.NotFound);
-
-                return actionPermission;
+                return result;
 
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
 
-        public ICollection<ActionPermission> GetAll()
+        public async Task<Result<ICollection<ActionPermissionViewModel>>> GetAllAsync()
         {
             try
             {
-                var actions = UnitOfWork.ActionPermissionRepository.GetAll();
+                var result = new Result<ICollection<ActionPermissionViewModel>>();
 
-                return actions;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task<ICollection<ActionPermission>> GetAllAsync()
-        {
-            try
-            {
                 var actions = await UnitOfWork.ActionPermissionRepository.GetAllAsync();
 
-                return actions;
+                result.Data = actions.Adapt<ICollection<ActionPermissionViewModel>>();
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }

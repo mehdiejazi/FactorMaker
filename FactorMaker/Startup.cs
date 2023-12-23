@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Models;
 
 namespace FactorMaker
 {
@@ -100,6 +101,7 @@ namespace FactorMaker
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IActionPermissionService, ActionPermissionService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<ICategoryService, CategoryService>();
 
             services.AddSwaggerGen(c =>
             {

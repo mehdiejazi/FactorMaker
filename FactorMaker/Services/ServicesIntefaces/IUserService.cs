@@ -1,34 +1,19 @@
-﻿using Models;
-using Models.Enums;
+﻿using Common;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ViewModels;
-using ViewModels.Authentication;
+using ViewModels.User;
 
 namespace FactorMaker.Services.ServicesIntefaces
 {
     public interface IUserService
     {
-        LoginResponseViewModel Login(LoginRequestViewModel loginRequest);
-        Task<LoginResponseViewModel> LoginAsync(LoginRequestViewModel loginRequest);
-        void DeleteById(Guid id);
-        Task DeleteByIdAsync(Guid id);
-        ICollection<User> GetAll();
-        Task<ICollection<User>> GetAllAsync();
-        ICollection<User> GetActive();
-        Task<ICollection<User>> GetActiveAsync();
-        ICollection<User> GetInActive();
-        Task<ICollection<User>> GetInActiveAsync();
-        User GetById(Guid id);
-        Task<User> GetByIdAsync(Guid id);
-        User Insert(string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive, Guid roleId);
-        Task<User> InsertAsync(string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive, Guid roleId);
-        User Update(Guid id, string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive, Guid roleId);
-        Task<User> UpdateAsync(Guid id, string firstName, string lastName, string nationalCode,
-            string userName, string password, bool isActive, Guid roleId);
+        Task<Result<UserViewModel>> InsertAsync(UserViewModel viewModel);
+        Task<Result<UserViewModel>> UpdateAsync(UserViewModel viewModel);
+        Task<Result> DeleteByIdAsync(Guid id);
+        Task<Result<UserViewModel>> GetByIdAsync(Guid id);
+        Task<Result<ICollection<UserViewModel>>> GetAllAsync();
+        Task<Result<ICollection<UserViewModel>>> GetActiveAsync();
+        Task<Result<ICollection<UserViewModel>>> GetInActiveAsync();
     }
 }

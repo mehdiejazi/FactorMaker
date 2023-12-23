@@ -1,11 +1,14 @@
-﻿using FactorMaker.Services.Base;
+﻿using Common;
 using Data;
+using FactorMaker.Services.Base;
+using FactorMaker.Services.ServicesIntefaces;
+using Mapster;
 using Models;
+using Resources;
 using System;
 using System.Threading.Tasks;
-using Resources;
-using System.Collections.Generic;
-using FactorMaker.Services.ServicesIntefaces;
+using ViewModels.FactorItem;
+using ViewModels.Product;
 
 namespace FactorMaker.Services
 {
@@ -15,26 +18,38 @@ namespace FactorMaker.Services
         {
 
         }
-        public FactorItem Update(Guid id, Guid productId, int quantity, byte offPercent)
+        public async Task<Result<FactorItemViewModel>> InsertAsync(FactorItemViewModel viewModel)
         {
             try
             {
-                FactorItem factorItem = UnitOfWork.FactorItemRepository.GetById(id);
-                if (factorItem == null)
-                    throw new NullReferenceException(typeof(FactorItem) + " " + ErrorMessages.NotFound);
+                var result = new Result<FactorItemViewModel>();
+                result.IsSuccessful = true;
 
-                Product product = UnitOfWork.ProductRepository.GetById(productId);
+                var product = UnitOfWork.ProductRepository.GetByIdAsync(viewModel.productId);
                 if (product == null)
-                    throw new NullReferenceException(typeof(Product) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(Product) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                factorItem.Product = product;
-                factorItem.Quantity = quantity;
-                factorItem.OffPercent = offPercent;
+                var factor = UnitOfWork.FactorRepository.GetByIdAsync(viewModel.factorId);
+                if (factor == null)
+                {
+                    result.AddErrorMessage(typeof(Factor) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                UnitOfWork.FactorItemRepository.Update(factorItem);
-                UnitOfWork.Save();
+                if (result.IsSuccessful == false) return result;
 
-                return factorItem;
+                var factorItem = viewModel.Adapt<FactorItem>();
+
+                await UnitOfWork.FactorItemRepository.InsertAsync(factorItem);
+                await UnitOfWork.SaveAsync();
+
+                result.Data = factorItem.Adapt<FactorItemViewModel>();
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
@@ -42,65 +57,71 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
-        public async Task<FactorItem> UpdateAsync(Guid id, Guid productId, int quantity, byte offPercent)
+        public async Task<Result<FactorItemViewModel>> UpdateAsync(FactorItemViewModel viewModel)
         {
             try
             {
-                FactorItem factorItem = await UnitOfWork.FactorItemRepository.GetByIdAsync(id);
+                var result = new Result<FactorItemViewModel>();
+                result.IsSuccessful = true;
+
+                var factorItem = await UnitOfWork.FactorItemRepository.GetByIdAsync(viewModel.Id);
                 if (factorItem == null)
-                    throw new NullReferenceException(typeof(FactorItem) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(FactorItem) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                Product product = await UnitOfWork.ProductRepository.GetByIdAsync(productId);
+                var factor = await UnitOfWork.FactorRepository.GetByIdAsync(viewModel.factorId);
+                if (factor == null)
+                {
+                    result.AddErrorMessage(typeof(FactorItem) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
+
+                var product = await UnitOfWork.ProductRepository.GetByIdAsync(viewModel.productId);
                 if (product == null)
-                    throw new NullReferenceException(typeof(Product) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(Product) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
 
-                factorItem.Product = product;
-                factorItem.Quantity = quantity;
-                factorItem.OffPercent = offPercent;
+                factorItem.OffPercent = viewModel.offpercent;
+                factorItem.Quantity = viewModel.quantity;
 
                 await UnitOfWork.FactorItemRepository.UpdateAsync(factorItem);
                 await UnitOfWork.SaveAsync();
 
-                return factorItem;
+                result.Data = factorItem.Adapt<FactorItemViewModel>();
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-        public void DeleteById(Guid id)
+        public async Task<Result> DeleteByIdAsync(Guid id)
         {
             try
             {
-                FactorItem factorItem = UnitOfWork.FactorItemRepository.GetById(id);
+                var result = new Result();
 
-                if (factorItem == null)
-                    throw new NullReferenceException(typeof(User) + " " + ErrorMessages.NotFound);
-
-                UnitOfWork.FactorItemRepository.Delete(factorItem);
-                UnitOfWork.Save();
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-
-        public async Task DeleteByIdAsync(Guid id)
-        {
-            try
-            {
                 FactorItem factorItem = await UnitOfWork.FactorItemRepository.GetByIdAsync(id);
-
                 if (factorItem == null)
-                    throw new NullReferenceException(typeof(User) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(FactorItem) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
+
+                if (result.IsSuccessful == false) return result;
 
                 await UnitOfWork.FactorItemRepository.DeleteAsync(factorItem);
                 await UnitOfWork.SaveAsync();
+
+                result.IsSuccessful = true;
+
+                return result;
             }
             catch (Exception ex)
             {
@@ -108,33 +129,20 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public FactorItem GetById(Guid id)
+        public async Task<Result<FactorItemViewModel>> GetByIdAsync(Guid id)
         {
             try
             {
-                FactorItem factorItem = UnitOfWork.FactorItemRepository.GetById(id);
+                var result = new Result<FactorItemViewModel>();
+                result.IsSuccessful = true;
 
-                if (factorItem == null)
-                    throw new NullReferenceException(typeof(Factor) + " " + ErrorMessages.NotFound);
-
-                return factorItem;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public async Task<FactorItem> GetByIdAsync(Guid id)
-        {
-            try
-            {
                 FactorItem factorItem = await UnitOfWork.FactorItemRepository.GetByIdAsync(id);
-
                 if (factorItem == null)
-                    throw new NullReferenceException(typeof(Factor) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(FactorItem) + " " + ErrorMessages.NotFound);
+                }
 
-                return factorItem;
+                return result;
             }
             catch (Exception ex)
             {

@@ -1,10 +1,11 @@
 ﻿using ViewModels.Base;
 using ViewModels.User;
 
-namespace ViewModels.Customer
+namespace Models
 {
-    public class CustomerViewModel : PersonViewModelBase
+    public class CategoryViewModel : ViewModelBase
     {
         public UserViewModel Owner { get; set; }
+        public string Name { get; set; }
     }
 }

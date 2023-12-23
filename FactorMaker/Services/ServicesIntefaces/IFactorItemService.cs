@@ -1,16 +1,15 @@
-﻿using Models;
+﻿using Common;
 using System;
 using System.Threading.Tasks;
+using ViewModels.FactorItem;
 
 namespace FactorMaker.Services.ServicesIntefaces
 {
     public interface IFactorItemService
     {
-        void DeleteById(Guid id);
-        Task DeleteByIdAsync(Guid id);
-        FactorItem GetById(Guid id);
-        Task<FactorItem> GetByIdAsync(Guid id);
-        FactorItem Update(Guid id, Guid productId, int quantity, byte offPercent);
-        Task<FactorItem> UpdateAsync(Guid id, Guid productId, int quantity, byte offPercent);
+        Task<Result<FactorItemViewModel>> InsertAsync(FactorItemViewModel viewModel);
+        Task<Result<FactorItemViewModel>> UpdateAsync(FactorItemViewModel viewModel);
+        Task<Result> DeleteByIdAsync(Guid id);
+        Task<Result<FactorItemViewModel>> GetByIdAsync(Guid id);
     }
 }

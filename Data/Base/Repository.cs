@@ -144,7 +144,7 @@ namespace Data.Base
             return result;
         }
 
-        public async Task<ICollection<T>> GetAllAsync()
+        public virtual async Task<ICollection<T>> GetAllAsync()
         {
             var result =
                 await
@@ -153,5 +153,6 @@ namespace Data.Base
 
             return result;
         }
+
     }
 }

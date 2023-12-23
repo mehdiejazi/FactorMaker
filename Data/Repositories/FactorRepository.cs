@@ -14,10 +14,10 @@ namespace Data.Repositories
         {
         }
 
-        public Factor GetFactorWithItemsById(Guid id)
+        public Factor GetWithItemsById(Guid id)
         {
             var result = DbSet
-                            .Where(current => current.Id.Equals(id))
+                            .Where(current => current.Id.Equals(id) && current.IsDeleted == false)
                             .Include(x => x.FactorItems)
                                 .ThenInclude(i => i.Product)
                             .Include(x => x.Owner)
@@ -28,10 +28,10 @@ namespace Data.Repositories
             return result;
         }
 
-        public async Task<Factor> GetFactorWithItemsByIdAsync(Guid id)
+        public async Task<Factor> GetWithItemsByIdAsync(Guid id)
         {
             var result = await DbSet
-                            .Where(current => current.Id.Equals(id))
+                            .Where(current => current.Id.Equals(id) && current.IsDeleted == false)
                             .Include(x => x.FactorItems)
                                 .ThenInclude(i => i.Product)
                             .Include(x => x.Owner)
