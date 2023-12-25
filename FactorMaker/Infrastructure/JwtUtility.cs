@@ -1,5 +1,6 @@
 ﻿using FactorMaker.Infrastructure.ApplicationSettings;
 using FactorMaker.Services.ServicesIntefaces;
+using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Models;
@@ -7,7 +8,6 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace FactorMaker.Infrastructure
@@ -55,7 +55,7 @@ namespace FactorMaker.Infrastructure
 
         }
 
-        public static void AttachUserToContextByToken(HttpContext context, IUserService userService,
+        public static async void AttachUserToContextByToken(HttpContext context, IUserService userService,
             string token, string secretKey)
         {
             try
@@ -90,13 +90,20 @@ namespace FactorMaker.Infrastructure
 
                 var userId = Guid.Parse(userIdClaim.Value);
 
-                User foundUser = userService.GetById(userId);
+                var res = await userService.GetByIdAsync(userId);
+
+                if (res.IsSuccessful == false) return;
+
+                User foundUser = res.Data.Adapt<User>();
 
                 if (foundUser == null) return;
 
+                if (!foundUser.IsDeleted) return;
+
                 if (!foundUser.IsActive) return;
+
                 //Check user is not disabled
-                //Check user is nod deleted , ...
+                //Check user is not deleted , ...
 
                 context.Items["User"] = foundUser;
             }

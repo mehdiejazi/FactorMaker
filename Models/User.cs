@@ -1,5 +1,6 @@
 ﻿using Models.Base;
 using System;
+using System.Collections.Generic;
 
 namespace Models
 {
@@ -10,5 +11,6 @@ namespace Models
         public bool IsActive { get; set; }
         public Role Role { get; set; }
         public Guid RoleId { get; set; }
+        public virtual ICollection<Store> Stores { get; set; }
     }
 }

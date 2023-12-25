@@ -150,14 +150,33 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<FactorViewModel>>> GetAllAsync()
+        public async Task<Result<ICollection<FactorViewModel>>> GetByCreatorIdAsync(Guid creatorId)
         {
             try
             {
                 var result = new Result<ICollection<FactorViewModel>>();
                 result.IsSuccessful = true;
 
-                var factors = await UnitOfWork.FactorRepository.GetAllAsync();
+                var factors = await UnitOfWork.FactorRepository.GetByCreatorIdAsync(creatorId);
+
+                result.Data = factors.Adapt<ICollection<FactorViewModel>>();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+
+            }
+        }
+        public async Task<Result<ICollection<FactorViewModel>>> GetByOwnerIdAsync(Guid ownerId)
+        {
+            try
+            {
+                var result = new Result<ICollection<FactorViewModel>>();
+                result.IsSuccessful = true;
+
+                var factors = await UnitOfWork.FactorRepository.GetByOwnerIdAsync(ownerId);
 
                 result.Data = factors.Adapt<ICollection<FactorViewModel>>();
 

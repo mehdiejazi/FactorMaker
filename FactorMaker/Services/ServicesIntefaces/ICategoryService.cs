@@ -6,7 +6,7 @@ using System;
 
 namespace FactorMaker.Services.ServicesIntefaces
 {
-    internal interface ICategoryService
+    public interface ICategoryService
     {
         Task<Result<CategoryViewModel>> InsertAsync(CategoryViewModel viewModel);
         Task<Result<CategoryViewModel>> UpdateAsync(CategoryViewModel viewModel);

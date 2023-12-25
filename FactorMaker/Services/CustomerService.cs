@@ -66,7 +66,6 @@ namespace FactorMaker.Services
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -77,7 +76,7 @@ namespace FactorMaker.Services
                 var result = new Result();
                 result.IsSuccessful = true;
 
-                var customer = await UnitOfWork.CustomerRepository.GetByIdAsync(viewModel.Id);
+                var customer = await UnitOfWork.CustomerRepository.GetByIdAsync(id);
                 if (customer == null)
                 {
                     result.AddErrorMessage(typeof(Customer) + " " + ErrorMessages.NotFound);
@@ -116,6 +115,7 @@ namespace FactorMaker.Services
                 if (result.IsSuccessful == false) return result;
 
                 result.IsSuccessful = true;
+                result.Data = customer.Adapt<CustomerViewModel>();
 
                 return result;
             }

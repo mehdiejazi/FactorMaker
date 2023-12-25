@@ -1,4 +1,3 @@
-using System.Linq;
 using Common;
 using Data;
 using FactorMaker.Infrastructure.ApplicationSettings;
@@ -12,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Models;
+using System.Linq;
 
 namespace FactorMaker
 {
@@ -102,6 +101,7 @@ namespace FactorMaker
             services.AddScoped<IActionPermissionService, ActionPermissionService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             services.AddSwaggerGen(c =>
             {
@@ -131,7 +131,6 @@ namespace FactorMaker
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

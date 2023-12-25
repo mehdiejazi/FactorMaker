@@ -6,12 +6,14 @@ namespace Models
 {
     public class Factor : EntityBase
     {
-        public Customer Owner { get; set; }
+        public virtual Customer Owner { get; set; }
         public Guid OwnerId { get; set; }
-        public User Creator { get; set; }
-        public Guid CreatorId { get; set; }
+        public virtual Store Store { get; set; }
+        public Guid StorId { get; set; }
         public string Description { get; set; }
         public virtual ICollection<FactorItem> FactorItems { get; set; }
+        public decimal TotalPrice { get; set; }
+        public bool IsClosed { get; set; }
 
     }
 }

@@ -3,12 +3,8 @@ using FactorMaker.Infrastructure.Attributes;
 using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Models;
-using Models.Enums;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using ViewModels.Customer;
 
@@ -27,113 +23,39 @@ namespace FactorMaker.Controllers
         }
         private ICustomerService CustomerService { get; }
 
-        [HttpGet("GetAll")]
-        public Result<ICollection<Customer>> GetAll()
-        {
-            var result = new Result<ICollection<Customer>>();
-            result.Data = CustomerService.GetAll();
-            result.IsSuccessful = true;
-
-            return result;
-        }
-
         [HttpGet("GetAllAsync")]
-        public async Task<Result<ICollection<Customer>>> GetAllAsync()
+        public async Task<Result<ICollection<CustomerViewModel>>> GetAllAsync()
         {
-            var result = new Result<ICollection<Customer>>();
-            result.Data = await CustomerService.GetAllAsync();
-            result.IsSuccessful = true;
-
+            var result =  await CustomerService.GetAllAsync();
             return result;
         }
         
-        [HttpGet("DeleteById")]
-        public Result DeleteById(Guid id)
-        {
-            CustomerService.DeleteById(id);
-
-            var result = new Result();
-            result.IsSuccessful = true;
-
-            return result;
-        }
-
         [HttpGet("DeleteByIdAsync")]
         public async Task<Result> DeleteByIdAsync(Guid id)
         {
-            await CustomerService.DeleteByIdAsync(id);
-
-            var result = new Result();
-            result.IsSuccessful = true;
-
-            return result;
-        }
-
-
-        [HttpGet("GetById")]
-        public Result<Customer> GetById(Guid id)
-        {
-            var result = new Result<Customer>();
-            result.Data = CustomerService.GetById(id);
-            result.IsSuccessful = true;
-
+            var result = await CustomerService.DeleteByIdAsync(id);
             return result;
         }
 
         [HttpGet("GetByIdAsync")]
-        public async Task<Result<Customer>> GetByIdAsync(Guid id)
+        public async Task<Result<CustomerViewModel>> GetByIdAsync(Guid id)
         {
-            var result = new Result<Customer>();
-            result.Data = await CustomerService.GetByIdAsync(id);
-            result.IsSuccessful = true;
-
-            return result;
-        }
-
-        [HttpPost("Insert")]
-        public Result<Customer> Insert(CustomerViewModel customerViewModel)
-        {
-            var result = new Result<Customer>();
-            result.Data = CustomerService.Insert(customerViewModel.FirstName, customerViewModel.LastName,
-                customerViewModel.NationalCode);
-            result.IsSuccessful = true;
-
+            var result = await CustomerService.GetByIdAsync(id);
             return result;
         }
 
         [HttpPost("InsertAsync")]
-        public async Task<Result<Customer>> InsertAsync(CustomerViewModel customerViewModel)
+        public async Task<Result<CustomerViewModel>> InsertAsync(CustomerViewModel viewModel)
         {
-            var result = new Result<Customer>();
-            result.Data = await CustomerService.InsertAsync(customerViewModel.FirstName, customerViewModel.LastName,
-                customerViewModel.NationalCode);
-            result.IsSuccessful = true;
-
-            return result;
-        }
-
-        [HttpPost("Update")]
-        public Result<Customer> Update(CustomerViewModel customerViewModel)
-        {
-            var result = new Result<Customer>();
-            result.Data = CustomerService.Update(customerViewModel.Id, customerViewModel.FirstName,
-                customerViewModel.LastName, customerViewModel.NationalCode);
-            result.IsSuccessful = true;
-
+            var result = await CustomerService.InsertAsync(viewModel);
             return result;
         }
 
         [HttpPost("UpdateAsync")]
-        public async Task<Result<Customer>> UpdateAsync(CustomerViewModel customerViewModel)
+        public async Task<Result<CustomerViewModel>> UpdateAsync(CustomerViewModel viewModel)
         {
-            var result = new Result<Customer>();
-            result.Data = await CustomerService.UpdateAsync(customerViewModel.Id, customerViewModel.FirstName,
-                customerViewModel.LastName, customerViewModel.NationalCode);
-            result.IsSuccessful = true;
-
+            var result =  await CustomerService.UpdateAsync(viewModel);
             return result;
         }
-     
-
     }
 }

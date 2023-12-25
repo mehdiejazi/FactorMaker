@@ -79,7 +79,7 @@ namespace FactorMaker.Services
                 user.NationalCode = viewModel.NationalCode;
                 user.UserName = viewModel.UserName;
                 user.Password = Utilities.HashSHA1(viewModel.Password);
-                user.IsActive = viewModel.IsActive
+                user.IsActive = viewModel.IsActive;
 
                 await UnitOfWork.UserRepository.UpdateAsync(user);
                 await UnitOfWork.SaveAsync();

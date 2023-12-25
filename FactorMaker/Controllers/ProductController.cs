@@ -24,107 +24,40 @@ namespace FactorMaker.Controllers
         }
         private IProductService ProductService { get; }
 
-        [HttpGet("GetAll")]
-        public Result<ICollection<Product>> GetAll()
-        {
-            var result = new Result<ICollection<Product>>();
-            result.Data = ProductService.GetAll();
-            result.IsSuccessful = true;
-
-            return result;
-        }
-
         [HttpGet("GetAllAsync")]
-        public async Task<Result<ICollection<Product>>> GetAllAsync()
+        public async Task<Result<ICollection<ProductViewModel>>> GetAllAsync()
         {
-            var result = new Result<ICollection<Product>>();
-            result.Data = await ProductService.GetAllAsync();
-            result.IsSuccessful = true;
-
-            return result;
-        }
-        
-        [HttpGet("DeleteById")]
-        public Result DeleteById(Guid id)
-        {
-            ProductService.DeleteById(id);
-
-            var result = new Result();
-            result.IsSuccessful = true;
-
+            var result = await ProductService.GetAllAsync();
             return result;
         }
 
         [HttpGet("DeleteByIdAsync")]
         public async Task<Result> DeleteByIdAsync(Guid id)
         {
-            await ProductService.DeleteByIdAsync(id);
-
-            var result = new Result();
-            result.IsSuccessful = true;
-
-            return result;
-        }
-
-        [HttpGet("GetById")]
-        public Result<Product> GetById(Guid id)
-        {
-            var result = new Result<Product>();
-            result.Data = ProductService.GetById(id);
-            result.IsSuccessful = true;
-
+            var result = await ProductService.DeleteByIdAsync(id);
             return result;
         }
 
         [HttpGet("GetByIdAsync")]
-        public async Task<Result<Product>> GetByIdAsync(Guid id)
+        public async Task<Result<ProductViewModel>> GetByIdAsync(Guid id)
         {
-            var result = new Result<Product>();
-            result.Data = await ProductService.GetByIdAsync(id);
-            result.IsSuccessful = true;
-
-            return result;
-        }
-
-        [HttpPost("Insert")]
-        public Result<Product> Insert(ProductViewModel productViewModel)
-        {
-            var result = new Result<Product>();
-            result.Data = ProductService.Insert(productViewModel.Name, productViewModel.Price);
-            result.IsSuccessful = true;
-
+            var result =  await ProductService.GetByIdAsync(id);
             return result;
         }
 
         [HttpPost("InsertAsync")]
-        public async Task<Result<Product>> InsertAsync(ProductViewModel productViewModel)
+        public async Task<Result<ProductViewModel>> InsertAsync(ProductViewModel viewModel)
         {
-            var result = new Result<Product>();
-            result.Data = await ProductService.InsertAsync(productViewModel.Name, productViewModel.Price);
-            result.IsSuccessful = true;
-
-            return result;
-        }
-
-        [HttpPost("Update")]
-        public Result<Product> Update(ProductViewModel productViewModel)
-        {
-            var result = new Result<Product>();
-            result.Data = ProductService.Update(productViewModel.Id, productViewModel.Name,productViewModel.Price);
-            result.IsSuccessful = true;
-
+            var result = await ProductService.InsertAsync(viewModel);
             return result;
         }
 
         [HttpPost("UpdateAsync")]
-        public async Task<Result<Product>> UpdateAsync(ProductViewModel productViewModel)
+        public async Task<Result<ProductViewModel>> UpdateAsync(ProductViewModel viewModel)
         {
-            var result = new Result<Product>();
-            result.Data = await ProductService.UpdateAsync(productViewModel.Id, productViewModel.Name, productViewModel.Price);
-            result.IsSuccessful = true;
-
+            var result =  await ProductService.UpdateAsync(viewModel);
             return result;
         }
-   
+
     }
 }

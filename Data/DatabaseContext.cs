@@ -55,6 +55,10 @@ namespace Data
                 .WithMany(ap => ap.RoleActionPermissions)
                 .HasForeignKey(bc => bc.RoleId);
 
+            builder.Entity<User>()
+                .HasMany(u => u.Stores)
+                .WithOne(s => s.Owner)
+                .HasForeignKey(s => s.OwnerId);
 
             Role programmerRole = new Role()
             {
@@ -81,11 +85,12 @@ namespace Data
         {
         }
 
-
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Factor> Factors { get; set; }
         public DbSet<FactorItem> FactorItems { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories{ get; set; }
+        public DbSet<Store> Stores { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<RoleActionPermission> RoleActionPermission { get; set; }
         public DbSet<Role> Roles { get; set; }

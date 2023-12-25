@@ -9,6 +9,21 @@ namespace Data
         {
         }
 
+        private IStoreRepository _storeRepository;
+        public IStoreRepository StoreRepository
+        {
+            get
+            {
+                if (_storeRepository == null)
+                {
+                    _storeRepository =
+                        new StoreRepository(DatabaseContext);
+                }
+
+                return _storeRepository;
+            }
+        }
+
         private ICategoryRepository _categoryRepository;
         public ICategoryRepository CategoryRepository
         {
