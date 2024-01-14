@@ -153,6 +153,15 @@
   <data name="ErrorMessage3110" xml:space="preserve">
     <value>User IP is not active!</value>
   </data>
+  <data name="GreaterThan" xml:space="preserve">
+    <value>{0} must be greater than {1}.</value>
+  </data>
+  <data name="IsNotValid" xml:space="preserve">
+    <value>{0} is not valid!</value>
+  </data>
+  <data name="LessThan" xml:space="preserve">
+    <value>{0} must be less than {1}.</value>
+  </data>
   <data name="LoginFailed" xml:space="preserve">
     <value>Login failed! Username or password is invalid!</value>
   </data>

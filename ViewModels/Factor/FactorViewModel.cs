@@ -17,5 +17,7 @@ namespace ViewModels.Factor
         public virtual ICollection<FactorItemViewModel> FactorItems { get; set; }
         public decimal TotalPrice { get; set; }
         public bool IsClosed { get; set; }
+        public DateTime SellDateTime { get; set; }
+
     }
 }

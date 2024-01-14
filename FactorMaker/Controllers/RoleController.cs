@@ -10,7 +10,7 @@ using ViewModels.Role;
 
 namespace FactorMaker.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class RoleController : BaseApiController
     {
         private RoleController() : base()
@@ -24,38 +24,38 @@ namespace FactorMaker.Controllers
         private IRoleService RoleService { get; }
 
         [HttpGet("GetAllAsync")]
-        public async Task<Result<ICollection<RoleViewModel>>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
             var result =  await RoleService.GetAllAsync();
-            return result;
+            return Result(result);
         }
 
         [HttpGet("DeleteByIdAsync")]
-        public async Task<Result> DeleteByIdAsync(Guid id)
+        public async Task<IActionResult> DeleteByIdAsync(Guid id)
         {
             var result = await RoleService.DeleteByIdAsync(id);
-            return result;
+            return Result(result);
         }
 
         [HttpGet("GetByIdAsync")]
-        public async Task<Result<RoleViewModel>> GetByIdAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var result =  await RoleService.GetByIdAsync(id);
-            return result;
+            return Result(result);
         }
 
         [HttpPost("InsertAsync")]
-        public async Task<Result<RoleViewModel>> InsertAsync(RoleViewModel viewModel)
+        public async Task<IActionResult> InsertAsync(RoleViewModel viewModel)
         {
             var result = await RoleService.InsertAsync(viewModel);
-            return result;
+            return Result(result);
         }
 
         [HttpPost("UpdateAsync")]
-        public async Task<Result<RoleViewModel>> UpdateAsync(RoleViewModel viewModel)
+        public async Task<IActionResult> UpdateAsync(RoleViewModel viewModel)
         {
             var result = await RoleService.UpdateAsync(viewModel);
-            return result;
+            return Result(result);
         }
 
     }

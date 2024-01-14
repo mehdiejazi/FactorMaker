@@ -11,7 +11,7 @@ using ViewModels.Product;
 
 namespace FactorMaker.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class ProductController : BaseApiController
     {
         private ProductController() : base()
@@ -25,38 +25,38 @@ namespace FactorMaker.Controllers
         private IProductService ProductService { get; }
 
         [HttpGet("GetAllAsync")]
-        public async Task<Result<ICollection<ProductViewModel>>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
             var result = await ProductService.GetAllAsync();
-            return result;
+            return Result(result);
         }
 
         [HttpGet("DeleteByIdAsync")]
-        public async Task<Result> DeleteByIdAsync(Guid id)
+        public async Task<IActionResult> DeleteByIdAsync(Guid id)
         {
             var result = await ProductService.DeleteByIdAsync(id);
-            return result;
+            return Result(result);
         }
 
         [HttpGet("GetByIdAsync")]
-        public async Task<Result<ProductViewModel>> GetByIdAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            var result =  await ProductService.GetByIdAsync(id);
-            return result;
+            var result = await ProductService.GetByIdAsync(id);
+            return Result(result);
         }
 
         [HttpPost("InsertAsync")]
-        public async Task<Result<ProductViewModel>> InsertAsync(ProductViewModel viewModel)
+        public async Task<IActionResult> InsertAsync(ProductViewModel viewModel)
         {
             var result = await ProductService.InsertAsync(viewModel);
-            return result;
+            return Result(result);
         }
 
         [HttpPost("UpdateAsync")]
-        public async Task<Result<ProductViewModel>> UpdateAsync(ProductViewModel viewModel)
+        public async Task<IActionResult> UpdateAsync(ProductViewModel viewModel)
         {
-            var result =  await ProductService.UpdateAsync(viewModel);
-            return result;
+            var result = await ProductService.UpdateAsync(viewModel);
+            return Result(result);
         }
 
     }

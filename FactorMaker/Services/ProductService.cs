@@ -24,6 +24,22 @@ namespace FactorMaker.Services
             {
                 var result = new Result<ProductViewModel>();
 
+                User owner = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.OwnerId);
+                if (owner == null)
+                {
+                    result.AddErrorMessage(nameof(viewModel.Owner) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
+
+                Category category = await UnitOfWork.CategoryRepository.GetByIdAsync(viewModel.CategoryId);
+                if (category == null)
+                {
+                    result.AddErrorMessage(nameof(Category) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
+
+                if (result.IsSuccessful == false) return result;
+
                 Product product = viewModel.Adapt<Product>();
 
                 await UnitOfWork.ProductRepository.InsertAsync(product);
@@ -45,6 +61,22 @@ namespace FactorMaker.Services
             try
             {
                 var result = new Result<ProductViewModel>();
+
+                User owner = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.OwnerId);
+                if (owner == null)
+                {
+                    result.AddErrorMessage(nameof(viewModel.Owner) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
+
+                Category category = await UnitOfWork.CategoryRepository.GetByIdAsync(viewModel.CategoryId);
+                if (category == null)
+                {
+                    result.AddErrorMessage(nameof(Category) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
+
+                if (result.IsSuccessful == false) return result;
 
                 Product product = UnitOfWork.ProductRepository.GetById(viewModel.Id);
                 if (product == null)

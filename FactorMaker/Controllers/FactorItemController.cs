@@ -23,24 +23,24 @@ namespace FactorMaker.Controllers
         private IFactorItemService FactorItemService { get; }
 
         [HttpGet("DeleteByIdAsync")]
-        public async Task<Result> DeleteByIdAsync(Guid id)
+        public async Task<IActionResult> DeleteByIdAsync(Guid id)
         {
             var result = await FactorItemService.DeleteByIdAsync(id);
-            return result;
+            return Result(result);
         }
 
         [HttpGet("GetByIdAsync")]
-        public async Task<Result<FactorItemViewModel>> GetByIdAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            var result =  await FactorItemService.GetByIdAsync(id);
-            return result;
+            var result = await FactorItemService.GetByIdAsync(id);
+            return Result(result);
         }
 
         [HttpPost("UpdateAsync")]
-        public async Task<Result<FactorItemViewModel>> UpdateAsync(FactorItemViewModel viewModel)
+        public async Task<IActionResult> UpdateAsync(FactorItemViewModel viewModel)
         {
             var result = await FactorItemService.UpdateAsync(viewModel);
-            return result;
+            return Result(result);
         }
 
     }

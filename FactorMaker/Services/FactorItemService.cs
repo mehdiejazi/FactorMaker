@@ -25,14 +25,14 @@ namespace FactorMaker.Services
                 var result = new Result<FactorItemViewModel>();
                 result.IsSuccessful = true;
 
-                var product = UnitOfWork.ProductRepository.GetByIdAsync(viewModel.productId);
+                var product = UnitOfWork.ProductRepository.GetByIdAsync(viewModel.ProductId);
                 if (product == null)
                 {
                     result.AddErrorMessage(typeof(Product) + " " + ErrorMessages.NotFound);
                     result.IsSuccessful = false;
                 }
 
-                var factor = UnitOfWork.FactorRepository.GetByIdAsync(viewModel.factorId);
+                var factor = UnitOfWork.FactorRepository.GetByIdAsync(viewModel.FactorId);
                 if (factor == null)
                 {
                     result.AddErrorMessage(typeof(Factor) + " " + ErrorMessages.NotFound);
@@ -71,22 +71,22 @@ namespace FactorMaker.Services
                     result.IsSuccessful = false;
                 }
 
-                var factor = await UnitOfWork.FactorRepository.GetByIdAsync(viewModel.factorId);
+                var factor = await UnitOfWork.FactorRepository.GetByIdAsync(viewModel.FactorId);
                 if (factor == null)
                 {
                     result.AddErrorMessage(typeof(FactorItem) + " " + ErrorMessages.NotFound);
                     result.IsSuccessful = false;
                 }
 
-                var product = await UnitOfWork.ProductRepository.GetByIdAsync(viewModel.productId);
+                var product = await UnitOfWork.ProductRepository.GetByIdAsync(viewModel.ProductId);
                 if (product == null)
                 {
                     result.AddErrorMessage(typeof(Product) + " " + ErrorMessages.NotFound);
                     result.IsSuccessful = false;
                 }
 
-                factorItem.OffPercent = viewModel.offpercent;
-                factorItem.Quantity = viewModel.quantity;
+                factorItem.OffPercent = viewModel.OffPercent;
+                factorItem.Quantity = viewModel.Quantity;
 
                 await UnitOfWork.FactorItemRepository.UpdateAsync(factorItem);
                 await UnitOfWork.SaveAsync();

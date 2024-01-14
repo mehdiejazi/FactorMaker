@@ -63,7 +63,7 @@ namespace Data
             Role programmerRole = new Role()
             {
                 Id  = Guid.NewGuid(),
-                RolName = "Programmer",
+                Name = "Programmer",
                 Description = "Full access Programmer.",
                 RoleActionPermissions = null
             };

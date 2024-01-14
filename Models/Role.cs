@@ -5,7 +5,7 @@ namespace Models
 {
     public class Role : EntityBase
     {
-        public string RolName { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
         public virtual ICollection<RoleActionPermission> RoleActionPermissions { get; set; }
     }

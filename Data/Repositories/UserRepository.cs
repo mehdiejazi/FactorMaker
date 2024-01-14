@@ -118,5 +118,13 @@ namespace Data.Repositories
 
             return list;
         }
+
+        public async Task<bool> IsExistByUsernameAsync(string userName)
+        {
+            var ret = await DbSet
+                .AnyAsync(u => u.UserName == userName);
+
+            return ret;
+        }
     }
 }

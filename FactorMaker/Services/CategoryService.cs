@@ -1,13 +1,13 @@
-﻿using Data;
+﻿using Common;
+using Data;
 using FactorMaker.Services.Base;
 using FactorMaker.Services.ServicesIntefaces;
+using Mapster;
 using Models;
 using Resources;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
-using Mapster;
-using Common;
 
 namespace FactorMaker.Services
 {
@@ -22,6 +22,16 @@ namespace FactorMaker.Services
             try
             {
                 var result = new Result<CategoryViewModel>();
+
+                var owner = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.OwnerId);
+                if (owner == null)
+                {
+                    result.AddErrorMessage(nameof(owner) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+
+                    return result;
+                }
+
 
                 var category = viewModel.Adapt<Category>();
 
@@ -79,6 +89,8 @@ namespace FactorMaker.Services
             {
                 Result result = new Result();
                 result.IsSuccessful = true;
+
+               
 
                 var category = UnitOfWork.CategoryRepository.GetById(id);
                 if (category == null)

@@ -55,7 +55,7 @@ namespace FactorMaker.Services
 
                 if (result.IsSuccessful == false) return result;
 
-                role.RolName = viewModel.RoleName;
+                role.Name = viewModel.Name;
                 role.Description = viewModel.Description;
 
 

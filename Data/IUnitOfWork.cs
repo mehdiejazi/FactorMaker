@@ -1,5 +1,4 @@
-﻿using Data.Repositories;
-using Data.Repositories.RepositoryInterfaces;
+﻿using Data.Repositories.RepositoryInterfaces;
 
 namespace Data
 {

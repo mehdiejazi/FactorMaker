@@ -22,45 +22,45 @@ namespace FactorMaker.Controllers
         private IStoreServuce StoreServuce { get; }
 
         [HttpPost("InsertAsync")]
-        public async Task<Result<StoreViewModel>> InsertAsync(StoreViewModel viewModel)
+        public async Task<IActionResult> InsertAsync(StoreViewModel viewModel)
         {
             var result = await StoreServuce.InsertAsync(viewModel);
-            return result;
+            return Result(result);
         }
 
-        [HttpPost("InsertAsync")]
-        public async Task<Result<StoreViewModel>> UpdateAsync(StoreViewModel viewModel)
+        [HttpPost("UpdateAsync")]
+        public async Task<IActionResult> UpdateAsync(StoreViewModel viewModel)
         {
             var result = await StoreServuce.UpdateAsync(viewModel);
-            return result;
+            return Result(result);
         }
 
         [HttpGet("DeleteByIdAsync")]
-        public async Task<Result> DeleteByIdAsync(Guid id)
+        public async Task<IActionResult> DeleteByIdAsync(Guid id)
         {
             var result = await StoreServuce.DeleteByIdAsync(id);
-            return result;
+            return Result(result);
         }
 
         [HttpGet("GetByIdAsync")]
-        public async Task<Result<StoreViewModel>> GetByIdAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var result = await StoreServuce.GetByIdAsync(id);
-            return result;
+            return Result(result);
         }
 
-        [HttpGet("GetByIdAsync")]
-        public async Task<Result<ICollection<StoreViewModel>>> GetByOwnerIdAsync(Guid ownerId)
+        [HttpGet("GetByOwnerIdAsync")]
+        public async Task<IActionResult> GetByOwnerIdAsync(Guid ownerId)
         {
             var result = await StoreServuce.GetByOwnerIdAsync(ownerId);
-            return result;
+            return Result(result);
         }
 
         [HttpGet("GetByStoreIdAsync")]
-        public async Task<Result<StoreViewModel>> GetByStoreIdAsync(Guid storeId)
+        public async Task<IActionResult> GetByStoreIdAsync(Guid storeId)
         {
             var result = await StoreServuce.GetByStoreIdAsync(storeId);
-            return result;
+            return Result(result);
         }
 
     }

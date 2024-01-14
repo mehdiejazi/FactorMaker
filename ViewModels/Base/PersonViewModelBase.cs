@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ViewModels.Base
+﻿namespace ViewModels.Base
 {
     public class PersonViewModelBase : ViewModelBase
     {

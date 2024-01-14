@@ -1,7 +1,12 @@
-﻿using FactorMaker;
+﻿using Common;
+using FactorMaker;
+using FactorMaker.Infrastructure.Attributes;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace Infrastructure
 {
+    [ActionValidator]
     [Microsoft.AspNetCore.Mvc.ApiController]
     [Microsoft.AspNetCore.Mvc.Route("[controller]")]
     [Microsoft.AspNetCore.Mvc.Produces(System.Net.Mime.MediaTypeNames.Application.Json)]
@@ -12,5 +17,38 @@ namespace Infrastructure
         public BaseApiController() : base()
         {
         }
+
+        //protected ActionResult Result<T>(Result<T> result)
+        //{
+        //    if (result.IsSuccessful)
+        //    {
+        //        return Ok(result);
+        //    }
+        //    else
+        //    {
+        //        return BadRequest(result);
+        //    }
+        //}
+        [NonAction]
+        public ActionResult Result(Result result)
+        {
+            if (result.IsSuccessful)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+        [NonAction]
+        public ActionResult BadResult(params string[] messages)
+        {
+            var res = new Result();
+            res.AddRangeErrorMessages(messages);
+
+            return Result(res);
+        }
+
     }
 }

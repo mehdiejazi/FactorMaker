@@ -10,7 +10,7 @@ using ViewModels.Customer;
 
 namespace FactorMaker.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class CustomerController : BaseApiController
     {
         private CustomerController() : base()
@@ -24,38 +24,38 @@ namespace FactorMaker.Controllers
         private ICustomerService CustomerService { get; }
 
         [HttpGet("GetAllAsync")]
-        public async Task<Result<ICollection<CustomerViewModel>>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
-            var result =  await CustomerService.GetAllAsync();
-            return result;
+            var result = await CustomerService.GetAllAsync();
+            return Result(result);
         }
-        
+
         [HttpGet("DeleteByIdAsync")]
-        public async Task<Result> DeleteByIdAsync(Guid id)
+        public async Task<IActionResult> DeleteByIdAsync(Guid id)
         {
             var result = await CustomerService.DeleteByIdAsync(id);
-            return result;
+            return Result(result);
         }
 
         [HttpGet("GetByIdAsync")]
-        public async Task<Result<CustomerViewModel>> GetByIdAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var result = await CustomerService.GetByIdAsync(id);
-            return result;
+            return Result(result);
         }
 
         [HttpPost("InsertAsync")]
-        public async Task<Result<CustomerViewModel>> InsertAsync(CustomerViewModel viewModel)
+        public async Task<IActionResult> InsertAsync(CustomerViewModel viewModel)
         {
             var result = await CustomerService.InsertAsync(viewModel);
-            return result;
+            return Result(result);
         }
 
         [HttpPost("UpdateAsync")]
-        public async Task<Result<CustomerViewModel>> UpdateAsync(CustomerViewModel viewModel)
+        public async Task<IActionResult> UpdateAsync(CustomerViewModel viewModel)
         {
-            var result =  await CustomerService.UpdateAsync(viewModel);
-            return result;
+            var result = await CustomerService.UpdateAsync(viewModel);
+            return Result(result);
         }
     }
 }

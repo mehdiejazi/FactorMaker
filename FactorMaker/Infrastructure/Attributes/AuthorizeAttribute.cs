@@ -1,4 +1,5 @@
 ﻿using Common;
+using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Models;
@@ -22,12 +23,12 @@ namespace FactorMaker.Infrastructure.Attributes
                 responseModel.IsSuccessful = false;
                 responseModel.AddErrorMessage(Resources.ErrorMessages.UnauthorizedAccess);
 
-                context.Result = new JsonResult(responseModel);
+                context.Result = (new BaseApiController()).Result(responseModel);
 
                 return;
             }
 
-            if (user.Role.RolName == "Programmer")
+            if (user.Role.Name == "Programmer")
             {
                 return;
             }
@@ -37,7 +38,7 @@ namespace FactorMaker.Infrastructure.Attributes
             var urlIsAthurized = 
                 (user.Role.RoleActionPermissions
                 .Where(x => x.ActionPermission.Url == path)
-                .ToList().Count > 0);
+                .Any());
 
             if (urlIsAthurized == false)
             {
@@ -46,8 +47,7 @@ namespace FactorMaker.Infrastructure.Attributes
                 responseModel.IsSuccessful = false;
                 responseModel.AddErrorMessage(Resources.ErrorMessages.UnauthorizedActionAccess);
 
-                context.Result = new JsonResult(responseModel);
-
+                context.Result = (new BaseApiController()).Result(responseModel);
                 return;
             }
 

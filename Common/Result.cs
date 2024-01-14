@@ -1,4 +1,6 @@
-﻿namespace Common
+﻿using System.Collections.Generic;
+
+namespace Common
 {
     public class Result : object
     {
@@ -47,6 +49,14 @@
 
             ErrorMessages.Add(message);
         }
+
+        public virtual void AddRangeErrorMessages(IEnumerable<string> messages)
+        {
+            foreach (string message in messages)
+            {
+                AddErrorMessage(message);
+            }
+        }
         // **********
 
         // **********
@@ -66,6 +76,14 @@
 
             WarningMessages.Add(message);
         }
+
+        public virtual void AddRangeWarningMessages(IEnumerable<string> messages)
+        {
+            foreach (string message in messages)
+            {
+                AddWarningMessage(message);
+            }
+        }
         // **********
 
         // **********
@@ -84,6 +102,14 @@
             }
 
             InformationMessages.Add(message);
+        }
+
+        public virtual void AddRangeInformationMessages(IEnumerable<string> messages)
+        {
+            foreach (string message in messages)
+            {
+                AddInformationMessage(message);
+            }
         }
         // **********
     }

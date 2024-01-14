@@ -24,53 +24,52 @@ namespace FactorMaker.Controllers
         private IUserService UserService { get; }
 
         [HttpGet("DeleteByIdAsync")]
-        public async Task<Result> DeleteByIdAsync(Guid id)
+        public async Task<IActionResult> DeleteByIdAsync(Guid id)
         {
             var result = await UserService.DeleteByIdAsync(id);
-            return result;
+            return Result(result);
         }
 
         [HttpGet("GetAllAsync")]
-        public async Task<Result<ICollection<UserViewModel>>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
             var result = await UserService.GetAllAsync();
-            return result;
+            return Result(result);
         }
 
         [HttpGet("GetActiveAsync")]
-        public async Task<Result<ICollection<UserViewModel>>> GetActiveAsync()
+        public async Task<IActionResult> GetActiveAsync()
         {
             var result =  await UserService.GetActiveAsync();
-            return result;
+            return Result(result);
         }
 
         [HttpGet("GetInActiveAsync")]
-        public async Task<Result<ICollection<UserViewModel>>> GetInActiveAsync()
+        public async Task<IActionResult> GetInActiveAsync()
         {
             var result =  await UserService.GetInActiveAsync();
-            return result;
+            return Result(result);
         }
 
-
         [HttpGet("GetByIdAsync")]
-        public async Task<Result<UserViewModel>> GetByIdAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var result =  await UserService.GetByIdAsync(id);
-            return result;
+            return Result(result);
         }
 
         [HttpPost("InsertAsync")]
-        public async Task<Result<UserViewModel>> InsertAsync(UserViewModel viewModel)
+        public async Task<IActionResult> InsertAsync(UserViewModel viewModel)
         {
             var result = await UserService.InsertAsync(viewModel);
-            return result;
+            return Result(result);
         }
 
         [HttpPost("UpdateAsync")]
-        public async Task<Result<UserViewModel>> UpdateAsync(UserViewModel viewModel)
+        public async Task<IActionResult> UpdateAsync(UserViewModel viewModel)
         {
             var result = await UserService.UpdateAsync(viewModel);
-            return result;
+            return Result(result);
         }
 
     }

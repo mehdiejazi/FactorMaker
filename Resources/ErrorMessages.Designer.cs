@@ -169,6 +169,33 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} must be greater than {1}..
+        /// </summary>
+        public static string GreaterThan {
+            get {
+                return ResourceManager.GetString("GreaterThan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is not valid!.
+        /// </summary>
+        public static string IsNotValid {
+            get {
+                return ResourceManager.GetString("IsNotValid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must be less than {1}..
+        /// </summary>
+        public static string LessThan {
+            get {
+                return ResourceManager.GetString("LessThan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login failed! Username or password is invalid!.
         /// </summary>
         public static string LoginFailed {

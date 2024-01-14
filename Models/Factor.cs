@@ -6,6 +6,7 @@ namespace Models
 {
     public class Factor : EntityBase
     {
+        public DateTime SellDateTime { get; set; }
         public virtual Customer Owner { get; set; }
         public Guid OwnerId { get; set; }
         public virtual Store Store { get; set; }

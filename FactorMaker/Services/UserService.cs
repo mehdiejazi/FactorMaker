@@ -2,6 +2,7 @@
 using Data;
 using FactorMaker.Services.Base;
 using FactorMaker.Services.ServicesIntefaces;
+using Flurl.Util;
 using Mapster;
 using Models;
 using Resources;
@@ -24,6 +25,15 @@ namespace FactorMaker.Services
                 var result = new Result<UserViewModel>();
                 result.IsSuccessful = true;
 
+                
+                if (await UnitOfWork.UserRepository.IsExistByUsernameAsync(viewModel.UserName))
+                {
+                    result.IsSuccessful = false;
+                    result.AddErrorMessage(ErrorMessages.UsernameAlreadyExists);
+                    return result;
+                }
+
+
                 Role role = await UnitOfWork.RoleRepository.GetByIdAsync(viewModel.RoleId);
                 if (role == null)
                 {
@@ -33,7 +43,7 @@ namespace FactorMaker.Services
 
                 if (result.IsSuccessful == false) return result;
 
-                User user = viewModel.Adapt<User>();
+                var user = viewModel.Adapt<User>();
 
                 user.Password = Utilities.HashSHA1(user.Password);
 
@@ -43,7 +53,7 @@ namespace FactorMaker.Services
                 result.Data = user.Adapt<UserViewModel>();
                 result.IsSuccessful = true;
 
-                return user;
+                return result;
             }
             catch (Exception ex)
             {
@@ -204,5 +214,61 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+        public async Task<Result<UserViewModel>> RegisterAsync(UserRegisterViewModel viewModel)
+        {
+            try
+            {
+                var result = new Result<UserViewModel>();
+
+                var user = await UnitOfWork.UserRepository.GetByUserNameAsync(viewModel.UserName);
+                if (user != null)
+                {
+                    result.IsSuccessful = false;
+                    result.AddErrorMessage(ErrorMessages.UsernameAlreadyExists);
+                    return result;
+                }
+
+                user = new User()
+                {
+                    FirstName = viewModel.FirstName,
+                    LastName = viewModel.LastName,
+                    UserName = viewModel.UserName,
+                    Password = Utilities.HashSHA1(viewModel.Password)
+                };
+
+                var insertResult = await InsertAsync(user.Adapt<UserViewModel>());
+
+                foreach (var item in insertResult.InformationMessages)
+                {
+                    result.AddInformationMessage(item);
+                }
+                foreach (var item in insertResult.WarningMessages)
+                {
+                    result.AddInformationMessage(item);
+                }
+
+                if (insertResult.IsSuccessful == false)
+                {
+                    foreach (var item in insertResult.ErrorMessages)
+                    {
+                        result.AddErrorMessage(item);
+                    }
+                    result.IsSuccessful = false;
+                }
+                else
+                {
+                    result.Data = insertResult.Data;
+                    result.IsSuccessful = true;
+                }
+
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
     }
 }

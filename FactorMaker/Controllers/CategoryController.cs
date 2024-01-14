@@ -1,11 +1,12 @@
 ﻿using Common;
+using FactorMaker.Infrastructure.Attributes;
 using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FactorMaker.Controllers
 {
@@ -21,46 +22,47 @@ namespace FactorMaker.Controllers
         }
         private ICategoryService CategoryService { get; }
 
+        
         [HttpPost("InsertAsync")]
-        public Task<Result<CategoryViewModel>> InsertAsync(CategoryViewModel viewModel)
+        public async Task<IActionResult> InsertAsync(CategoryViewModel viewModel)
         {
-            var result = CategoryService.InsertAsync(viewModel);
-            return result;
+            var result = await CategoryService.InsertAsync(viewModel);
+            return Result(result);
         }
 
         [HttpPost("UpdateAsync")]
-        public Task<Result<CategoryViewModel>> UpdateAsync(CategoryViewModel viewModel)
+        public async Task<IActionResult> UpdateAsync(CategoryViewModel viewModel)
         {
-            var result = CategoryService.UpdateAsync(viewModel);
-            return result;
+            var result = await CategoryService.UpdateAsync(viewModel);
+            return Result(result);
         }
 
         [HttpGet("DeleteByIdAsync")]
-        public Task<Result> DeleteByIdAsync(Guid id)
+        public async Task<IActionResult> DeleteByIdAsync(Guid id)
         {
-            var result = CategoryService.DeleteByIdAsync(id);
-            return result;
+            var result = await CategoryService.DeleteByIdAsync(id);
+            return Result(result);
         }
 
         [HttpGet("GetByIdAsync")]
-        Task<Result<CategoryViewModel>> GetByIdAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            var result = CategoryService.GetByIdAsync(id);
-            return result;
+            var result = await CategoryService.GetByIdAsync(id);
+            return Result(result);
         }
 
         [HttpGet("GetAllAsync")]
-        public Task<Result<ICollection<CategoryViewModel>>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
-            var result = CategoryService.GetAllAsync();
-            return result;
+            var result = await CategoryService.GetAllAsync();
+            return Result(result);
         }
 
         [HttpGet("GetByOwnerIdAsync")]
-        public Task<Result<ICollection<CategoryViewModel>>> GetByOwnerIdAsync(Guid ownerId)
+        public async Task<IActionResult> GetByOwnerIdAsync(Guid ownerId)
         {
-            var result = CategoryService.GetAllAsync();
-            return result;
+            var result = await CategoryService.GetAllAsync();
+            return Result(result);
         }
 
     }

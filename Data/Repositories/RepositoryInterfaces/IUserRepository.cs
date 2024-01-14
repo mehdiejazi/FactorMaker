@@ -12,5 +12,6 @@ namespace Data.Repositories.RepositoryInterfaces
         Task<ICollection<User>> GetActiveAsync();
         ICollection<User> GetInActive();
         Task<ICollection<User>> GetInActiveAsync();
+        Task<bool> IsExistByUsernameAsync(string userName);
     }
 }

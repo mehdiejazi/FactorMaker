@@ -26,19 +26,19 @@ namespace FactorMaker.Controllers
 
         [Authorize]
         [HttpGet("GetAllAsync")]
-        public async Task<Result<ICollection<ActionPermissionViewModel>>> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync()
         {
             var result = await ActionPermissionService.GetAllAsync();
-            return result;
+            return Result(result);
         }
 
 
         [Authorize]
         [HttpGet("GetByIdAsync")]
-        public async Task<Result<ActionPermissionViewModel>> GetByIdAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var result = await ActionPermissionService.GetByIdAsync(id);
-            return result;
+            return Result(result);
         }
 
 

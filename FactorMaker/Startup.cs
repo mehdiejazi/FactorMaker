@@ -2,15 +2,23 @@ using Common;
 using Data;
 using FactorMaker.Infrastructure.ApplicationSettings;
 using FactorMaker.Infrastructure.MiddleWares;
+using FactorMaker.Infrastructure.Validators.Authentication;
+using FactorMaker.Infrastructure.Validators.Category;
+using FactorMaker.Infrastructure.Validators.Customer;
 using FactorMaker.Services;
 using FactorMaker.Services.ServicesIntefaces;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Models;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace FactorMaker
@@ -36,6 +44,17 @@ namespace FactorMaker
              = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
+            //services.AddControllers().AddFluentValidation();
+
+            services.AddFluentValidationAutoValidation();
+            //services.AddFluentValidationClientsideAdapters();
+
+            services.AddValidatorsFromAssemblyContaining<LoginRequestViewModelValidator>();
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             services.AddCors(options =>
             {
@@ -105,7 +124,7 @@ namespace FactorMaker
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                c.SwaggerDoc("v1", new OpenApiInfo
                 { Title = "FactorMaker Web Api Core", Version = "v1" });
                 c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First()); //This line
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
