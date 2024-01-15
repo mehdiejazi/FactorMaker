@@ -1,5 +1,6 @@
 ﻿using Common;
 using Data;
+using Data.DataTransferObjects.Product;
 using FactorMaker.Services.Base;
 using FactorMaker.Services.ServicesIntefaces;
 using Mapster;
@@ -7,7 +8,9 @@ using Models;
 using Resources;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using ViewModels.Customer;
 using ViewModels.Product;
 
 namespace FactorMaker.Services
@@ -85,7 +88,7 @@ namespace FactorMaker.Services
                 product.IsDeleted = viewModel.IsDeleted;
                 product.Name = viewModel.Name;
                 product.Price = viewModel.Price;
-                
+
                 await UnitOfWork.ProductRepository.UpdateAsync(product);
                 await UnitOfWork.SaveAsync();
 
@@ -182,6 +185,150 @@ namespace FactorMaker.Services
                 throw;
             }
         }
-       
+        public async Task<Result<ICollection<ProductSaleTotalQuantityViewModel>>> GetTop10SaleByQuantityAsync(Guid storeId)
+        {
+            try
+            {
+                var result = new Result<ICollection<ProductSaleTotalQuantityViewModel>>();
+                result.IsSuccessful = true;
+
+                var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
+                if (store == null)
+                {
+                    result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var productSaleTotalQuantityDtos = await UnitOfWork.ProductRepository.GetTop10SaleByQuantityAsync(storeId);
+
+                result.Data = productSaleTotalQuantityDtos
+                    .Select(x => new ProductSaleTotalQuantityViewModel
+                    {
+                        Product = x.Product.Adapt<ProductViewModel>(),
+                        TotalQuantity = x.TotalQuantity
+                    })
+                    .ToList();
+
+                result.IsSuccessful = true;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<Result<ICollection<ProductSaleTotalPriceViewModel>>> GetTop10SaleByPriceAsync(Guid storeId)
+        {
+            try
+            {
+                var result = new Result<ICollection<ProductSaleTotalPriceViewModel>>();
+                result.IsSuccessful = true;
+
+                var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
+                if (store == null)
+                {
+                    result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var productSaleTotalPriceDtos = await UnitOfWork.ProductRepository.GetTop10SaleByPriceAsync(storeId);
+
+                result.Data = productSaleTotalPriceDtos
+                    .Select(x => new ProductSaleTotalPriceViewModel
+                    {
+                        Product = x.Product.Adapt<ProductViewModel>(),
+                        TotalPrice = x.TotalPrice
+                    })
+                    .ToList();
+
+                result.IsSuccessful = true;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+      
+
+        public async Task<Result<ICollection<ProductSaleTotalQuantityViewModel>>> GetSaleTotalByQuantityAsync
+            (DateTime dtFrom, DateTime dtTo, Guid storeId)
+        {
+            try
+            {
+                var result = new Result<ICollection<ProductSaleTotalQuantityViewModel>>();
+                result.IsSuccessful = true;
+
+                var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
+                if (store == null)
+                {
+                    result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var productSaleTotalQuantityDtos = await UnitOfWork.ProductRepository
+                    .GetSaleTotalByQuantityAsync(dtFrom,dtTo, storeId);
+
+                result.Data = productSaleTotalQuantityDtos
+                    .Select(x => new ProductSaleTotalQuantityViewModel
+                    {
+                        Product = x.Product.Adapt<ProductViewModel>(),
+                        TotalQuantity = x.TotalQuantity
+                    })
+                    .ToList();
+
+                result.IsSuccessful = true;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Result<ICollection<ProductSaleTotalPriceViewModel>>> GetSaleTotalByPriceAsync
+         (DateTime dtFrom, DateTime dtTo, Guid storeId)
+        {
+            try
+            {
+                var result = new Result<ICollection<ProductSaleTotalPriceViewModel>>();
+                result.IsSuccessful = true;
+
+                var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
+                if (store == null)
+                {
+                    result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var productSaleTotalPriceDtos = await UnitOfWork.ProductRepository
+                    .GetSaleTotalByPriceAsync(dtFrom,dtTo, storeId);
+
+                result.Data = productSaleTotalPriceDtos
+                    .Select(x => new ProductSaleTotalPriceViewModel
+                    {
+                        Product = x.Product.Adapt<ProductViewModel>(),
+                        TotalPrice = x.TotalPrice
+                    })
+                    .ToList();
+
+                result.IsSuccessful = true;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
     }
 }

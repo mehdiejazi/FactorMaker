@@ -57,5 +57,19 @@ namespace FactorMaker.Controllers
             var result = await CustomerService.UpdateAsync(viewModel);
             return Result(result);
         }
+
+        [HttpPost("GetTop10ByQuantityAsync")]
+        public async Task<IActionResult> GetTop10ByQuantityAsync(Guid storeId)
+        {
+            var result = await CustomerService.GetTop10ByQuantityAsync(storeId);
+            return Result(result);
+        }
+
+        [HttpPost("GetTop10ByPriceAsync")]
+        public async Task<IActionResult> GetTop10ByPriceAsync(Guid storeId)
+        {
+            var result = await CustomerService.GetTop10ByPriceAsync(storeId);
+            return Result(result);
+        }
     }
 }

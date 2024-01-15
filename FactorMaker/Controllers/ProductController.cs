@@ -4,6 +4,7 @@ using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Resources;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -56,6 +57,21 @@ namespace FactorMaker.Controllers
         public async Task<IActionResult> UpdateAsync(ProductViewModel viewModel)
         {
             var result = await ProductService.UpdateAsync(viewModel);
+            return Result(result);
+        }
+
+        [HttpGet("GetTop10SellingByQuantityAsync")]
+        public async Task<IActionResult> GetTop10SellingByQuantityAsync(Guid storeId)
+        {
+            var result = await ProductService.GetTop10SaleByQuantityAsync(storeId);
+            return Result(result);
+
+        }
+
+        [HttpGet("GetTop10SellingByPriceAsync")]
+        public async Task<IActionResult> GetTop10SellingByPriceAsync(Guid storeId)
+        {
+            var result = await ProductService.GetTop10SaleByPriceAsync(storeId);
             return Result(result);
         }
 

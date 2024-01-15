@@ -1,5 +1,6 @@
 ﻿using Common;
 using Data;
+using Data.DataTransferObjects.Factor;
 using FactorMaker.Services.Base;
 using FactorMaker.Services.ServicesIntefaces;
 using Mapster;
@@ -131,6 +132,62 @@ namespace FactorMaker.Services
                 var result = new Result<ICollection<CustomerViewModel>>();
 
                 var customers = await UnitOfWork.CustomerRepository.GetAllAsync();
+
+                result.Data = customers.Adapt<ICollection<CustomerViewModel>>();
+                result.IsSuccessful = true;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Result<ICollection<CustomerViewModel>>> GetTop10ByQuantityAsync(Guid storeId)
+        {
+            try
+            {
+                var result = new Result<ICollection<CustomerViewModel>>();
+                result.IsSuccessful = true;
+
+                var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
+                if (store == null)
+                {
+                    result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var customers = await UnitOfWork.CustomerRepository.GetTop10CustomersByQuantityAsync(storeId);
+
+                result.Data = customers.Adapt<ICollection<CustomerViewModel>>();
+                result.IsSuccessful = true;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Result<ICollection<CustomerViewModel>>> GetTop10ByPriceAsync(Guid storeId)
+        {
+            try
+            {
+                var result = new Result<ICollection<CustomerViewModel>>();
+                result.IsSuccessful = true;
+
+                var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
+                if (store == null)
+                {
+                    result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var customers = await UnitOfWork.CustomerRepository.GetTop10CustomersByQuantityAsync(storeId);
 
                 result.Data = customers.Adapt<ICollection<CustomerViewModel>>();
                 result.IsSuccessful = true;
