@@ -25,10 +25,10 @@ namespace FactorMaker.Infrastructure.MiddleWares
                         ?.Split(" ")
                         .Last();
 
-            if (string.IsNullOrWhiteSpace(token) == false)
+            if (string.IsNullOrWhiteSpace(token) == false && token.Equals("null") == false)
             {
-                JwtUtility.AttachUserToContextByToken(context: context,
-                userService: userService, token: token, secretKey: AuthSettings.SecretKey);
+                await JwtUtility.AttachUserToContextByTokenAsync(context: context,
+                 userService: userService, token: token, secretKey: AuthSettings.SecretKey);
             }
 
             await Next(context);
@@ -39,7 +39,7 @@ namespace FactorMaker.Infrastructure.MiddleWares
     {
         public static IApplicationBuilder UseJwtAuthenticationMiddleware(this IApplicationBuilder builder)
         {
-           return builder.UseMiddleware<JwtAuthenticationMiddleware>();
+            return builder.UseMiddleware<JwtAuthenticationMiddleware>();
         }
     }
 }

@@ -3,8 +3,6 @@ using Data;
 using FactorMaker.Infrastructure.ApplicationSettings;
 using FactorMaker.Infrastructure.MiddleWares;
 using FactorMaker.Infrastructure.Validators.Authentication;
-using FactorMaker.Infrastructure.Validators.Category;
-using FactorMaker.Infrastructure.Validators.Customer;
 using FactorMaker.Services;
 using FactorMaker.Services.ServicesIntefaces;
 using FluentValidation;
@@ -15,10 +13,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Models;
-using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 
 namespace FactorMaker
@@ -44,10 +42,7 @@ namespace FactorMaker
              = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
-            //services.AddControllers().AddFluentValidation();
-
             services.AddFluentValidationAutoValidation();
-            //services.AddFluentValidationClientsideAdapters();
 
             services.AddValidatorsFromAssemblyContaining<LoginRequestViewModelValidator>();
 
@@ -64,9 +59,7 @@ namespace FactorMaker
                         builder
                             .WithOrigins("http://localhost:5001")
                             .AllowAnyHeader()
-                            .AllowAnyMethod()
-                            //.AllowCredentials()
-                            ;
+                            .AllowAnyMethod();
                     });
 
                 options.AddPolicy(OTHERS_CORS_POLICY,
@@ -75,9 +68,7 @@ namespace FactorMaker
                         builder
                             .AllowAnyOrigin()
                             .AllowAnyHeader()
-                            .AllowAnyMethod()
-                            //.AllowCredentials()
-                            ;
+                            .AllowAnyMethod();
                     });
             });
 
@@ -90,7 +81,7 @@ namespace FactorMaker
 
             AuthSettings _authSettings = new AuthSettings();
             Configuration.GetSection("AuthSettings").Bind(_authSettings);// bind is necessary
-             services.AddSingleton<AuthSettings>(_authSettings);
+            services.AddSingleton<AuthSettings>(_authSettings);
 
             //  services.AddSingleton<AuthSettings>(Configuration.GetSection("AuthSettings").Get<AuthSettings>());
 
@@ -121,6 +112,8 @@ namespace FactorMaker
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IAuthService, AuthService>();
+
+            services.AddMemoryCache();
 
             services.AddSwaggerGen(c =>
             {
@@ -168,6 +161,13 @@ namespace FactorMaker
                 endpoints.MapControllers();
             });
 
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+              Path.Combine(env.ContentRootPath, "uploads")),
+                RequestPath = "/uploads"
+            });
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

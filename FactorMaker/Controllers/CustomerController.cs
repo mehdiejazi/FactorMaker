@@ -1,17 +1,14 @@
-﻿using Common;
-using FactorMaker.Infrastructure.Attributes;
-using FactorMaker.Services.ServicesIntefaces;
+﻿using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels.Customer;
 
 namespace FactorMaker.Controllers
 {
     //[Authorize]
-    public class CustomerController : BaseApiController
+    public class CustomerController : BaseApiControllerWithUser
     {
         private CustomerController() : base()
         {
@@ -48,6 +45,7 @@ namespace FactorMaker.Controllers
         public async Task<IActionResult> InsertAsync(CustomerViewModel viewModel)
         {
             var result = await CustomerService.InsertAsync(viewModel);
+            viewModel.OwnerId = User.Id;
             return Result(result);
         }
 
@@ -61,14 +59,14 @@ namespace FactorMaker.Controllers
         [HttpPost("GetTop10ByQuantityAsync")]
         public async Task<IActionResult> GetTop10ByQuantityAsync(Guid storeId)
         {
-            var result = await CustomerService.GetTop10ByQuantityAsync(storeId);
+            var result = await CustomerService.GetTop10ByQuantityAsync(User, storeId);
             return Result(result);
         }
 
         [HttpPost("GetTop10ByPriceAsync")]
         public async Task<IActionResult> GetTop10ByPriceAsync(Guid storeId)
         {
-            var result = await CustomerService.GetTop10ByPriceAsync(storeId);
+            var result = await CustomerService.GetTop10ByPriceAsync(User,storeId);
             return Result(result);
         }
     }

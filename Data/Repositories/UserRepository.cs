@@ -40,6 +40,8 @@ namespace Data.Repositories
                 .Include(u => u.Role)
                 .ThenInclude(p => p.RoleActionPermissions)
                 .ThenInclude(a => a.ActionPermission)
+                .Include(u=>u.Avatar)
+                .Include(u=>u.RefreshToken)
                 .FirstOrDefault();
 
             return user;
@@ -52,6 +54,8 @@ namespace Data.Repositories
                 .Include(u => u.Role)
                 .ThenInclude(p => p.RoleActionPermissions)
                 .ThenInclude(a => a.ActionPermission)
+                .Include(u => u.Avatar)
+                .Include(u => u.RefreshToken)
                 .FirstOrDefaultAsync();
 
             return user;
@@ -64,6 +68,8 @@ namespace Data.Repositories
                 .Include(u => u.Role)
                 .ThenInclude(p => p.RoleActionPermissions)
                 .ThenInclude(a => a.ActionPermission)
+                .Include(u => u.Avatar)
+                .Include(u => u.RefreshToken)
                 .FirstOrDefault();
             return user;
         }
@@ -75,6 +81,8 @@ namespace Data.Repositories
                 .Include(u => u.Role)
                 .ThenInclude(p => p.RoleActionPermissions)
                 .ThenInclude(a => a.ActionPermission)
+                .Include(u => u.Avatar)
+                .Include(u => u.RefreshToken)
                 .FirstOrDefaultAsync();
             return user;
         }
@@ -125,6 +133,25 @@ namespace Data.Repositories
                 .AnyAsync(u => u.UserName == userName);
 
             return ret;
+        }
+
+        public async Task<bool> HasAccessToStoreAsync(Guid id, Guid storeId)
+        {
+            bool hasAny = await DbSet
+                .AnyAsync(u => u.Id.Equals(id) && u.Stores.Any(s => s.Id.Equals(storeId)));
+
+            return hasAny;
+
+        }
+
+        public async Task<User> GetByRefreshTokenAsync(string refreshToken)
+        {
+            var user = await DbSet
+                .Where(u => u.RefreshToken.RefreshToken == refreshToken)
+                .Include(u => u.RefreshToken)
+                .FirstOrDefaultAsync();
+
+            return user;
         }
     }
 }

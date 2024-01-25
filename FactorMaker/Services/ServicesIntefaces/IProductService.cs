@@ -1,5 +1,4 @@
 ﻿using Common;
-using Data.DataTransferObjects.Product;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -16,12 +15,12 @@ namespace FactorMaker.Services.ServicesIntefaces
         Task<Result<ProductViewModel>> GetByIdAsync(Guid id);
         Task<Result<ICollection<ProductViewModel>>> GetAllAsync();
         Task<Result<ICollection<ProductViewModel>>> GetByOwnerIdCategoryIdAsync(Guid ownerId, Guid categoryId);
-        Task<Result<ICollection<ProductSaleTotalQuantityViewModel>>> GetTop10SaleByQuantityAsync(Guid storeId);
-        Task<Result<ICollection<ProductSaleTotalPriceViewModel>>> GetTop10SaleByPriceAsync(Guid storeId);
+        Task<Result<ICollection<ProductSaleTotalQuantityViewModel>>> GetTop10SaleByQuantityAsync(User user, Guid storeId);
+        Task<Result<ICollection<ProductSaleTotalPriceViewModel>>> GetTop10SaleByPriceAsync(User user, Guid storeId);
         Task<Result<ICollection<ProductSaleTotalQuantityViewModel>>> GetSaleTotalByQuantityAsync
-            (DateTime dtFrom, DateTime dtTo, Guid storeId);
+            (User user, DateTime dtFrom, DateTime dtTo, Guid storeId);
         Task<Result<ICollection<ProductSaleTotalPriceViewModel>>> GetSaleTotalByPriceAsync
-            (DateTime dtFrom, DateTime dtTo, Guid storeId);
+            (User user,DateTime dtFrom, DateTime dtTo, Guid storeId);
 
     }
 }

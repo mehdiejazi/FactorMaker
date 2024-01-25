@@ -7,6 +7,7 @@ using FactorMaker.Services.ServicesIntefaces;
 using Mapster;
 using Models;
 using Resources;
+using System;
 using System.Threading.Tasks;
 using ViewModels.Authentication;
 using ViewModels.User;
@@ -16,9 +17,11 @@ namespace FactorMaker.Services
     public class AuthService : BaseServiceWithDatabase, IAuthService
     {
         protected AuthSettings AuthSettings { get; }
-        public AuthService(IUnitOfWork unitOfWork, AuthSettings authSettings) : base(unitOfWork)
+        protected IUserService UserService { get; }
+        public AuthService(IUnitOfWork unitOfWork, AuthSettings authSettings, UserService userService) : base(unitOfWork)
         {
             AuthSettings = authSettings;
+            UserService = userService;
         }
         public async Task<Result<LoginResponseViewModel>> LoginAsync(LoginRequestViewModel loginRequest)
         {
@@ -74,6 +77,67 @@ namespace FactorMaker.Services
             result.IsSuccessful = false;
 
             return result;
+        }
+        public async Task<Result<NewTokenResponseViewModel>> GenerateNewTokenAsync(NewTokenRequestViewModel request)
+        {
+            try
+            {
+                var result = new Result<NewTokenResponseViewModel>();
+                result.IsSuccessful = true;
+
+                User user = await UnitOfWork.UserRepository.GetByRefreshTokenAsync(request.RefreshToken);
+                if (user == null)
+                {
+                    result.AddErrorMessage(typeof(User) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+                if (user.Id.Equals(request.UserId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.RefreshTokenIsInvalid);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+                if (user.RefreshToken == null)
+                {
+                    result.AddErrorMessage(ErrorMessages.RefreshTokenNotFound);
+                    result.IsSuccessful = false;
+                }
+                if (user.RefreshToken.IsValid == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.RefreshTokenIsInvalid);
+                    result.IsSuccessful = false;
+                }
+                if (user.RefreshToken.InsertDateTime
+                    .AddMinutes(user.RefreshToken.RefreshTokenTimeOut)
+                    .CompareTo(DateTime.Now) > 0)
+                {
+                    result.AddErrorMessage(ErrorMessages.RefreshTokenIsExpired);
+                    result.IsSuccessful = false;
+                }
+
+                string newToken = JwtUtility.GenerateJwtToken(user, AuthSettings);
+                string newRefreshToken = JwtUtility.GenetrateRefreshToken();
+
+                await UserService.SetRefreshTokenAsync(user.Id, newRefreshToken);
+
+                if (result.IsSuccessful == false) return result;
+
+                var response = new NewTokenResponseViewModel()
+                {
+                    RefreshToken = newRefreshToken,
+                    Token = newToken
+                };
+                result.Data = response;
+                result.IsSuccessful = true;
+
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
     }
 }

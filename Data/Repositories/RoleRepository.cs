@@ -43,7 +43,7 @@ namespace Data.Repositories
             return role;
         }
 
-        public async new Task<Role> GetByIdAsync(Guid Id)
+        public async new Task<Role> GetByIdWithRefreshTokenAsync(Guid Id)
         {
             var role = await DbSet
                 .Where(u => u.Id.Equals(Id))

@@ -5,8 +5,8 @@ namespace Models
 {
     public class Category : EntityBase
     {
-        public User Owner { get; set; }
-        public Guid OwnerId { get; set; }
+        public Store Store { get; set; }
+        public Guid StoreId { get; set; }
         public string Name { get; set; }
     }
 }

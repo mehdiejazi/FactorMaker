@@ -23,7 +23,7 @@ namespace Data.Repositories
 
         public async Task<Store> GetByStoreIdAsync(Guid storeId)
         {
-            var entity = await DbSet.Where(x => x.StoreId.Equals(storeId)).FirstOrDefaultAsync();
+            var entity = await DbSet.Where(x => x.StoreEnglishName.Equals(storeId)).FirstOrDefaultAsync();
             return entity;
         }
     }

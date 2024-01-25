@@ -2,7 +2,6 @@
 using FactorMaker;
 using FactorMaker.Infrastructure.Attributes;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace Infrastructure
 {
@@ -16,19 +15,9 @@ namespace Infrastructure
     {
         public BaseApiController() : base()
         {
+
         }
 
-        //protected ActionResult Result<T>(Result<T> result)
-        //{
-        //    if (result.IsSuccessful)
-        //    {
-        //        return Ok(result);
-        //    }
-        //    else
-        //    {
-        //        return BadRequest(result);
-        //    }
-        //}
         [NonAction]
         public ActionResult Result(Result result)
         {

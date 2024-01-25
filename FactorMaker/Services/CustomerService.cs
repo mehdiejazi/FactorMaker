@@ -1,6 +1,5 @@
 ﻿using Common;
 using Data;
-using Data.DataTransferObjects.Factor;
 using FactorMaker.Services.Base;
 using FactorMaker.Services.ServicesIntefaces;
 using Mapster;
@@ -8,7 +7,6 @@ using Models;
 using Resources;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using ViewModels.Customer;
 
@@ -143,13 +141,19 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
-        public async Task<Result<ICollection<CustomerViewModel>>> GetTop10ByQuantityAsync(Guid storeId)
+        public async Task<Result<ICollection<CustomerViewModel>>> GetTop10ByQuantityAsync(User user, Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<CustomerViewModel>>();
                 result.IsSuccessful = true;
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
                 if (store == null)
@@ -171,13 +175,19 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
-        public async Task<Result<ICollection<CustomerViewModel>>> GetTop10ByPriceAsync(Guid storeId)
+        public async Task<Result<ICollection<CustomerViewModel>>> GetTop10ByPriceAsync(User user, Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<CustomerViewModel>>();
                 result.IsSuccessful = true;
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
                 if (store == null)

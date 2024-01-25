@@ -1,10 +1,7 @@
-﻿using Common;
-using FactorMaker.Infrastructure.Attributes;
-using FactorMaker.Services.ServicesIntefaces;
+﻿using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels.Role;
 

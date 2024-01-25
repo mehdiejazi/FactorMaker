@@ -1,13 +1,9 @@
-﻿using Common;
-using FactorMaker.Infrastructure.Attributes;
+﻿using FactorMaker.Infrastructure.Attributes;
 using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Models;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using ViewModels.ActionPermission;
 
 namespace FactorMaker.Controllers
 {
@@ -23,7 +19,6 @@ namespace FactorMaker.Controllers
         }
         private IActionPermissionService ActionPermissionService { get; }
 
-
         [Authorize]
         [HttpGet("GetAllAsync")]
         public async Task<IActionResult> GetAllAsync()
@@ -32,7 +27,6 @@ namespace FactorMaker.Controllers
             return Result(result);
         }
 
-
         [Authorize]
         [HttpGet("GetByIdAsync")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
@@ -40,7 +34,5 @@ namespace FactorMaker.Controllers
             var result = await ActionPermissionService.GetByIdAsync(id);
             return Result(result);
         }
-
-
     }
 }

@@ -95,6 +95,8 @@ namespace Data
         public DbSet<RoleActionPermission> RoleActionPermission { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<ActionPermission> ActionPermissions { get; set; }
-
+        public DbSet<ImageAsset> ImageAssets { get; set; }
+        public DbSet<BlogPost> BlogPosts { get; set; }
+        public DbSet<PostCategory> PostCategories { get; set; }
     }
 }

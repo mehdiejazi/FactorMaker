@@ -1,5 +1,4 @@
-﻿using Common;
-using FactorMaker.Infrastructure.Attributes;
+﻿using FactorMaker.Infrastructure.Attributes;
 using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -28,18 +27,22 @@ namespace FactorMaker.Controllers
             var result = await FactorItemService.DeleteByIdAsync(id);
             return Result(result);
         }
-
         [HttpGet("GetByIdAsync")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var result = await FactorItemService.GetByIdAsync(id);
             return Result(result);
         }
-
         [HttpPost("UpdateAsync")]
         public async Task<IActionResult> UpdateAsync(FactorItemViewModel viewModel)
         {
             var result = await FactorItemService.UpdateAsync(viewModel);
+            return Result(result);
+        }
+        [HttpPost("InsertAsync")]
+        public async Task<IActionResult> InsertAsync(FactorItemViewModel viewModel)
+        {
+            var result = await FactorItemService.InsertAsync(viewModel);
             return Result(result);
         }
 

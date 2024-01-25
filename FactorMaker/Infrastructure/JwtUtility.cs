@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FactorMaker.Infrastructure
 {
@@ -55,7 +56,7 @@ namespace FactorMaker.Infrastructure
 
         }
 
-        public static async void AttachUserToContextByToken(HttpContext context, IUserService userService,
+        public static async Task AttachUserToContextByTokenAsync(HttpContext context, IUserService userService,
             string token, string secretKey)
         {
             try
@@ -113,5 +114,9 @@ namespace FactorMaker.Infrastructure
             }
         }
 
+        public static string GenetrateRefreshToken()
+        {
+            return Guid.NewGuid().ToString();
+        }
     }
 }

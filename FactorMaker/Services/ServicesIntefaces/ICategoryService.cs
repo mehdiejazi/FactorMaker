@@ -1,8 +1,9 @@
 ﻿using Common;
-using Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using ViewModels.Category;
+using Models;
 
 namespace FactorMaker.Services.ServicesIntefaces
 {
@@ -14,5 +15,9 @@ namespace FactorMaker.Services.ServicesIntefaces
         Task<Result<CategoryViewModel>> GetByIdAsync(Guid id);
         Task<Result<ICollection<CategoryViewModel>>> GetAllAsync();
         Task<Result<ICollection<CategoryViewModel>>> GetByOwnerIdAsync(Guid ownerId);
+        Task<Result<ICollection<CategorySaleTotalPriceViewModel>>> GetSaleTotalByPriceAsync
+            (User user,DateTime dtFrom, DateTime dtTo, Guid storeId);
+        Task<Result<ICollection<CategorySaleTotalQuantityViewModel>>> GetSaleTotalQuantityAsync
+            (User user,DateTime dtFrom, DateTime dtTo, Guid storeId);
     }
 }

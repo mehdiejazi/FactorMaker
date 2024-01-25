@@ -9,6 +9,21 @@ namespace Data
         {
         }
 
+        private IImageAssetRepository _imageAssetRepository;
+        public IImageAssetRepository ImageAssetRepository
+        {
+            get
+            {
+                if (_imageAssetRepository == null)
+                {
+                    _imageAssetRepository =
+                        new ImageAssetRepository(DatabaseContext);
+                }
+
+                return _imageAssetRepository;
+            }
+        }
+
         private IStoreRepository _storeRepository;
         public IStoreRepository StoreRepository
         {
@@ -143,5 +158,35 @@ namespace Data
                 return _actionPermissionRepository;
             }
         }
+
+        public IBlogPostRepository _blogPostRepository;
+        public IBlogPostRepository BlogPostRepository
+        {
+            get
+            {
+                if (_blogPostRepository == null)
+                {
+                    _blogPostRepository =
+                        new BlogPostRepository(DatabaseContext);
+                }
+
+                return _blogPostRepository;
+            }
+        }
+        public IPostCategoryRepository _postCategoryRepository;
+        public IPostCategoryRepository PostCategoryRepository
+        {
+            get
+            {
+                if (_postCategoryRepository == null)
+                {
+                    _postCategoryRepository =
+                        new PostCategoryRepository(DatabaseContext);
+                }
+
+                return _postCategoryRepository;
+            }
+        }
+
     }
 }

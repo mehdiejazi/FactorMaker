@@ -1,4 +1,5 @@
 ﻿using Common;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,8 +14,8 @@ namespace FactorMaker.Services.ServicesIntefaces
         Task<Result> DeleteByIdAsync(Guid id);
         Task<Result<CustomerViewModel>> GetByIdAsync(Guid id);
         Task<Result<ICollection<CustomerViewModel>>> GetAllAsync();
-        Task<Result<ICollection<CustomerViewModel>>> GetTop10ByQuantityAsync(Guid storeId);
-        Task<Result<ICollection<CustomerViewModel>>> GetTop10ByPriceAsync(Guid storeId);
+        Task<Result<ICollection<CustomerViewModel>>> GetTop10ByQuantityAsync(User user,Guid storeId);
+        Task<Result<ICollection<CustomerViewModel>>> GetTop10ByPriceAsync(User user,Guid storeId);
        
     }
 }

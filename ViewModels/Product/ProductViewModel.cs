@@ -1,6 +1,7 @@
 ﻿using Models;
 using System;
 using ViewModels.Base;
+using ViewModels.Category;
 using ViewModels.User;
 
 namespace ViewModels.Product

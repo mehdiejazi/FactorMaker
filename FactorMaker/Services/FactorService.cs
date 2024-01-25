@@ -245,12 +245,19 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<FactorViewModel>>> GetByStoreIdAsync(Guid storeId)
+        public async Task<Result<ICollection<FactorViewModel>>> GetByStoreIdAsync(User user,Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<FactorViewModel>>();
                 result.IsSuccessful = true;
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
                 if (store == null)
@@ -271,13 +278,19 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
-        public async Task<Result<FactorsSummaryViewModel>> GetFactorSummaryByStoreId(Guid storeId)
+        public async Task<Result<FactorsSummaryViewModel>> GetFactorSummaryByStoreId(User user,Guid storeId)
         {
             try
             {
                 var result = new Result<FactorsSummaryViewModel>();
                 result.IsSuccessful = true;
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
                 if (store == null)
@@ -343,13 +356,20 @@ namespace FactorMaker.Services
             }
         }
         public async Task<Result<ICollection<FactorSaleMonthlyViewModel>>> GetMonthlyFactorSaleAsync
-            (int year, Guid storeId)
+            (User user, int year, Guid storeId)
         {
 
             try
             {
                 var result = new Result<ICollection<FactorSaleMonthlyViewModel>>();
                 result.IsSuccessful = true;
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
                 if (store == null)
@@ -389,11 +409,18 @@ namespace FactorMaker.Services
             }
         }
         public async Task<Result<ICollection<FactorSaleWeeklyViewModel>>> GetWeeklyFactorSaleAsync
-            (int year, int month, Guid storeId)
+            (User user,int year, int month, Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<FactorSaleWeeklyViewModel>>();
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
                 if (store == null)
@@ -433,11 +460,18 @@ namespace FactorMaker.Services
             }
         }
         public async Task<Result<ICollection<FactorSaleHourlyViewModel>>> GetHourlyFactorSaleAsync
-            (DateTime dtFrom, DateTime dtTo, Guid storeId)
+            (User user, DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<FactorSaleHourlyViewModel>>();
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
                 if (store == null)
@@ -464,11 +498,18 @@ namespace FactorMaker.Services
             }
         }
         public async Task<Result<ICollection<FactorSaleWeekDailyViewModel>>> GetWeekDailyFactorSaleAsync
-            (DateTime dtFrom, DateTime dtTo, Guid storeId)
+            (User user, DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<FactorSaleWeekDailyViewModel>>();
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
                 if (store == null)

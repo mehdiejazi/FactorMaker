@@ -46,7 +46,6 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
         public async Task<Result<StoreViewModel>> GetByIdAsync(Guid id)
         {
             try
@@ -74,7 +73,6 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
         public async Task<Result<ICollection<StoreViewModel>>> GetByOwnerIdAsync(Guid ownerId)
         {
             try
@@ -97,7 +95,6 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
         public async Task<Result<StoreViewModel>> GetByStoreIdAsync(Guid storeId)
         {
             try
@@ -125,7 +122,6 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
         public async Task<Result<StoreViewModel>> InsertAsync(StoreViewModel viewModel)
         {
             try
@@ -147,7 +143,6 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
         public async Task<Result<StoreViewModel>> UpdateAsync(StoreViewModel viewModel)
         {
             try

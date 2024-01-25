@@ -171,6 +171,9 @@
   <data name="MinLength" xml:space="preserve">
     <value>The min. length of {0} should be {1}!</value>
   </data>
+  <data name="MustBeLatinAlphanumeric" xml:space="preserve">
+    <value>{0} must be latin alphanumeric.</value>
+  </data>
   <data name="NationalCodeInvalid" xml:space="preserve">
     <value>National code is invalid.</value>
   </data>
@@ -179,6 +182,15 @@
   </data>
   <data name="PasswordIsEmpty" xml:space="preserve">
     <value>You did not specify password!</value>
+  </data>
+  <data name="RefreshTokenIsExpired" xml:space="preserve">
+    <value>RefreshTokenIsExpired</value>
+  </data>
+  <data name="RefreshTokenIsInvalid" xml:space="preserve">
+    <value>RefreshTokenIsInvalid</value>
+  </data>
+  <data name="RefreshTokenNotFound" xml:space="preserve">
+    <value>RefreshTokenNotFound</value>
   </data>
   <data name="RepeatedPasswordInvalid" xml:space="preserve">
     <value>Repeated password is invalid!</value>

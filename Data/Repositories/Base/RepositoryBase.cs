@@ -14,6 +14,38 @@ namespace Data.Repositories.Base
         {
         }
 
+
+        public override void InsertRange(IEnumerable<T> list)
+        {
+            if (list == null)
+            {
+                throw new ArgumentNullException(paramName: nameof(list));
+            }
+
+            foreach (var entity in list)
+            {
+                entity.InsertDateTime = Utility.Now;
+            }
+
+            DbSet.AddRange(list);
+        }
+
+        public async override Task InsertRangeAsync(IEnumerable<T> list)
+        {
+            if (list == null)
+            {
+                throw new ArgumentNullException(paramName: nameof(list));
+            }
+
+            foreach (var entity in list)
+            {
+                entity.InsertDateTime = Utility.Now;
+            }
+
+            await DbSet.AddRangeAsync(list);
+        }
+
+
         public override void Insert(T entity)
         {
             if (entity == null)
@@ -126,7 +158,7 @@ namespace Data.Repositories.Base
         {
             var result =
                 DbSet.
-                Where(x=>x.IsDeleted == false).
+                Where(x => x.IsDeleted == false).
                 OrderBy(x => x.InsertDateTime).ToList();
 
             return result;

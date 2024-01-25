@@ -1,17 +1,18 @@
-﻿using FactorMaker.Services.Base;
+﻿using Common;
 using Data;
-using Models;
-using System;
-using System.Threading.Tasks;
-using Resources;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Linq;
-using Infrastructure;
+using FactorMaker.Infrastructure.Attributes;
+using FactorMaker.Services.Base;
 using FactorMaker.Services.ServicesIntefaces;
-using Common;
-using ViewModels.ActionPermission;
+using Infrastructure;
 using Mapster;
+using Models;
+using Resources;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using ViewModels.ActionPermission;
 
 namespace FactorMaker.Services
 {
@@ -19,42 +20,39 @@ namespace FactorMaker.Services
     {
         public ActionPermissionService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            SyncActions();
+            Task.Run(() => SyncActionsAsync());
         }
 
-        private void SyncActions()
+        private async Task SyncActionsAsync()
         {
             Assembly asm = Assembly.GetExecutingAssembly();
 
             var controlleractionlist = asm.GetTypes()
-                    .Where(type => typeof(BaseApiController).IsAssignableFrom(type))
-                    .SelectMany(type => type.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public))
-                    .Where(m => !m.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), true).Any())
-                    .Select(x => new { Controller = x.DeclaringType.Name, Action = x.Name, ReturnType = x.ReturnType.Name, Attributes = System.String.Join(",", x.GetCustomAttributes().Select(a => a.GetType().Name.Replace("Attribute", ""))) })
-                    .OrderBy(x => x.Controller).ThenBy(x => x.Action).ToList();
+                .Where(type => typeof(BaseApiController).IsAssignableFrom(type))
+                .SelectMany(type => type.GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public))
+                .Where(m => !m.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), true).Any())
+                .Where(m => m.GetCustomAttributes(typeof(AuthorizeAttribute), true).Any()) // فقط اکشن‌های دارای [Authorize] را انتخاب کن
+                .Select(x => new { Controller = x.DeclaringType.Name, Action = x.Name, ReturnType = x.ReturnType.Name, Attributes = System.String.Join(",", x.GetCustomAttributes().Select(a => a.GetType().Name.Replace("Attribute", ""))) })
+                .OrderBy(x => x.Controller)
+                .ThenBy(x => x.Action)
+                .ToList();
 
-            var actionPermissions =
-                UnitOfWork.ActionPermissionRepository.GetAll().ToArray();
+            var actionPermissions = await UnitOfWork.ActionPermissionRepository.GetAllAsync();
 
-            if (actionPermissions.Count() != controlleractionlist.Count())
-            {
-                foreach (var item in controlleractionlist)
+            var missingPermissions = controlleractionlist
+                .Where(item => actionPermissions.All(a => a.ControllerName != item.Controller || a.ActionName != item.Action))
+                .Select(item => new ActionPermission
                 {
-                    if (actionPermissions
-                        .Where(a => a.ControllerName == item.Controller
-                        && a.ActionName == item.Action).Count() == 0)
-                    {
-                        ActionPermission ap = new ActionPermission();
-                        ap.ControllerName = item.Controller;
-                        ap.ActionName = item.Action;
-                        ap.Url = "/" + item.Controller.Replace("Controller", "") + "/" + item.Action;
+                    ControllerName = item.Controller,
+                    ActionName = item.Action,
+                    Url = "/" + item.Controller.Replace("Controller", "") + "/" + item.Action
+                });
 
-                        UnitOfWork.ActionPermissionRepository.Insert(ap);
-                    }
-                }
+            if (missingPermissions.Any())
+            {
+                await UnitOfWork.ActionPermissionRepository.InsertRangeAsync(missingPermissions);
+                await UnitOfWork.SaveAsync();
             }
-
-            UnitOfWork.Save();
         }
 
         public async Task<Result<ActionPermissionViewModel>> GetByIdAsync(Guid id)

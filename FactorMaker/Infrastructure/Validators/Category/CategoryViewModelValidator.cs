@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using Models;
 using Resources;
-using ViewModels.Authentication;
+using ViewModels.Category;
 
 namespace FactorMaker.Infrastructure.Validators.Category
 {
@@ -9,9 +8,9 @@ namespace FactorMaker.Infrastructure.Validators.Category
     {
         public CategoryViewModelValidator()
         {
-            RuleFor(x=>x.OwnerId)
+            RuleFor(x=>x.StoreId)
                .NotEmpty()
-               .WithMessage(x => string.Format(ErrorMessages.Required,nameof(x.OwnerId)));
+               .WithMessage(x => string.Format(ErrorMessages.Required,nameof(x.StoreId)));
 
             RuleFor(x=>x.Name)
                .NotEmpty()

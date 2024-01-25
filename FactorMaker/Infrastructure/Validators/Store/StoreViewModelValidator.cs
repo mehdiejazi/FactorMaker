@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Resources;
 using System;
+using System.Text.RegularExpressions;
 using ViewModels.Store;
 
 namespace FactorMaker.Infrastructure.Validators.Store
@@ -10,7 +11,7 @@ namespace FactorMaker.Infrastructure.Validators.Store
         public StoreViewModelValidator()
         {
             RuleFor(x => x.Url)
-                .Must(BeAValidUrl)
+                .Must(BeValidUrl)
                 .WithMessage(x => string.Format(ErrorMessages.IsNotValid, x.Url));
 
             RuleFor(x => x.Name)
@@ -21,18 +22,23 @@ namespace FactorMaker.Infrastructure.Validators.Store
                .NotEmpty()
                .WithMessage(x => string.Format(ErrorMessages.Required, nameof(x.OwnerId)));
 
-            RuleFor(x => x.StoreId)
-               .NotEmpty()
-               .WithMessage(x => string.Format(ErrorMessages.Required, nameof(x.StoreId)));
+            RuleFor(x => x.EnglishName)
+                .Must(BeLatinAlphanumeric)
+                .WithMessage(x => string.Format(ErrorMessages.MustBeLatinAlphanumeric, nameof(x.EnglishName)));
 
-            RuleFor(x => x.LogoUrl)
-                .Must(BeAValidUrl)
-                .WithMessage(x => string.Format(ErrorMessages.IsNotValid, x.Url));
+            RuleFor(x => x.EnglishName)
+               .NotEmpty()
+               .WithMessage(x => string.Format(ErrorMessages.Required, nameof(x.EnglishName)));
+
         }
-        private bool BeAValidUrl(string myUrl)
+        private bool BeValidUrl(string myUrl)
         {
             return Uri.IsWellFormedUriString(myUrl, UriKind.Absolute);
 
+        }
+        static bool BeLatinAlphanumeric(string input)
+        {
+            return Regex.IsMatch(input, "^[a-zA-Z0-9]+$");
         }
     }
 }

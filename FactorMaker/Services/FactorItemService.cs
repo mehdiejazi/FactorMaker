@@ -8,7 +8,6 @@ using Resources;
 using System;
 using System.Threading.Tasks;
 using ViewModels.FactorItem;
-using ViewModels.Product;
 
 namespace FactorMaker.Services
 {

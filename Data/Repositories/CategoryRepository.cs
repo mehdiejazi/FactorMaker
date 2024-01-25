@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Data.DataTransferObjects.Category;
 
 namespace Data.Repositories
 {
@@ -16,12 +17,56 @@ namespace Data.Repositories
 
         }
 
-        public async Task<ICollection<Category>> GetByOwnerIdAsync(Guid ownerId)
+        public async Task<ICollection<Category>> GetByStoreIdAsync(Guid storeId)
         {
             var list = await DbSet
-                .Where(u => u.Owner.Id.Equals(ownerId))
+                .Where(u => u.Store.Id.Equals(storeId))
                 .ToListAsync();
                 
+            return list;
+        }
+
+        public async Task<ICollection<CategorySaleTotalPriceDto>> GetSaleTotalByPriceAsync
+            (DateTime dtFrom, DateTime dtTo, Guid storeId)
+        {
+            var list = await DatabaseContext.Set<FactorItem>()
+                .Where(x => x.IsDeleted == false &&
+                          x.Factor.IsDeleted == false &&
+                          x.Factor.IsClosed &&
+                          x.Factor.SellDateTime >= dtFrom &&
+                          x.Factor.SellDateTime < dtTo &&
+                          x.Factor.StoreId.Equals(storeId))
+                .GroupBy(f => f.Product.Category)
+                .Select(group => new CategorySaleTotalPriceDto
+                {
+                    Category = group.Key,
+                    TotalPrice = group.Sum(x => x.Price)
+                })
+                .OrderBy(x => x.Category.Name)
+                .ToListAsync();
+
+            return list;
+        }
+
+        public async Task<ICollection<CategorySaleTotalQuantityDto>> GetSaleTotalByQuantityAsync
+            (DateTime dtFrom, DateTime dtTo, Guid storeId)
+        {
+            var list = await DatabaseContext.Set<FactorItem>()
+                .Where(x => x.IsDeleted == false &&
+                          x.Factor.IsDeleted == false &&
+                          x.Factor.IsClosed &&
+                          x.Factor.SellDateTime >= dtFrom &&
+                          x.Factor.SellDateTime < dtTo &&
+                          x.Factor.StoreId.Equals(storeId))
+                .GroupBy(f => f.Product.Category)
+                .Select(group => new CategorySaleTotalQuantityDto
+                {
+                    Category = group.Key,
+                    TotalQuantity = group.Sum(x => x.Quantity)
+                })
+                .OrderBy(x => x.Category.Name)
+                .ToListAsync();
+
             return list;
         }
     }

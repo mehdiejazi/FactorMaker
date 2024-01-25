@@ -6,6 +6,11 @@ namespace Data.Base
 {
     public interface IRepository<T> where T : Models.Base.EntityBase
     {
+        void InsertRange(IEnumerable<T> list);
+
+        Task InsertRangeAsync(IEnumerable<T> list);
+
+
         void Insert(T entity);
 
         Task InsertAsync(T entity);

@@ -1,4 +1,5 @@
 ﻿using Common;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,5 +16,7 @@ namespace FactorMaker.Services.ServicesIntefaces
         Task<Result<ICollection<UserViewModel>>> GetAllAsync();
         Task<Result<ICollection<UserViewModel>>> GetActiveAsync();
         Task<Result<ICollection<UserViewModel>>> GetInActiveAsync();
+        Task<User> GetByIdForLoginAsync(Guid id);
+        Task<bool> SetRefreshTokenAsync(Guid userId, string refreshToken);
     }
 }

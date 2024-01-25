@@ -1,15 +1,13 @@
-﻿using Common;
-using FactorMaker.Services.ServicesIntefaces;
+﻿using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
-using ViewModels.Store;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
+using ViewModels.Store;
 
 namespace FactorMaker.Controllers
 {
-    public class StoreConroller : BaseApiController
+    public class StoreConroller : BaseApiControllerWithUser
     {
         private StoreConroller() : base()
         {
@@ -25,6 +23,7 @@ namespace FactorMaker.Controllers
         public async Task<IActionResult> InsertAsync(StoreViewModel viewModel)
         {
             var result = await StoreServuce.InsertAsync(viewModel);
+            viewModel.OwnerId = User.Id;
             return Result(result);
         }
 
@@ -50,9 +49,9 @@ namespace FactorMaker.Controllers
         }
 
         [HttpGet("GetByOwnerIdAsync")]
-        public async Task<IActionResult> GetByOwnerIdAsync(Guid ownerId)
+        public async Task<IActionResult> GetByOwnerAsync()
         {
-            var result = await StoreServuce.GetByOwnerIdAsync(ownerId);
+            var result = await StoreServuce.GetByOwnerIdAsync(User.Id);
             return Result(result);
         }
 

@@ -13,5 +13,8 @@ namespace Data
         IActionPermissionRepository ActionPermissionRepository { get; }
         ICategoryRepository CategoryRepository { get; }
         IStoreRepository StoreRepository { get; }
+        IImageAssetRepository ImageAssetRepository { get; }
+        IBlogPostRepository BlogPostRepository { get; }
+        IPostCategoryRepository PostCategoryRepository { get; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Common;
 using Data;
-using Data.DataTransferObjects.Product;
 using FactorMaker.Services.Base;
 using FactorMaker.Services.ServicesIntefaces;
 using Mapster;
@@ -10,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ViewModels.Customer;
 using ViewModels.Product;
 
 namespace FactorMaker.Services
@@ -185,12 +183,20 @@ namespace FactorMaker.Services
                 throw;
             }
         }
-        public async Task<Result<ICollection<ProductSaleTotalQuantityViewModel>>> GetTop10SaleByQuantityAsync(Guid storeId)
+        public async Task<Result<ICollection<ProductSaleTotalQuantityViewModel>>> GetTop10SaleByQuantityAsync
+            (User user,Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<ProductSaleTotalQuantityViewModel>>();
                 result.IsSuccessful = true;
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
                 if (store == null)
@@ -219,12 +225,20 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<ProductSaleTotalPriceViewModel>>> GetTop10SaleByPriceAsync(Guid storeId)
+        public async Task<Result<ICollection<ProductSaleTotalPriceViewModel>>> GetTop10SaleByPriceAsync
+            (User user,Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<ProductSaleTotalPriceViewModel>>();
                 result.IsSuccessful = true;
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
                 if (store == null)
@@ -253,15 +267,20 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-      
-
         public async Task<Result<ICollection<ProductSaleTotalQuantityViewModel>>> GetSaleTotalByQuantityAsync
-            (DateTime dtFrom, DateTime dtTo, Guid storeId)
+            (User user,DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<ProductSaleTotalQuantityViewModel>>();
                 result.IsSuccessful = true;
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
                 if (store == null)
@@ -291,14 +310,20 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
         public async Task<Result<ICollection<ProductSaleTotalPriceViewModel>>> GetSaleTotalByPriceAsync
-         (DateTime dtFrom, DateTime dtTo, Guid storeId)
+            (User user,DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<ProductSaleTotalPriceViewModel>>();
                 result.IsSuccessful = true;
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
                 if (store == null)
@@ -328,7 +353,5 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
-
     }
 }

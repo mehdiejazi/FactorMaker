@@ -1,6 +1,5 @@
 ﻿using Common;
 using Infrastructure;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Models;
 using System;
@@ -11,7 +10,6 @@ namespace FactorMaker.Infrastructure.Attributes
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class AuthorizeAttribute : Attribute, IAuthorizationFilter
     {
-        //public RoleType RoleType { get; set; } = RoleType.User;
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             User user = context.HttpContext.Items["User"] as User;
@@ -23,7 +21,7 @@ namespace FactorMaker.Infrastructure.Attributes
                 responseModel.IsSuccessful = false;
                 responseModel.AddErrorMessage(Resources.ErrorMessages.UnauthorizedAccess);
 
-                context.Result = (new BaseApiController()).Result(responseModel);
+                context.Result = new BaseApiController().Result(responseModel);
 
                 return;
             }
@@ -47,23 +45,9 @@ namespace FactorMaker.Infrastructure.Attributes
                 responseModel.IsSuccessful = false;
                 responseModel.AddErrorMessage(Resources.ErrorMessages.UnauthorizedActionAccess);
 
-                context.Result = (new BaseApiController()).Result(responseModel);
+                context.Result = new BaseApiController().Result(responseModel);
                 return;
             }
-
-
-            //if (RoleType == RoleType.Administrator)
-            //{
-            //    if (user.Role != RoleType.Administrator)
-            //    {
-            //        var responseModel = new Result();
-
-            //        responseModel.IsSuccessful = false;
-            //        responseModel.AddErrorMessage(Resources.ErrorMessages.UnauthorizedAccess);
-
-            //        context.Result = new JsonResult(responseModel);
-            //    }
-            //}
         }
     }
 }

@@ -1,12 +1,8 @@
-﻿using Common;
-using FactorMaker.Services.ServicesIntefaces;
+﻿using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Models;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using ViewModels.Authentication;
 using ViewModels.User;
 
 namespace FactorMaker.Controllers

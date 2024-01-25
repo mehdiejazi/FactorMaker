@@ -1,9 +1,10 @@
 ﻿using Common;
 using Data;
+using FactorMaker.Infrastructure.ApplicationSettings;
 using FactorMaker.Services.Base;
 using FactorMaker.Services.ServicesIntefaces;
-using Flurl.Util;
 using Mapster;
+using Microsoft.Extensions.Caching.Memory;
 using Models;
 using Resources;
 using System;
@@ -15,8 +16,12 @@ namespace FactorMaker.Services
 {
     public class UserService : BaseServiceWithDatabase, IUserService
     {
-        public UserService(IUnitOfWork unitOfWork) : base(unitOfWork)
+        protected IMemoryCache MemoryCache { get; }
+        protected AuthSettings AuthSettings { get; }
+        public UserService(IUnitOfWork unitOfWork, IMemoryCache memoryCache, AuthSettings authSettings) : base(unitOfWork)
         {
+            MemoryCache = memoryCache;
+            AuthSettings = authSettings;
         }
         public async Task<Result<UserViewModel>> InsertAsync(UserViewModel viewModel)
         {
@@ -270,5 +275,66 @@ namespace FactorMaker.Services
             }
         }
 
+        public async Task<User> GetByIdForLoginAsync(Guid id)
+        {
+            try
+            {
+                var userCachKey = $"userId-{id}";
+                User foundUser = null;
+
+                if (MemoryCache.TryGetValue(userCachKey, out foundUser))
+                {
+                    return foundUser;
+                }
+                else
+                {
+                    foundUser = await UnitOfWork.UserRepository.GetByIdAsync(id);
+
+                    var catchEntryOption =
+                        new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromMinutes(AuthSettings.RefreshTokenExpiresInMinutes - 10));
+
+                    MemoryCache.Set(userCachKey, foundUser, catchEntryOption);
+
+                    return foundUser;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> SetRefreshTokenAsync(Guid userId, string refreshToken)
+        {
+            try
+            {
+                User user = await UnitOfWork.UserRepository.GetByIdAsync(userId);
+                if (user == null) return false;
+
+                UserRefreshToken userRefreshToken;
+                if (user.RefreshToken == null)
+                {
+                    userRefreshToken = new UserRefreshToken();
+                    user.RefreshToken = userRefreshToken;
+                }
+                else
+                {
+                    userRefreshToken = user.RefreshToken;
+                }
+
+                userRefreshToken.RefreshToken = refreshToken;
+                userRefreshToken.RefreshTokenTimeOut = AuthSettings.RefreshTokenExpiresInMinutes;
+                userRefreshToken.IsValid = true;
+
+                await UnitOfWork.SaveAsync();
+                return true;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

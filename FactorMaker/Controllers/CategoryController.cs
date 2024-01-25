@@ -1,16 +1,13 @@
-﻿using Common;
-using FactorMaker.Infrastructure.Attributes;
-using FactorMaker.Services.ServicesIntefaces;
+﻿using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Models;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using ViewModels.Category;
 
 namespace FactorMaker.Controllers
 {
-    public class CategoryController : BaseApiController
+    public class CategoryController : BaseApiControllerWithUser
     {
         private CategoryController() : base()
         {
@@ -22,7 +19,7 @@ namespace FactorMaker.Controllers
         }
         private ICategoryService CategoryService { get; }
 
-        
+
         [HttpPost("InsertAsync")]
         public async Task<IActionResult> InsertAsync(CategoryViewModel viewModel)
         {
@@ -62,6 +59,21 @@ namespace FactorMaker.Controllers
         public async Task<IActionResult> GetByOwnerIdAsync(Guid ownerId)
         {
             var result = await CategoryService.GetAllAsync();
+            return Result(result);
+        }
+
+        [HttpGet("GetSaleTotalByPriceAsync")]
+        public async Task<IActionResult> GetSaleTotalByPriceAsync(DateTime dtFrom, DateTime dtTo, Guid storeId)
+        {
+            var result = await CategoryService.GetSaleTotalByPriceAsync(User, dtFrom, dtTo, storeId);
+            return Result(result);
+        }
+
+        [HttpGet("GetSaleTotalQuantityAsync")]
+        public async Task<IActionResult> GetSaleTotalQuantityAsync
+            (DateTime dtFrom, DateTime dtTo, Guid storeId)
+        {
+            var result = await CategoryService.GetSaleTotalQuantityAsync(User, dtFrom, dtTo, storeId);
             return Result(result);
         }
 

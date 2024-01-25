@@ -7,7 +7,9 @@ using Models;
 using Resources;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using ViewModels.Category;
 
 namespace FactorMaker.Services
 {
@@ -23,7 +25,7 @@ namespace FactorMaker.Services
             {
                 var result = new Result<CategoryViewModel>();
 
-                var owner = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.OwnerId);
+                var owner = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.Store.OwnerId);
                 if (owner == null)
                 {
                     result.AddErrorMessage(nameof(owner) + " " + ErrorMessages.NotFound);
@@ -31,7 +33,6 @@ namespace FactorMaker.Services
 
                     return result;
                 }
-
 
                 var category = viewModel.Adapt<Category>();
 
@@ -79,7 +80,6 @@ namespace FactorMaker.Services
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -90,7 +90,6 @@ namespace FactorMaker.Services
                 Result result = new Result();
                 result.IsSuccessful = true;
 
-               
 
                 var category = UnitOfWork.CategoryRepository.GetById(id);
                 if (category == null)
@@ -100,10 +99,10 @@ namespace FactorMaker.Services
                 }
 
                 if (result.IsSuccessful == false) return result;
-                
+
                 await UnitOfWork.CategoryRepository.DeleteAsync(category);
                 await UnitOfWork.SaveAsync();
-                
+
                 result.IsSuccessful = true;
 
                 return result;
@@ -120,7 +119,7 @@ namespace FactorMaker.Services
                 var result = new Result<CategoryViewModel>();
                 result.IsSuccessful = true;
 
-                var category = UnitOfWork.CategoryRepository.GetById(id);
+                var category = await UnitOfWork.CategoryRepository.GetByIdAsync(id);
                 if (category == null)
                 {
                     result.AddErrorMessage(typeof(Category) + " " + ErrorMessages.NotFound);
@@ -164,7 +163,7 @@ namespace FactorMaker.Services
             {
                 var result = new Result<ICollection<CategoryViewModel>>();
 
-                var categories = await UnitOfWork.CategoryRepository.GetByOwnerIdAsync(ownerId);
+                var categories = await UnitOfWork.CategoryRepository.GetByStoreIdAsync(ownerId);
 
                 result.Data = categories.Adapt<ICollection<CategoryViewModel>>();
                 result.IsSuccessful = true;
@@ -174,6 +173,78 @@ namespace FactorMaker.Services
             catch (Exception ex)
             {
 
+                throw ex;
+            }
+        }
+        public async Task<Result<ICollection<CategorySaleTotalPriceViewModel>>> GetSaleTotalByPriceAsync
+            (User user,DateTime dtFrom, DateTime dtTo, Guid storeId)
+        {
+            try
+            {
+                var result = new Result<ICollection<CategorySaleTotalPriceViewModel>>();
+                result.IsSuccessful = true;
+
+                var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
+                if (store == null)
+                {
+                    result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var categorySaleTotalPriceDtos = await UnitOfWork.CategoryRepository
+                    .GetSaleTotalByPriceAsync(dtFrom, dtTo, storeId);
+
+                result.Data = categorySaleTotalPriceDtos
+                    .Select(x => new CategorySaleTotalPriceViewModel
+                    {
+                        Category = x.Category.Adapt<CategoryViewModel>(),
+                        TotalPrice = x.TotalPrice
+                    })
+                    .ToList();
+
+                result.IsSuccessful = true;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<Result<ICollection<CategorySaleTotalQuantityViewModel>>> GetSaleTotalQuantityAsync
+            (User user, DateTime dtFrom, DateTime dtTo, Guid storeId)
+        {
+            try
+            {
+                var result = new Result<ICollection<CategorySaleTotalQuantityViewModel>>();
+                result.IsSuccessful = true;
+
+                var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
+                if (store == null)
+                {
+                    result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var categorySaleTotalQuantityDto = await UnitOfWork.CategoryRepository
+                    .GetSaleTotalByQuantityAsync(dtFrom, dtTo, storeId);
+
+                result.Data = categorySaleTotalQuantityDto
+                    .Select(x => new CategorySaleTotalQuantityViewModel
+                    {
+                        Category = x.Category.Adapt<CategoryViewModel>(),
+                        TotalQuantity = x.TotalQuantity
+                    })
+                    .ToList();
+
+                result.IsSuccessful = true;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
                 throw ex;
             }
         }

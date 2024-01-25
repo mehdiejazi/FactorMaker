@@ -1,13 +1,13 @@
 ﻿using System;
 using ViewModels.Base;
-using ViewModels.User;
+using ViewModels.Store;
 
-namespace Models
+namespace ViewModels.Category
 {
     public class CategoryViewModel : ViewModelBase
     {
-        public UserViewModel Owner { get; set; }
-        public Guid OwnerId { get; set; }
+        public StoreViewModel Store { get; set; }
+        public Guid StoreId { get; set; }
         public string Name { get; set; }
     }
 }

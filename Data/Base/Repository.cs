@@ -27,6 +27,27 @@ namespace Data.Base
         internal DbSet<T> DbSet { get; }
         // **********
 
+
+        public virtual void InsertRange(IEnumerable<T> list)
+        {
+            if (list == null)
+            {
+                throw new ArgumentNullException(paramName: nameof(list));
+            }
+
+            DbSet.AddRange(list);
+        }
+
+        public virtual async Task InsertRangeAsync(IEnumerable<T> list)
+        {
+            if (list == null)
+            {
+                throw new ArgumentNullException(paramName: nameof(list));
+            }
+
+            await DbSet.AddRangeAsync(list);
+        }
+
         public virtual void Insert(T entity)
         {
             if (entity == null)

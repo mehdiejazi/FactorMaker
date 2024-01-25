@@ -29,7 +29,8 @@ namespace Data.Repositories
         public async Task<ICollection<ProductSaleTotalQuantityDto>> GetTop10SaleByQuantityAsync(Guid storeId)
         {
             var list = await DatabaseContext.Set<FactorItem>()
-                .Where(fi => 
+                .Where(fi =>
+                    fi.IsDeleted == false &&
                     fi.Factor.StoreId == storeId &&
                     fi.Factor.IsDeleted == false &&
                     fi.Factor.IsClosed)
@@ -50,6 +51,7 @@ namespace Data.Repositories
         {
             var list = await DatabaseContext.Set<FactorItem>()
                 .Where(fi =>
+                    fi.IsDeleted == false &&
                     fi.Factor.StoreId == storeId &&
                     fi.Factor.IsDeleted == false &&
                     fi.Factor.IsClosed)
@@ -71,7 +73,8 @@ namespace Data.Repositories
             (DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
             var list = await DatabaseContext.Set<FactorItem>()
-                .Where(fi => 
+                .Where(fi =>
+                    fi.IsDeleted == false &&
                     fi.Factor.StoreId == storeId &&
                     fi.Factor.IsDeleted == false &&
                     fi.Factor.IsClosed &&
@@ -94,6 +97,7 @@ namespace Data.Repositories
         {
             var list = await DatabaseContext.Set<FactorItem>()
                .Where(fi =>
+                    fi.IsDeleted == false &&
                     fi.Factor.StoreId == storeId &&
                     fi.Factor.IsDeleted == false &&
                     fi.Factor.IsClosed &&

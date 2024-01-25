@@ -223,6 +223,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} must be latin alphanumeric..
+        /// </summary>
+        public static string MustBeLatinAlphanumeric {
+            get {
+                return ResourceManager.GetString("MustBeLatinAlphanumeric", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to National code is invalid..
         /// </summary>
         public static string NationalCodeInvalid {
@@ -246,6 +255,33 @@ namespace Resources {
         public static string PasswordIsEmpty {
             get {
                 return ResourceManager.GetString("PasswordIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RefreshTokenIsExpired.
+        /// </summary>
+        public static string RefreshTokenIsExpired {
+            get {
+                return ResourceManager.GetString("RefreshTokenIsExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RefreshTokenIsInvalid.
+        /// </summary>
+        public static string RefreshTokenIsInvalid {
+            get {
+                return ResourceManager.GetString("RefreshTokenIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RefreshTokenNotFound.
+        /// </summary>
+        public static string RefreshTokenNotFound {
+            get {
+                return ResourceManager.GetString("RefreshTokenNotFound", resourceCulture);
             }
         }
         

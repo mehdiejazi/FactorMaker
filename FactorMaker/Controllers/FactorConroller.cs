@@ -1,12 +1,8 @@
-﻿using Common;
-using Data.DataTransferObjects.Factor;
-using FactorMaker.Infrastructure.Attributes;
+﻿using FactorMaker.Infrastructure.Attributes;
 using FactorMaker.Services.ServicesIntefaces;
 using Infrastructure;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels.Factor;
 
@@ -14,7 +10,7 @@ namespace FactorMaker.Controllers
 {
     [Authorize]
 
-    public class FactorConroller : BaseApiController
+    public class FactorConroller : BaseApiControllerWithUser
     {
         private FactorConroller() : base()
         {
@@ -36,7 +32,7 @@ namespace FactorMaker.Controllers
         [HttpGet("GetByStoreIdAsync")]
         async Task<IActionResult> GetByStoreIdAsync(Guid storeId)
         {
-            var result = await FactorService.GetByStoreIdAsync(storeId);
+            var result = await FactorService.GetByStoreIdAsync(User, storeId);
             return Result(result);
         }
 
@@ -78,28 +74,28 @@ namespace FactorMaker.Controllers
         [HttpGet("GetMonthlyFactorSaleAsync")]
         public async Task<IActionResult> GetMonthlyFactorSaleAsync(int year, Guid storeId)
         {
-            var result = await FactorService.GetMonthlyFactorSaleAsync(year, storeId);
+            var result = await FactorService.GetMonthlyFactorSaleAsync(User, year, storeId);
             return Result(result);
         }
 
         [HttpGet("GetWeeklyFactorSaleAsync")]
         public async Task<IActionResult> GetWeeklyFactorSaleAsync(int year, int month, Guid storeId)
         {
-            var result = await FactorService.GetWeeklyFactorSaleAsync(year, month, storeId);
+            var result = await FactorService.GetWeeklyFactorSaleAsync(User, year, month, storeId);
             return Result(result);
         }
 
         [HttpGet("GetWeeklyFactorSaleAsync")]
         public async Task<IActionResult> GetHourlyFactorSaleAsync(DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
-            var result = await FactorService.GetHourlyFactorSaleAsync(dtFrom, dtTo, storeId);
+            var result = await FactorService.GetHourlyFactorSaleAsync(User, dtFrom, dtTo, storeId);
             return Result(result);
         }
 
         [HttpGet("GetWeekDailyFactorSaleAsync")]
         public async Task<IActionResult> GetWeekDailyFactorSaleAsync(DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
-            var result = await FactorService.GetWeekDailyFactorSaleAsync(dtFrom, dtTo, storeId);
+            var result = await FactorService.GetWeekDailyFactorSaleAsync(User, dtFrom, dtTo, storeId);
             return Result(result);
         }
     }
