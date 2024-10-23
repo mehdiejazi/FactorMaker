@@ -1,7 +1,7 @@
 ﻿using Common;
 using Data;
 using FactorMaker.Services.Base;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Mapster;
 using Models;
 using Resources;
@@ -41,6 +41,7 @@ namespace FactorMaker.Services
                 if (result.IsSuccessful == false) return result;
 
                 var factorItem = viewModel.Adapt<FactorItem>();
+                factorItem.Product = null;
 
                 await UnitOfWork.FactorItemRepository.InsertAsync(factorItem);
                 await UnitOfWork.SaveAsync();
@@ -105,6 +106,7 @@ namespace FactorMaker.Services
             try
             {
                 var result = new Result();
+                result.IsSuccessful = true;
 
                 FactorItem factorItem = await UnitOfWork.FactorItemRepository.GetByIdAsync(id);
                 if (factorItem == null)

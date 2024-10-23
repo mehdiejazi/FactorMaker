@@ -8,7 +8,8 @@ namespace Data.Repositories.RepositoryInterfaces
 {
     public interface IProductRepository : Data.Base.IRepository<Product>
     {
-        Task<ICollection<Product>> GetByOwnerIdCategoryIdAsync(Guid ownerId, Guid categoryId);
+        Task<ICollection<Product>> GetByStoreIdAsync(Guid storeId);
+        Task<ICollection<Product>> GetByStoreIdCategoryIdAsync(Guid storeId, Guid categoryId);
         Task<ICollection<ProductSaleTotalQuantityDto>> GetTop10SaleByQuantityAsync(Guid storeId);
         Task<ICollection<ProductSaleTotalPriceDto>> GetTop10SaleByPriceAsync(Guid storeId);
         Task<ICollection<ProductSaleTotalQuantityDto>> GetSaleTotalByQuantityAsync

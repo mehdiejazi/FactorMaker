@@ -1,7 +1,7 @@
 ﻿using Common;
 using Data;
 using FactorMaker.Services.Base;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Mapster;
 using Models;
 using Resources;
@@ -12,12 +12,11 @@ using ViewModels.Store;
 
 namespace FactorMaker.Services
 {
-    public class StoreService : BaseServiceWithDatabase, IStoreServuce
+    public class StoreService : BaseServiceWithDatabase, IStoreService
     {
         public StoreService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
-
         public async Task<Result> DeleteByIdAsync(Guid id)
         {
             try
@@ -95,7 +94,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<StoreViewModel>> GetByStoreIdAsync(Guid storeId)
+        public async Task<Result<StoreViewModel>> GetByStoreEnglishNameAsync(string storeEnglishName)
         {
             try
             {
@@ -103,7 +102,7 @@ namespace FactorMaker.Services
 
                 result.IsSuccessful = true;
 
-                var store = await UnitOfWork.StoreRepository.GetByStoreIdAsync(storeId);
+                var store = await UnitOfWork.StoreRepository.GetByStoreEnglishNameAsync(storeEnglishName);
                 if (store == null)
                 {
                     result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
@@ -129,6 +128,22 @@ namespace FactorMaker.Services
                 var result = new Result<StoreViewModel>();
 
                 var store = viewModel.Adapt<Store>();
+
+                var owner = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.OwnerId);
+                if (owner == null)
+                {
+                    result.IsSuccessful = false;
+                    result.AddErrorMessage(nameof(viewModel.OwnerId) + " " + ErrorMessages.NotFound);
+                    return result;
+                }
+
+
+                if (await UnitOfWork.StoreRepository.IsExistByStoreEnglishNameAsync(viewModel.StoreEnglishName))
+                {
+                    result.IsSuccessful = false;
+                    result.AddErrorMessage(nameof(viewModel.StoreEnglishName) + " " + ErrorMessages.AlreadyExists);
+                    return result;
+                }
 
                 await UnitOfWork.StoreRepository.InsertAsync(store);
                 await UnitOfWork.SaveAsync();
@@ -157,7 +172,23 @@ namespace FactorMaker.Services
                     result.IsSuccessful = false;
                 }
 
+                var engStore = await UnitOfWork.StoreRepository.GetByStoreEnglishNameAsync(viewModel.StoreEnglishName);
+                if (engStore != null)
+                    if (engStore.Id.Equals(viewModel.Id) == false)
+                    {
+                        result.IsSuccessful = false;
+                        result.AddErrorMessage(nameof(viewModel.StoreEnglishName) + " " + ErrorMessages.AlreadyExists);
+                        return result;
+                    }
+
                 if (result.IsSuccessful == false) return result;
+
+                store.IsDeleted = viewModel.IsDeleted;
+                store.LogoId = viewModel.LogoId;
+                store.Name = viewModel.Name;
+                store.OwnerId = viewModel.OwnerId;
+                store.Url = viewModel.Url;
+                //store.Logo = await UnitOfWork.ImageAssetRepository.GetByIdAsync();
 
                 await UnitOfWork.StoreRepository.UpdateAsync(store);
                 await UnitOfWork.SaveAsync();
@@ -172,5 +203,6 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
     }
 }

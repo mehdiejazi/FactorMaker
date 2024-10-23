@@ -1,7 +1,7 @@
 ﻿using Common;
 using Data;
 using FactorMaker.Services.Base;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Mapster;
 using Models;
 using Resources;
@@ -130,6 +130,32 @@ namespace FactorMaker.Services
                 var result = new Result<ICollection<CustomerViewModel>>();
 
                 var customers = await UnitOfWork.CustomerRepository.GetAllAsync();
+
+                result.Data = customers.Adapt<ICollection<CustomerViewModel>>();
+                result.IsSuccessful = true;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<Result<ICollection<CustomerViewModel>>> GetByStoreIdAsync(User user,Guid storeId)
+        {
+            try
+            {
+                var result = new Result<ICollection<CustomerViewModel>>();
+                result.IsSuccessful = true;
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var customers = await UnitOfWork.CustomerRepository.GetByStoreIdAsync(storeId);
 
                 result.Data = customers.Adapt<ICollection<CustomerViewModel>>();
                 result.IsSuccessful = true;

@@ -1,4 +1,5 @@
-﻿using FactorMaker.Services.ServicesIntefaces;
+﻿using FactorMaker.Infrastructure.Attributes;
+using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -18,7 +19,10 @@ namespace FactorMaker.Controllers
         {
             BlogPostService = blogPostService;
         }
+        
         private IBlogPostService BlogPostService { get; }
+
+        [Authorize]
         [HttpPost("InsertAsync")]
         public async Task<IActionResult> InsertAsync(BlogPostViewModel viewModel)
         {

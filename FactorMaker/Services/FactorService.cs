@@ -2,7 +2,7 @@
 using Data;
 using Data.DataTransferObjects.Factor;
 using FactorMaker.Services.Base;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Mapster;
 using Models;
 using Resources;
@@ -47,6 +47,7 @@ namespace FactorMaker.Services
                 if (result.IsSuccessful == false) return result;
 
                 var factor = viewModel.Adapt<Factor>();
+                factor.Owner = null;
 
                 await UnitOfWork.FactorRepository.InsertAsync(factor);
                 await UnitOfWork.SaveAsync();
@@ -106,6 +107,7 @@ namespace FactorMaker.Services
             try
             {
                 var result = new Result();
+                result.IsSuccessful = true;
 
                 Factor factor = await UnitOfWork.FactorRepository.GetByIdAsync(id);
                 if (factor == null)
@@ -222,7 +224,7 @@ namespace FactorMaker.Services
 
             return result;
         }
-        public async Task<Result<FactorViewModel>> GetFactorWithItemsByIdAsync(Guid id)
+        public async Task<Result<FactorViewModel>> GetFactorWithItemsByIdAsync(User user, Guid id)
         {
             try
             {
@@ -235,8 +237,18 @@ namespace FactorMaker.Services
                     result.AddErrorMessage(typeof(Factor) + " " + ErrorMessages.NotFound);
                     result.IsSuccessful = false;
                 }
+                else if (await HasAccessUserToStore(user, factor.StoreId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                }
 
                 if (result.IsSuccessful == false) return result;
+
+                if (factor.FactorItems != null)
+                    factor.FactorItems = factor.FactorItems.Where(fi => fi.IsDeleted == false).ToList();
+
+                result.Data = factor.Adapt<FactorViewModel>();
 
                 return result;
             }
@@ -245,7 +257,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<FactorViewModel>>> GetByStoreIdAsync(User user,Guid storeId)
+        public async Task<Result<ICollection<FactorViewModel>>> GetByStoreIdAsync(User user, Guid storeId)
         {
             try
             {
@@ -278,7 +290,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<FactorsSummaryViewModel>> GetFactorSummaryByStoreId(User user,Guid storeId)
+        public async Task<Result<FactorsSummaryViewModel>> GetFactorSummaryByStoreId(User user, Guid storeId)
         {
             try
             {
@@ -409,7 +421,7 @@ namespace FactorMaker.Services
             }
         }
         public async Task<Result<ICollection<FactorSaleWeeklyViewModel>>> GetWeeklyFactorSaleAsync
-            (User user,int year, int month, Guid storeId)
+            (User user, int year, int month, Guid storeId)
         {
             try
             {

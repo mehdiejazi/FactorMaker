@@ -3,7 +3,7 @@ using System;
 using System.Threading.Tasks;
 using ViewModels.FactorItem;
 
-namespace FactorMaker.Services.ServicesIntefaces
+namespace FactorMaker.Services.ServiceIntefaces
 {
     public interface IFactorItemService
     {

@@ -1,6 +1,7 @@
 ﻿using Common;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 
 namespace FactorMaker.Infrastructure.Attributes
 {
@@ -8,17 +9,23 @@ namespace FactorMaker.Infrastructure.Attributes
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var controller = (BaseApiController)context.Controller;
-            if (controller.ModelState.IsValid == false)
+            var controller = context.Controller as BaseApiController;
+            if (controller != null)
             {
-                var response = new Result();
+                if (!controller.ModelState.IsValid)
+                {
+                    var response = new Result();
+                    response.IsSuccessful = false;
+                    response.AddRangeErrorMessages(controller.ModelState.GetErrorMessages());
 
-                response.IsSuccessful = false;
-                response.AddRangeErrorMessages(controller.ModelState.GetErrorMessages());
-
-                context.Result = controller.Result(response);
-
-                return;
+                    context.Result = controller.Result(response);
+                    return;
+                }
+            }
+            else
+            {
+                // Optional: handle the case when the controller is not a BaseApiController
+                throw new InvalidOperationException("The controller must inherit from BaseApiController to use ActionValidator.");
             }
 
         }

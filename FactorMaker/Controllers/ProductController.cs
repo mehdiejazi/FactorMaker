@@ -1,4 +1,4 @@
-﻿using FactorMaker.Services.ServicesIntefaces;
+﻿using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -45,7 +45,6 @@ namespace FactorMaker.Controllers
         public async Task<IActionResult> InsertAsync(ProductViewModel viewModel)
         {
             var result = await ProductService.InsertAsync(viewModel);
-            viewModel.OwnerId = User.Id;
             return Result(result);
         }
 
@@ -53,6 +52,20 @@ namespace FactorMaker.Controllers
         public async Task<IActionResult> UpdateAsync(ProductViewModel viewModel)
         {
             var result = await ProductService.UpdateAsync(viewModel);
+            return Result(result);
+        }
+
+        [HttpGet("GetByStoreIdAsync")]
+        public async Task<IActionResult> GetByStoreIdAsync(Guid storeId)
+        {
+           var result = await ProductService.GetByStoreIdAsync(storeId);
+            return Result(result);
+        }
+
+        [HttpGet("GetByStoreIdCategoryIdAsync")]
+        public async Task<IActionResult> GetByStoreIdCategoryIdAsync(Guid storeId,Guid categoryId)
+        {
+            var result = await ProductService.GetByStoreIdCategoryIdAsync(storeId,categoryId);
             return Result(result);
         }
 

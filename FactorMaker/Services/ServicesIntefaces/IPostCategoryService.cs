@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels.PostCategory;
 
-namespace FactorMaker.Services.ServicesIntefaces
+namespace FactorMaker.Services.ServiceIntefaces
 {
     public interface IPostCategoryService
     {

@@ -1,7 +1,7 @@
 ﻿using Common;
 using Data;
 using FactorMaker.Services.Base;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Mapster;
 using Models;
 using Resources;

@@ -1,15 +1,14 @@
-﻿using Models;
-using System;
+﻿using System;
 using ViewModels.Base;
 using ViewModels.Category;
-using ViewModels.User;
+using ViewModels.Store;
 
 namespace ViewModels.Product
 {
     public class ProductViewModel : ViewModelBase
     {
-        public UserViewModel Owner { get; set; }
-        public Guid OwnerId { get; set; }
+       public StoreViewModel Store { get; set; }
+        public Guid StoreId { get; set; }
         public string Name { get; set; }
         public long Price { get; set; }
         public CategoryViewModel Category { get; set; }

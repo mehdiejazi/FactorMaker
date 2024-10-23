@@ -1,13 +1,10 @@
 ﻿using Common;
-using Mapster;
-using Models;
-using Resources;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels.ActionPermission;
 
-namespace FactorMaker.Services.ServicesIntefaces
+namespace FactorMaker.Services.ServiceIntefaces
 {
     public interface IActionPermissionService
     {

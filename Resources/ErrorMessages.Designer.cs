@@ -61,6 +61,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Already exists..
+        /// </summary>
+        public static string AlreadyExists {
+            get {
+                return ResourceManager.GetString("AlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ArgumentIs is null.
         /// </summary>
         public static string ArgumentIsNull {
@@ -237,6 +246,15 @@ namespace Resources {
         public static string NationalCodeInvalid {
             get {
                 return ResourceManager.GetString("NationalCodeInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Defaul role is not defined..
+        /// </summary>
+        public static string NoDefaultRole {
+            get {
+                return ResourceManager.GetString("NoDefaultRole", resourceCulture);
             }
         }
         

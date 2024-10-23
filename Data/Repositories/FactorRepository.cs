@@ -54,6 +54,7 @@ namespace Data.Repositories
         {
             var result = await DbSet
                             .Where(current => current.Id.Equals(id) && current.IsDeleted == false)
+
                             .Include(x => x.FactorItems)
                                 .ThenInclude(i => i.Product)
                             .Include(x => x.Owner)

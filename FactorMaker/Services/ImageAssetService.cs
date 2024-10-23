@@ -198,6 +198,9 @@ namespace FactorMaker.Services
 
                 string fileNamFullPath = _uploadImageDir + "/" + fileName;
 
+                if (Directory.Exists(_uploadImageDir) == false)
+                    Directory.CreateDirectory(_uploadImageDir);
+
                 if (File.Exists(fileNamFullPath))
                 {
                     Random rnd = new Random();

@@ -20,7 +20,8 @@ namespace Data.Repositories
         public async Task<ICollection<Category>> GetByStoreIdAsync(Guid storeId)
         {
             var list = await DbSet
-                .Where(u => u.Store.Id.Equals(storeId))
+                .Where(u => u.Store.Id.Equals(storeId) &&
+                            u.IsDeleted == false)
                 .ToListAsync();
                 
             return list;

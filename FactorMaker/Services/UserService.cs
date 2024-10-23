@@ -2,27 +2,29 @@
 using Data;
 using FactorMaker.Infrastructure.ApplicationSettings;
 using FactorMaker.Services.Base;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Mapster;
 using Microsoft.Extensions.Caching.Memory;
 using Models;
 using Resources;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using ViewModels.Store;
 using ViewModels.User;
 
 namespace FactorMaker.Services
 {
     public class UserService : BaseServiceWithDatabase, IUserService
     {
-        protected IMemoryCache MemoryCache { get; }
-        protected AuthSettings AuthSettings { get; }
         public UserService(IUnitOfWork unitOfWork, IMemoryCache memoryCache, AuthSettings authSettings) : base(unitOfWork)
         {
             MemoryCache = memoryCache;
             AuthSettings = authSettings;
         }
+        protected IMemoryCache MemoryCache { get; }
+        protected AuthSettings AuthSettings { get; }
         public async Task<Result<UserViewModel>> InsertAsync(UserViewModel viewModel)
         {
             try
@@ -30,7 +32,7 @@ namespace FactorMaker.Services
                 var result = new Result<UserViewModel>();
                 result.IsSuccessful = true;
 
-                
+
                 if (await UnitOfWork.UserRepository.IsExistByUsernameAsync(viewModel.UserName))
                 {
                     result.IsSuccessful = false;
@@ -50,7 +52,7 @@ namespace FactorMaker.Services
 
                 var user = viewModel.Adapt<User>();
 
-                user.Password = Utilities.HashSHA1(user.Password);
+                //user.Password = Utilities.HashSHA1(user.Password);
 
                 await UnitOfWork.UserRepository.InsertAsync(user);
                 await UnitOfWork.SaveAsync();
@@ -87,14 +89,35 @@ namespace FactorMaker.Services
                     result.IsSuccessful = false;
                 }
 
+                ImageAsset avatar = await UnitOfWork.ImageAssetRepository.GetByIdAsync(viewModel.AvatarId);
+
                 if (result.IsSuccessful == false) return result;
 
                 user.FirstName = viewModel.FirstName;
                 user.LastName = viewModel.LastName;
                 user.NationalCode = viewModel.NationalCode;
                 user.UserName = viewModel.UserName;
-                user.Password = Utilities.HashSHA1(viewModel.Password);
                 user.IsActive = viewModel.IsActive;
+                user.EmailIsVerified = viewModel.EmailIsVerified;
+                user.IsForcedChangePassword = viewModel.IsForcedChangePassword;
+                if (avatar != null)
+                    user.Avatar = avatar;
+
+                foreach (StoreViewModel vmstore in viewModel.Stores)
+                {
+                    if (user.Stores.Where(i => i.Id == vmstore.Id).Count() == 0)
+                        user.Stores.Add(vmstore.Adapt<Store>());
+                }
+
+                for (int i = user.Stores.Count - 1; i >= 0; i--)
+                {
+                    if (viewModel.Stores.Where(x => x.Id == user.Stores.ToList()[i].Id).Count() == 0)
+                    {
+                        var store = user.Stores.ToList()[i];
+                        user.Stores.Remove(store);
+                    }
+                }
+
 
                 await UnitOfWork.UserRepository.UpdateAsync(user);
                 await UnitOfWork.SaveAsync();
@@ -225,47 +248,37 @@ namespace FactorMaker.Services
             {
                 var result = new Result<UserViewModel>();
 
-                var user = await UnitOfWork.UserRepository.GetByUserNameAsync(viewModel.UserName);
-                if (user != null)
+                var defaultRole = await UnitOfWork.RoleRepository.GetDefaultRoleAsync();
+                if (defaultRole == null)
+                {
+                    result.IsSuccessful = false;
+                    result.AddErrorMessage(ErrorMessages.NoDefaultRole);
+                    return result;
+                }
+
+
+                if (await UnitOfWork.UserRepository.IsExistByUsernameAsync(viewModel.UserName))
                 {
                     result.IsSuccessful = false;
                     result.AddErrorMessage(ErrorMessages.UsernameAlreadyExists);
                     return result;
                 }
 
-                user = new User()
+                var user = new User()
                 {
                     FirstName = viewModel.FirstName,
                     LastName = viewModel.LastName,
                     UserName = viewModel.UserName,
-                    Password = Utilities.HashSHA1(viewModel.Password)
+                    Password = Utilities.HashSHA1(viewModel.Password),
+                    RoleId = defaultRole.Id,
+                    IsActive = true,
                 };
 
-                var insertResult = await InsertAsync(user.Adapt<UserViewModel>());
+                await UnitOfWork.UserRepository.InsertAsync(user);
+                await UnitOfWork.SaveAsync();
 
-                foreach (var item in insertResult.InformationMessages)
-                {
-                    result.AddInformationMessage(item);
-                }
-                foreach (var item in insertResult.WarningMessages)
-                {
-                    result.AddInformationMessage(item);
-                }
-
-                if (insertResult.IsSuccessful == false)
-                {
-                    foreach (var item in insertResult.ErrorMessages)
-                    {
-                        result.AddErrorMessage(item);
-                    }
-                    result.IsSuccessful = false;
-                }
-                else
-                {
-                    result.Data = insertResult.Data;
-                    result.IsSuccessful = true;
-                }
-
+                result.Data = user.Adapt<UserViewModel>();
+                result.IsSuccessful = true;
 
                 return result;
             }
@@ -274,7 +287,6 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
         public async Task<User> GetByIdForLoginAsync(Guid id)
         {
             try
@@ -304,7 +316,6 @@ namespace FactorMaker.Services
                 throw;
             }
         }
-
         public async Task<bool> SetRefreshTokenAsync(Guid userId, string refreshToken)
         {
             try
@@ -333,6 +344,40 @@ namespace FactorMaker.Services
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+        public async Task<Result<UserViewModel>> ChangePasswordAsync(ChangePasswordViewModel viewModel)
+        {
+            try
+            {
+                var result = new Result<UserViewModel>();
+                result.IsSuccessful = true;
+
+                User user = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.UserId);
+                if (user == null)
+                {
+                    result.AddErrorMessage(typeof(User) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
+
+                if (result.IsSuccessful == false) return result;
+
+                user.Password = Utilities.HashSHA1(viewModel.Password);
+                user.IsForcedChangePassword = false;
+
+                await UnitOfWork.UserRepository.UpdateAsync(user);
+                await UnitOfWork.SaveAsync();
+
+                result.Data = user.Adapt<UserViewModel>();
+                result.IsSuccessful = true;
+
+                return result;
+
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }

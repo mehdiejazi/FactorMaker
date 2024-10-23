@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+﻿ using FluentValidation;
 using Resources;
 using ViewModels.Authentication;
 

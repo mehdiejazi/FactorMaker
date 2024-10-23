@@ -3,7 +3,7 @@ using Data;
 using FactorMaker.Infrastructure;
 using FactorMaker.Infrastructure.ApplicationSettings;
 using FactorMaker.Services.Base;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Mapster;
 using Models;
 using Resources;
@@ -18,7 +18,7 @@ namespace FactorMaker.Services
     {
         protected AuthSettings AuthSettings { get; }
         protected IUserService UserService { get; }
-        public AuthService(IUnitOfWork unitOfWork, AuthSettings authSettings, UserService userService) : base(unitOfWork)
+        public AuthService(IUnitOfWork unitOfWork, AuthSettings authSettings, IUserService userService) : base(unitOfWork)
         {
             AuthSettings = authSettings;
             UserService = userService;
@@ -74,7 +74,7 @@ namespace FactorMaker.Services
             string token = JwtUtility.GenerateJwtToken(foundUser, AuthSettings);
 
             result.Data = new LoginResponseViewModel(foundUser.Adapt<UserViewModel>(), token);
-            result.IsSuccessful = false;
+            result.IsSuccessful = true;
 
             return result;
         }

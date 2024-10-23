@@ -5,7 +5,7 @@ using System;
 using ViewModels.Category;
 using Models;
 
-namespace FactorMaker.Services.ServicesIntefaces
+namespace FactorMaker.Services.ServiceIntefaces
 {
     public interface ICategoryService
     {
@@ -14,7 +14,7 @@ namespace FactorMaker.Services.ServicesIntefaces
         Task<Result> DeleteByIdAsync(Guid id);
         Task<Result<CategoryViewModel>> GetByIdAsync(Guid id);
         Task<Result<ICollection<CategoryViewModel>>> GetAllAsync();
-        Task<Result<ICollection<CategoryViewModel>>> GetByOwnerIdAsync(Guid ownerId);
+        Task<Result<ICollection<CategoryViewModel>>> GetByStoreIdAsync(Guid storeId);
         Task<Result<ICollection<CategorySaleTotalPriceViewModel>>> GetSaleTotalByPriceAsync
             (User user,DateTime dtFrom, DateTime dtTo, Guid storeId);
         Task<Result<ICollection<CategorySaleTotalQuantityViewModel>>> GetSaleTotalQuantityAsync

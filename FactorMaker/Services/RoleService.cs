@@ -1,7 +1,7 @@
 ﻿using Common;
 using Data;
 using FactorMaker.Services.Base;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Mapster;
 using Models;
 using Resources;
@@ -25,6 +25,8 @@ namespace FactorMaker.Services
                 var result = new Result<RoleViewModel>();
 
                 var role = viewModel.Adapt<Role>();
+
+
 
                 await UnitOfWork.RoleRepository.InsertAsync(role);
                 await UnitOfWork.SaveAsync();
@@ -106,7 +108,7 @@ namespace FactorMaker.Services
                 Role role = await UnitOfWork.RoleRepository.GetByIdAsync(id);
                 if (role == null)
                 {
-                    throw new NullReferenceException(typeof(Role) + " " + ErrorMessages.NotFound);
+                    result.AddErrorMessage(typeof(Role) + " " + ErrorMessages.NotFound);
                     result.IsSuccessful = false;
                 }
 
@@ -138,6 +140,54 @@ namespace FactorMaker.Services
             catch (Exception ex)
             {
 
+                throw ex;
+            }
+        }
+
+        public async Task<Result<RoleViewModel>> SetDefaultRoleAsync(Guid id)
+        {
+            try
+            {
+                var result = new Result<RoleViewModel>();
+                result.IsSuccessful = true;
+
+                var oldDefaultRole = await UnitOfWork.RoleRepository.GetDefaultRoleAsync();
+                if (oldDefaultRole != null)
+                {
+                    oldDefaultRole.IsDefault = false;
+                    await UnitOfWork.RoleRepository.UpdateAsync(oldDefaultRole);
+                }
+
+                var newDefaultRole = await UnitOfWork.RoleRepository.GetByIdAsync(id);
+                newDefaultRole.IsDefault = true;
+                await UnitOfWork.RoleRepository.UpdateAsync(newDefaultRole);
+
+                await UnitOfWork.SaveAsync();
+
+                result.Data = newDefaultRole.Adapt<RoleViewModel>();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Result<RoleViewModel>> GetDefaultRoleAsync()
+        {
+            try
+            {
+                var result = new Result<RoleViewModel>();
+                result.IsSuccessful = true;
+
+                var defaultRole = await UnitOfWork.RoleRepository.GetDefaultRoleAsync();
+
+                result.Data = defaultRole.Adapt<RoleViewModel>();
+                return result;
+            }
+            catch (Exception ex)
+            {
                 throw ex;
             }
         }

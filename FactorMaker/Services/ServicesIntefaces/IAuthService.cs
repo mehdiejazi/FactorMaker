@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using ViewModels.Authentication;
 using ViewModels.User;
 
-namespace FactorMaker.Services.ServicesIntefaces
+namespace FactorMaker.Services.ServiceIntefaces
 {
     public interface IAuthService
     {

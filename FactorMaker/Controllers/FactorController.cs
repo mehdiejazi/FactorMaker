@@ -1,5 +1,5 @@
 ﻿using FactorMaker.Infrastructure.Attributes;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -8,29 +8,27 @@ using ViewModels.Factor;
 
 namespace FactorMaker.Controllers
 {
-    [Authorize]
-
-    public class FactorConroller : BaseApiControllerWithUser
+    public class FactorController : BaseApiControllerWithUser
     {
-        private FactorConroller() : base()
+        private FactorController() : base()
         {
 
         }
-        public FactorConroller(IFactorService factorService)
+        public FactorController(IFactorService factorService)
         {
             FactorService = factorService;
         }
         private IFactorService FactorService { get; }
 
         [HttpGet("GetByOwnerIdAsync")]
-        async Task<IActionResult> GetByOwnerIdAsync(Guid ownerId)
+        public async Task<IActionResult> GetByOwnerIdAsync(Guid ownerId)
         {
             var result = await FactorService.GetByOwnerIdAsync(ownerId);
             return Result(result);
         }
 
         [HttpGet("GetByStoreIdAsync")]
-        async Task<IActionResult> GetByStoreIdAsync(Guid storeId)
+       public async Task<IActionResult> GetByStoreIdAsync(Guid storeId)
         {
             var result = await FactorService.GetByStoreIdAsync(User, storeId);
             return Result(result);
@@ -47,6 +45,13 @@ namespace FactorMaker.Controllers
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var result = await FactorService.GetByIdAsync(id);
+            return Result(result);
+        }
+
+        [HttpGet("GetFactorWithItemsByIdAsync")]
+        public async Task<IActionResult> GetFactorWithItemsByIdAsync(Guid id)
+        {
+            var result = await FactorService.GetFactorWithItemsByIdAsync(User, id);
             return Result(result);
         }
 

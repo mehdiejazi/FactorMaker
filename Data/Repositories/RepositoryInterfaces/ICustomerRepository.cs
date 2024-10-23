@@ -9,5 +9,6 @@ namespace Data.Repositories.RepositoryInterfaces
     {
         Task<ICollection<Customer>> GetTop10CustomersByQuantityAsync(Guid storeId);
         Task<ICollection<Customer>> GetTop10CustomersByPriceAsync(Guid storeId);
+        Task<ICollection<Customer>> GetByStoreIdAsync(Guid storeId);
     }
 }

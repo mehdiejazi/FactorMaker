@@ -5,8 +5,8 @@ namespace Models
 {
     public class Product : EntityBase
     {
-        public User Owner;
-        public Guid OwnerId;
+        public Store Store { get; set; }
+        public Guid StoreId { get; set; }
         public string Name { get; set; }
         public long Price { get; set; }
         public Category Category { get; set; }

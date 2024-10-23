@@ -16,5 +16,6 @@ namespace Data
         IImageAssetRepository ImageAssetRepository { get; }
         IBlogPostRepository BlogPostRepository { get; }
         IPostCategoryRepository PostCategoryRepository { get; }
+        IRoleActionPermissionRepository RoleActionPermissionRepository {get;}
     }
 }

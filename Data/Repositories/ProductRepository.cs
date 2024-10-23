@@ -1,13 +1,12 @@
-﻿using Data.Repositories.Base;
+﻿using Data.DataTransferObjects.Product;
+using Data.Repositories.Base;
 using Data.Repositories.RepositoryInterfaces;
+using Microsoft.EntityFrameworkCore;
 using Models;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
-using Data.DataTransferObjects.Product;
 
 namespace Data.Repositories
 {
@@ -16,11 +15,27 @@ namespace Data.Repositories
         internal ProductRepository(DatabaseContext databaseContext) : base(databaseContext)
         {
         }
-
-        public async Task<ICollection<Product>> GetByOwnerIdCategoryIdAsync(Guid ownerId, Guid categoryId)
+        public async Task<ICollection<Product>> GetByStoreIdAsync(Guid storeId)
         {
             var list = await DbSet
-                .Where(u => u.Owner.Id.Equals(ownerId) && u.Category.Id.Equals(categoryId))
+                .Where(u => 
+                u.StoreId == storeId && 
+                u.IsDeleted == false)
+                .Include(p=>p.Category)
+                .OrderBy(x => x.InsertDateTime)
+                .ToListAsync();
+
+            return list;
+        }
+        public async Task<ICollection<Product>> GetByStoreIdCategoryIdAsync(Guid storeId, Guid categoryId)
+        {
+            var list = await DbSet
+                .Where(u => 
+                u.StoreId.Equals(storeId) && 
+                u.Category.Id.Equals(categoryId) && 
+                u.IsDeleted == false)
+                .Include(p => p.Category)
+                .OrderBy(x => x.InsertDateTime)
                 .ToListAsync();
 
             return list;

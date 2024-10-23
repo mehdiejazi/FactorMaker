@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels.Store;
 
-namespace FactorMaker.Services.ServicesIntefaces
+namespace FactorMaker.Services.ServiceIntefaces
 {
-    public interface IStoreServuce
+    public interface IStoreService
     {
         Task<Result<StoreViewModel>> InsertAsync(StoreViewModel viewModel);
         Task<Result<StoreViewModel>> UpdateAsync(StoreViewModel viewModel);
         Task<Result> DeleteByIdAsync(Guid id);
         Task<Result<StoreViewModel>> GetByIdAsync(Guid id);
         Task<Result<ICollection<StoreViewModel>>> GetByOwnerIdAsync(Guid ownerId);
-        Task<Result<StoreViewModel>> GetByStoreIdAsync(Guid storeId);
+        Task<Result<StoreViewModel>> GetByStoreEnglishNameAsync(string storeEnglishName);
     }
 }

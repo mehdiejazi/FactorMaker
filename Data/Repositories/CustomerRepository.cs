@@ -16,6 +16,15 @@ namespace Data.Repositories
 
         }
 
+        public async Task<ICollection<Customer>> GetByStoreIdAsync(Guid storeId)
+        {
+            var list = await DbSet
+                .Where(s => s.StoreId.Equals(storeId) && s.IsDeleted == false)
+                .ToListAsync();
+
+            return list;
+        }
+
         public async Task<ICollection<Customer>> GetTop10CustomersByQuantityAsync(Guid storeId)
         {
             var list = await DatabaseContext.Set<Factor>()

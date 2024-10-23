@@ -1,6 +1,5 @@
 ﻿using System;
 using ViewModels.Base;
-using ViewModels.Factor;
 using ViewModels.Product;
 
 namespace ViewModels.FactorItem
@@ -8,7 +7,7 @@ namespace ViewModels.FactorItem
     public class FactorItemViewModel : ViewModelBase
     {
         public string Description { get; set; }
-        public FactorViewModel Factor { get; set; }
+        //public FactorViewModel Factor { get; set; }
         public Guid FactorId { get; set; }
         public ProductViewModel Product { get; set; }
         public Guid ProductId { get; set; }

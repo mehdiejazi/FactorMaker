@@ -1,4 +1,4 @@
-﻿using FactorMaker.Services.ServicesIntefaces;
+﻿using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -55,10 +55,10 @@ namespace FactorMaker.Controllers
             return Result(result);
         }
 
-        [HttpGet("GetByOwnerIdAsync")]
-        public async Task<IActionResult> GetByOwnerIdAsync(Guid ownerId)
+        [HttpGet("GetByStoreIdAsync")]
+        public async Task<IActionResult> GetByStoreIdAsync(Guid storeId)
         {
-            var result = await CategoryService.GetAllAsync();
+            var result = await CategoryService.GetByStoreIdAsync(storeId);
             return Result(result);
         }
 

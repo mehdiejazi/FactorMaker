@@ -7,16 +7,11 @@ namespace Data.Repositories.RepositoryInterfaces
 {
     public interface IUserRepository : Data.Base.IRepository<User>
     {
-        User GetByUserName(string userName);
         Task<User> GetByUserNameAsync(string userName);
-        ICollection<User> GetActive();
         Task<ICollection<User>> GetActiveAsync();
-        ICollection<User> GetInActive();
         Task<ICollection<User>> GetInActiveAsync();
         Task<bool> IsExistByUsernameAsync(string userName);
         Task<bool> HasAccessToStoreAsync(Guid id, Guid storeId);
         Task<User> GetByRefreshTokenAsync(string refreshToken);
-
-
     }
 }

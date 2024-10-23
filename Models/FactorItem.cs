@@ -8,7 +8,7 @@ namespace Models
         public string Description { get; set; }
         public Factor Factor { get; set; }
         public Guid FactorId { get; set; }
-        public Product Product { get; set; }
+        public virtual Product Product { get; set; }
         public Guid ProductId { get; set; }
         public int Quantity { get; set; }
         public int OffPercent { get; set; }

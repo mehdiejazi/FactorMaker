@@ -12,12 +12,11 @@ namespace FactorMaker.Services.Base
         }
         protected Data.IUnitOfWork UnitOfWork { get; }
 
-        protected async Task<bool> HasAccessUserToStore(User user,Guid storeId)
+        protected async Task<bool> HasAccessUserToStore(User user, Guid storeId)
         {
-            if (user.Role.Name == "Programmer")
-            {
-                return true;
-            }
+            if (user == null) return false;
+            if (user.Role.Name == "Programmer") return true;
+
 
             return await UnitOfWork.UserRepository.HasAccessToStoreAsync(user.Id, storeId);
         }

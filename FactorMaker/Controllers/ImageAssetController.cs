@@ -23,45 +23,45 @@ namespace FactorMaker.Controllers
         private IImageAssetService ImageAssetService { get; set; }
 
         [HttpGet("DeleteByIdAsync")]
-        public Task<Result> DeleteByIdAsync(Guid id)
+        public async Task<IActionResult> DeleteByIdAsync(Guid id)
         {
-            var result = ImageAssetService.DeleteByIdUserIdAsync(id, User.Id);
-            return result;
+            var result = await ImageAssetService.DeleteByIdUserIdAsync(id, User.Id);
+            return Result(result);
         }
 
         [HttpGet("GetAsync")]
-        public Task<Result<ICollection<ImageAssetViewModel>>> GetAsync()
+        public async Task<IActionResult> GetAsync()
         {
-            var result = ImageAssetService.GetByUserIdAsync(User.Id);
-            return result;
+            var result = await ImageAssetService.GetByUserIdAsync(User.Id);
+            return Result(result);
         }
 
         [HttpGet("GetDeletedAsync")]
-        public Task<Result<ICollection<ImageAssetViewModel>>> GetDeletedAsync()
+        public async Task<IActionResult> GetDeletedAsync()
         {
-            var result = ImageAssetService.GetDeletedByUserIdAsync(User.Id);
-            return result;
+            var result = await ImageAssetService.GetDeletedByUserIdAsync(User.Id);
+            return Result(result);
         }
 
         [HttpGet("GetNotDeletedAsync")]
-        public Task<Result<ICollection<ImageAssetViewModel>>> GetNotDeletedAsync()
+        public async Task<IActionResult> GetNotDeletedAsync()
         {
-            var result = ImageAssetService.GetNotDeletedByUserIdAsync(User.Id);
-            return result;
+            var result = await ImageAssetService.GetNotDeletedByUserIdAsync(User.Id);
+            return Result(result);
         }
 
         [HttpGet("GetByIdAsync")]
-        public Task<Result<ImageAssetViewModel>> GetByIdAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            var result = ImageAssetService.GetByIdAsync(id);
-            return result;
+            var result = await ImageAssetService.GetByIdAsync(id);
+            return Result(result);
         }
 
         [HttpPost("InsertAsync")]
-        public Task<Result<ImageAssetViewModel>> InsertAsync(IFormFile imageDataFile,string fileName)
+        public async Task<IActionResult> InsertAsync(IFormFile imageDataFile,string fileName)
         {
-            var result = ImageAssetService.InsertAsync(imageDataFile, fileName, User.Id);
-            return result;
+            var result = await ImageAssetService.InsertAsync(imageDataFile, fileName, User.Id);
+            return Result(result);
         }
         
     }

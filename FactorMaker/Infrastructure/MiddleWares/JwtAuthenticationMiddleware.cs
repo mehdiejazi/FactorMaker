@@ -1,5 +1,5 @@
 ﻿using FactorMaker.Infrastructure.ApplicationSettings;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System.Linq;

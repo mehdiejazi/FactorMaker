@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels.Role;
 
-namespace FactorMaker.Services.ServicesIntefaces
+namespace FactorMaker.Services.ServiceIntefaces
 {
     public interface IRoleService
     {
@@ -13,5 +13,8 @@ namespace FactorMaker.Services.ServicesIntefaces
         Task<Result> DeleteByIdAsync(Guid id);
         Task<Result<RoleViewModel>> GetByIdAsync(Guid id);
         Task<Result<ICollection<RoleViewModel>>> GetAllAsync();
+        Task<Result<RoleViewModel>> SetDefaultRoleAsync(Guid id);
+        Task<Result<RoleViewModel>> GetDefaultRoleAsync();
+
     }
 }

@@ -9,6 +9,21 @@ namespace Data
         {
         }
 
+        private IRoleActionPermissionRepository _roleActionPermissionRepository;
+        public IRoleActionPermissionRepository RoleActionPermissionRepository
+        {
+            get
+            {
+                if(_roleActionPermissionRepository == null)
+                {
+                    _roleActionPermissionRepository =
+                        new RoleActionPermissionRepository(DatabaseContext);
+                }
+
+                return _roleActionPermissionRepository;
+            }
+        }
+
         private IImageAssetRepository _imageAssetRepository;
         public IImageAssetRepository ImageAssetRepository
         {

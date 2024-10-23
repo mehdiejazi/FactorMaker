@@ -5,8 +5,8 @@ namespace Models
 {
     public class Customer : PersonBase
     {
-        public User Owner { get; set; }
-        public Guid OwnerId { get; set; }
+        public Store Store { get; set; }
+        public Guid StoreId { get; set; }
     }
 
 }

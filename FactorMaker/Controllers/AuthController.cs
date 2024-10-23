@@ -1,5 +1,5 @@
 ﻿using Common;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -8,22 +8,20 @@ using ViewModels.User;
 
 namespace FactorMaker.Controllers
 {
-    public class AuthConroller : BaseApiController
+    public class AuthController : BaseApiController
     {
-        private AuthConroller() : base()
+        private AuthController() : base()
         {
 
         }
-        public AuthConroller(IAuthService authService,IUserService userService)
+        public AuthController(IAuthService authService)
         {
             AuthService = authService;
-            UserService = userService;
         }
         private IAuthService AuthService { get; }
-        private IUserService UserService { get; }
 
         [HttpPost("LoginAsync")]
-        public async Task<IActionResult> LoginAsync(LoginRequestViewModel loginRequest)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginRequestViewModel loginRequest)
         {
             var result = await AuthService.LoginAsync(loginRequest);
             return Result(result);

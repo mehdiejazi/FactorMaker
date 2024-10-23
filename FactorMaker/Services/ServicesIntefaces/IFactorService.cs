@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels.Factor;
 
-namespace FactorMaker.Services.ServicesIntefaces
+namespace FactorMaker.Services.ServiceIntefaces
 {
     public interface IFactorService
     {
@@ -16,7 +16,7 @@ namespace FactorMaker.Services.ServicesIntefaces
         Task<Result<FactorViewModel>> GetByIdAsync(Guid id);
         Task<Result<ICollection<FactorViewModel>>> GetByOwnerIdAsync(Guid ownerId);
         Task<Result<TotalFactorViewModel>> CalculateFactorByIdAsync(Guid id);
-        Task<Result<FactorViewModel>> GetFactorWithItemsByIdAsync(Guid id);
+        Task<Result<FactorViewModel>> GetFactorWithItemsByIdAsync(User user, Guid id);
         Task<Result<ICollection<FactorViewModel>>> GetByStoreIdAsync(User user,Guid storeId);
         Task<Result<ICollection<FactorSaleMonthlyViewModel>>> GetMonthlyFactorSaleAsync(User user,int year, Guid storeId);
         Task<Result<ICollection<FactorSaleWeeklyViewModel>>> GetWeeklyFactorSaleAsync

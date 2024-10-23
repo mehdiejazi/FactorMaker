@@ -24,6 +24,8 @@ namespace Data.Repositories.Base
 
             foreach (var entity in list)
             {
+                entity.Id = Guid.NewGuid();
+                entity.IsDeleted = false;
                 entity.InsertDateTime = Utility.Now;
             }
 
@@ -39,6 +41,8 @@ namespace Data.Repositories.Base
 
             foreach (var entity in list)
             {
+                entity.Id = Guid.NewGuid();
+                entity.IsDeleted = false;
                 entity.InsertDateTime = Utility.Now;
             }
 
@@ -53,6 +57,8 @@ namespace Data.Repositories.Base
                 throw new ArgumentNullException(paramName: nameof(entity));
             }
 
+            entity.Id = Guid.NewGuid();
+            entity.IsDeleted = false;
             entity.InsertDateTime = Utility.Now;
 
             DbSet.Add(entity);
@@ -90,6 +96,8 @@ namespace Data.Repositories.Base
                 throw new ArgumentNullException(paramName: nameof(entity));
             }
 
+            entity.Id = Guid.NewGuid();
+            entity.IsDeleted = false;
             entity.InsertDateTime = Utility.Now;
 
             await DbSet.AddAsync(entity);

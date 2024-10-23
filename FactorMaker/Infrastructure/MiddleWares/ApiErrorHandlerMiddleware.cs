@@ -41,7 +41,7 @@ namespace Infrastructure.Middlewares
 
                 var result = JsonConvert.SerializeObject(responseModel, settings);
 
-                response.StatusCode = StatusCodes.Status500InternalServerError;
+                //response.StatusCode = StatusCodes.Status500InternalServerError;
                 await response.WriteAsync(result);
             }
         }

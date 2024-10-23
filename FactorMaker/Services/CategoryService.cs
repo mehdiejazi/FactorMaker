@@ -1,7 +1,7 @@
 ﻿using Common;
 using Data;
 using FactorMaker.Services.Base;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Mapster;
 using Models;
 using Resources;
@@ -25,10 +25,10 @@ namespace FactorMaker.Services
             {
                 var result = new Result<CategoryViewModel>();
 
-                var owner = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.Store.OwnerId);
-                if (owner == null)
+                var store = await UnitOfWork.StoreRepository.GetByIdAsync(viewModel.StoreId);
+                if (store == null)
                 {
-                    result.AddErrorMessage(nameof(owner) + " " + ErrorMessages.NotFound);
+                    result.AddErrorMessage(nameof(Store) + " " + ErrorMessages.NotFound);
                     result.IsSuccessful = false;
 
                     return result;
@@ -39,7 +39,7 @@ namespace FactorMaker.Services
                 await UnitOfWork.CategoryRepository.InsertAsync(category);
                 await UnitOfWork.SaveAsync();
 
-                result.Data = viewModel.Adapt<CategoryViewModel>();
+                result.Data = category.Adapt<CategoryViewModel>();
                 result.IsSuccessful = true;
 
                 return result;
@@ -55,6 +55,16 @@ namespace FactorMaker.Services
             {
                 var result = new Result<CategoryViewModel>();
                 result.IsSuccessful = true;
+
+
+                var store = await UnitOfWork.StoreRepository.GetByIdAsync(viewModel.StoreId);
+                if (store == null)
+                {
+                    result.AddErrorMessage(nameof(Store) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+
+                    return result;
+                }
 
                 Category category = UnitOfWork.CategoryRepository.GetById(viewModel.Id);
                 if (category == null)
@@ -157,13 +167,13 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<CategoryViewModel>>> GetByOwnerIdAsync(Guid ownerId)
+        public async Task<Result<ICollection<CategoryViewModel>>> GetByStoreIdAsync(Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<CategoryViewModel>>();
 
-                var categories = await UnitOfWork.CategoryRepository.GetByStoreIdAsync(ownerId);
+                var categories = await UnitOfWork.CategoryRepository.GetByStoreIdAsync(storeId);
 
                 result.Data = categories.Adapt<ICollection<CategoryViewModel>>();
                 result.IsSuccessful = true;

@@ -4,7 +4,7 @@ using FactorMaker.Infrastructure.ApplicationSettings;
 using FactorMaker.Infrastructure.MiddleWares;
 using FactorMaker.Infrastructure.Validators.Authentication;
 using FactorMaker.Services;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Infrastructure.Middlewares;
@@ -102,16 +102,20 @@ namespace FactorMaker
                     };
                 return new UnitOfWork(options: options);
             });
-
-            services.AddScoped<ICustomerService, CustomerService>();
-            services.AddScoped<IFactorService, FactorService>();
-            services.AddScoped<IFactorItemService, FactorItemService>();
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IActionPermissionService, ActionPermissionService>();
-            services.AddScoped<IRoleService, RoleService>();
-            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IBlogPostService, BlogPostService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IFactorItemService, FactorItemService>();
+            services.AddScoped<IFactorService, FactorService>();
+            services.AddScoped<IImageAssetService, ImageAssetService>();
+            services.AddScoped<IPostCategoryService, PostCategoryService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IRoleActionPermissionService, RoleActionPermissionService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IStoreService, StoreService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddMemoryCache();
 

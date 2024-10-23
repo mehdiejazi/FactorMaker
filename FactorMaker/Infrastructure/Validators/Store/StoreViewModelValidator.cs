@@ -12,27 +12,28 @@ namespace FactorMaker.Infrastructure.Validators.Store
         {
             RuleFor(x => x.Url)
                 .Must(BeValidUrl)
-                .WithMessage(x => string.Format(ErrorMessages.IsNotValid, x.Url));
+                .WithMessage(x => string.Format(ErrorMessages.IsNotValid, nameof(x.Url)));
 
             RuleFor(x => x.Name)
                .NotEmpty()
                .WithMessage(x => string.Format(ErrorMessages.Required, nameof(x.Name)));
 
-            RuleFor(x => x.OwnerId)
-               .NotEmpty()
-               .WithMessage(x => string.Format(ErrorMessages.Required, nameof(x.OwnerId)));
+            //RuleFor(x => x.OwnerId)
+            //   .NotEmpty()
+            //   .WithMessage(x => string.Format(ErrorMessages.Required, nameof(x.OwnerId)));
 
-            RuleFor(x => x.EnglishName)
+            RuleFor(x => x.StoreEnglishName)
                 .Must(BeLatinAlphanumeric)
-                .WithMessage(x => string.Format(ErrorMessages.MustBeLatinAlphanumeric, nameof(x.EnglishName)));
+                .WithMessage(x => string.Format(ErrorMessages.MustBeLatinAlphanumeric, nameof(x.StoreEnglishName)));
 
-            RuleFor(x => x.EnglishName)
+            RuleFor(x => x.StoreEnglishName)
                .NotEmpty()
-               .WithMessage(x => string.Format(ErrorMessages.Required, nameof(x.EnglishName)));
+               .WithMessage(x => string.Format(ErrorMessages.Required, nameof(x.StoreEnglishName)));
 
         }
         private bool BeValidUrl(string myUrl)
         {
+            if (string.IsNullOrEmpty(myUrl)) return true;
             return Uri.IsWellFormedUriString(myUrl, UriKind.Absolute);
 
         }

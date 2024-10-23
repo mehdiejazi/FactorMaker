@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels.Customer;
 
-namespace FactorMaker.Services.ServicesIntefaces
+namespace FactorMaker.Services.ServiceIntefaces
 {
     public interface ICustomerService
     {
@@ -16,6 +16,8 @@ namespace FactorMaker.Services.ServicesIntefaces
         Task<Result<ICollection<CustomerViewModel>>> GetAllAsync();
         Task<Result<ICollection<CustomerViewModel>>> GetTop10ByQuantityAsync(User user,Guid storeId);
         Task<Result<ICollection<CustomerViewModel>>> GetTop10ByPriceAsync(User user,Guid storeId);
-       
+        Task<Result<ICollection<CustomerViewModel>>> GetByStoreIdAsync(User user, Guid storeId);
+
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using FactorMaker.Services.ServicesIntefaces;
+﻿using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -68,5 +68,18 @@ namespace FactorMaker.Controllers
             return Result(result);
         }
 
+        [HttpPost("RegisterAsync")]
+        public async Task<IActionResult> RegisterAsync(UserRegisterViewModel viewModel)
+        {
+            var result = await UserService.RegisterAsync(viewModel);
+            return Result(result);
+        }
+
+        [HttpPost("ChangePasswordAsync")]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordViewModel viewModel)
+        {
+            var result = await UserService.ChangePasswordAsync(viewModel);
+            return Result(result);
+        }
     }
 }

@@ -2,7 +2,7 @@
 using Data;
 using FactorMaker.Infrastructure.Attributes;
 using FactorMaker.Services.Base;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Mapster;
 using Models;
@@ -20,10 +20,10 @@ namespace FactorMaker.Services
     {
         public ActionPermissionService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            Task.Run(() => SyncActionsAsync());
+            SyncActions();
         }
 
-        private async Task SyncActionsAsync()
+        private void SyncActions()
         {
             Assembly asm = Assembly.GetExecutingAssembly();
 
@@ -37,7 +37,7 @@ namespace FactorMaker.Services
                 .ThenBy(x => x.Action)
                 .ToList();
 
-            var actionPermissions = await UnitOfWork.ActionPermissionRepository.GetAllAsync();
+            var actionPermissions = UnitOfWork.ActionPermissionRepository.GetAll();
 
             var missingPermissions = controlleractionlist
                 .Where(item => actionPermissions.All(a => a.ControllerName != item.Controller || a.ActionName != item.Action))
@@ -50,8 +50,8 @@ namespace FactorMaker.Services
 
             if (missingPermissions.Any())
             {
-                await UnitOfWork.ActionPermissionRepository.InsertRangeAsync(missingPermissions);
-                await UnitOfWork.SaveAsync();
+                UnitOfWork.ActionPermissionRepository.InsertRange(missingPermissions);
+                UnitOfWork.Save();
             }
         }
 

@@ -1,4 +1,4 @@
-﻿using FactorMaker.Services.ServicesIntefaces;
+﻿using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -45,7 +45,6 @@ namespace FactorMaker.Controllers
         public async Task<IActionResult> InsertAsync(CustomerViewModel viewModel)
         {
             var result = await CustomerService.InsertAsync(viewModel);
-            viewModel.OwnerId = User.Id;
             return Result(result);
         }
 
@@ -69,5 +68,13 @@ namespace FactorMaker.Controllers
             var result = await CustomerService.GetTop10ByPriceAsync(User,storeId);
             return Result(result);
         }
+
+        [HttpGet("GetByStoreIdAsync")]
+        public async Task<IActionResult> GetByStoreIdAsync(Guid storeId)
+        {
+            var result = await CustomerService.GetByStoreIdAsync(User, storeId);
+            return Result(result);
+        }
+
     }
 }

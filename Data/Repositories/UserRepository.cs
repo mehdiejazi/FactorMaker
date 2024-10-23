@@ -16,37 +16,6 @@ namespace Data.Repositories
         }
 
 
-        public new ICollection<User> GetAll()
-        {
-            var list = DbSet
-                .OrderBy(u => u.InsertDateTime)
-                .ToList();
-
-            return list;
-        }
-        public new async Task<ICollection<User>> GetAllAsync()
-        {
-            var list = await DbSet
-                .OrderBy(u => u.InsertDateTime)
-                .ToListAsync();
-
-            return list;
-        }
-
-        public new User GetById(Guid Id)
-        {
-            var user = DbSet
-                .Where(u => u.Id.Equals(Id))
-                .Include(u => u.Role)
-                .ThenInclude(p => p.RoleActionPermissions)
-                .ThenInclude(a => a.ActionPermission)
-                .Include(u=>u.Avatar)
-                .Include(u=>u.RefreshToken)
-                .FirstOrDefault();
-
-            return user;
-        }
-
         public async new Task<User> GetByIdAsync(Guid Id)
         {
             var user = await DbSet
@@ -56,21 +25,9 @@ namespace Data.Repositories
                 .ThenInclude(a => a.ActionPermission)
                 .Include(u => u.Avatar)
                 .Include(u => u.RefreshToken)
+                .Include(u => u.Stores)
                 .FirstOrDefaultAsync();
 
-            return user;
-        }
-
-        public User GetByUserName(string userName)
-        {
-            var user = DbSet
-                .Where(u => u.UserName.ToLower() == userName.ToLower())
-                .Include(u => u.Role)
-                .ThenInclude(p => p.RoleActionPermissions)
-                .ThenInclude(a => a.ActionPermission)
-                .Include(u => u.Avatar)
-                .Include(u => u.RefreshToken)
-                .FirstOrDefault();
             return user;
         }
 
@@ -83,16 +40,20 @@ namespace Data.Repositories
                 .ThenInclude(a => a.ActionPermission)
                 .Include(u => u.Avatar)
                 .Include(u => u.RefreshToken)
+                .Include(u => u.Stores)
+
                 .FirstOrDefaultAsync();
             return user;
         }
 
-        public ICollection<User> GetActive()
+        public new async Task<ICollection<User>> GetAllAsync()
         {
-            var list = DbSet
-               .Where(u => u.IsActive)
-               .OrderBy(u => u.InsertDateTime)
-               .ToList();
+            var list = await DbSet
+                .Include(u => u.Avatar)
+                .Include(u => u.Role)
+                .Include(u => u.Stores)
+                .OrderBy(u => u.InsertDateTime)
+                .ToListAsync();
 
             return list;
         }
@@ -101,18 +62,11 @@ namespace Data.Repositories
         {
             var list = await DbSet
                 .Where(u => u.IsActive)
+                .Include(u => u.Avatar)
+                .Include(u => u.Role)
+                .Include(u=>u.Stores)
                 .OrderBy(u => u.InsertDateTime)
                 .ToListAsync();
-
-            return list;
-        }
-
-        public ICollection<User> GetInActive()
-        {
-            var list = DbSet
-                .Where(u => u.IsActive == false)
-                .OrderBy(u => u.InsertDateTime)
-                .ToList();
 
             return list;
         }
@@ -121,6 +75,9 @@ namespace Data.Repositories
         {
             var list = await DbSet
                 .Where(u => u.IsActive == false)
+                .Include(u => u.Avatar)
+                .Include(u => u.Role)
+                .Include(u => u.Stores)
                 .OrderBy(u => u.InsertDateTime)
                 .ToListAsync();
 
@@ -153,5 +110,7 @@ namespace Data.Repositories
 
             return user;
         }
+
+
     }
 }

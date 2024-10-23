@@ -1,4 +1,6 @@
-﻿using FactorMaker.Services.ServicesIntefaces;
+﻿using Common;
+using FactorMaker.Services.ServiceIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,7 +25,7 @@ namespace FactorMaker.Controllers
         [HttpGet("GetAllAsync")]
         public async Task<IActionResult> GetAllAsync()
         {
-            var result =  await RoleService.GetAllAsync();
+            var result = await RoleService.GetAllAsync();
             return Result(result);
         }
 
@@ -37,7 +39,7 @@ namespace FactorMaker.Controllers
         [HttpGet("GetByIdAsync")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            var result =  await RoleService.GetByIdAsync(id);
+            var result = await RoleService.GetByIdAsync(id);
             return Result(result);
         }
 
@@ -55,5 +57,18 @@ namespace FactorMaker.Controllers
             return Result(result);
         }
 
+        [HttpGet("SetDefaultRoleAsync")]
+        public async Task<IActionResult> SetDefaultRoleAsync(Guid id)
+        {
+            var result = await RoleService.SetDefaultRoleAsync(id);
+            return Result(result);
+        }
+
+        [HttpGet("GetDefaultRoleAsync")]
+        public async Task<IActionResult> GetDefaultRoleAsync()
+        {
+            var result = await RoleService.GetDefaultRoleAsync();
+            return Result(result);
+        }
     }
 }

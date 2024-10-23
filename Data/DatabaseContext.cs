@@ -13,7 +13,7 @@ namespace Data
             try
             {
 
-                Database.EnsureDeleted();
+                //Database.EnsureDeleted();
                 Database.EnsureCreated();
 
                 //Database.Migrate();
@@ -42,6 +42,18 @@ namespace Data
                 .WithOne(fi => fi.Factor)
                 .HasForeignKey(fi => fi.FactorId);
 
+            builder.Entity<FactorItem>()
+                .HasOne(fi => fi.Product)
+                .WithMany()
+                .HasForeignKey(fi => fi.ProductId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Store>()
+                .HasMany(s => s.Factors)
+                .WithOne(f => f.Store)
+                .HasForeignKey(f => f.StoreId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Entity<RoleActionPermission>()
                 .HasKey(ra => new { ra.ActionPermissionId, ra.RoleId });
 
@@ -58,11 +70,40 @@ namespace Data
             builder.Entity<User>()
                 .HasMany(u => u.Stores)
                 .WithOne(s => s.Owner)
-                .HasForeignKey(s => s.OwnerId);
+                .HasForeignKey(s => s.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            builder.Entity<User>()
+                .HasOne(a => a.RefreshToken)
+                .WithOne(b => b.User)
+                .HasForeignKey<UserRefreshToken>(b => b.OwnerId);
+
+
+            builder.Entity<ImageAsset>(entity =>
+            {
+                entity.HasOne(a => a.Owner)
+                    .WithMany(i => i.ImageAssets)
+                    .HasForeignKey(a => a.OwnerId);
+            });
+
+            builder.Entity<Product>()
+            .HasOne(c => c.Store)
+            .WithMany(s => s.Products)
+            .HasForeignKey(x => x.StoreId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Category>()
+            .HasOne(c => c.Store)
+            .WithMany(s => s.Categories)
+            .HasForeignKey(x => x.StoreId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+
 
             Role programmerRole = new Role()
             {
-                Id  = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 Name = "Programmer",
                 Description = "Full access Programmer.",
                 RoleActionPermissions = null
@@ -78,6 +119,7 @@ namespace Data
                 IsActive = true,
                 NationalCode = "00000000",
                 RoleId = programmerRole.Id,
+                
             };
             builder.Entity<User>().HasData(new[] { user });
         }
@@ -89,7 +131,7 @@ namespace Data
         public DbSet<Factor> Factors { get; set; }
         public DbSet<FactorItem> FactorItems { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Categories{ get; set; }
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Store> Stores { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<RoleActionPermission> RoleActionPermission { get; set; }

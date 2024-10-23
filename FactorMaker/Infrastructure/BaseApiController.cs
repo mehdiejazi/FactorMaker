@@ -21,6 +21,7 @@ namespace Infrastructure
         [NonAction]
         public ActionResult Result(Result result)
         {
+            return Ok(result);
             if (result.IsSuccessful)
             {
                 return Ok(result);

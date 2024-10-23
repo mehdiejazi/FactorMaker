@@ -1,5 +1,5 @@
 ﻿using FactorMaker.Infrastructure.ApplicationSettings;
-using FactorMaker.Services.ServicesIntefaces;
+using FactorMaker.Services.ServiceIntefaces;
 using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
@@ -99,7 +99,7 @@ namespace FactorMaker.Infrastructure
 
                 if (foundUser == null) return;
 
-                if (!foundUser.IsDeleted) return;
+                if (foundUser.IsDeleted) return;
 
                 if (!foundUser.IsActive) return;
 

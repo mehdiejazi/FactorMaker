@@ -26,8 +26,8 @@ namespace FactorMaker.Infrastructure.Validators.User
                .NotEmpty()
                .WithMessage(x => string.Format(ErrorMessages.Required, nameof(x.LastName)));
 
-            RuleFor(x => x.NationalCode)
-                .Must(BeAValidNationalCode).WithMessage(ErrorMessages.NationalCodeInvalid);
+            //RuleFor(x => x.NationalCode)
+            //    .Must(BeAValidNationalCode).WithMessage(ErrorMessages.NationalCodeInvalid);
 
         }
 

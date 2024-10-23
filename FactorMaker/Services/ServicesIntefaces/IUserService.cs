@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ViewModels.User;
 
-namespace FactorMaker.Services.ServicesIntefaces
+namespace FactorMaker.Services.ServiceIntefaces
 {
     public interface IUserService
     {
@@ -18,5 +18,7 @@ namespace FactorMaker.Services.ServicesIntefaces
         Task<Result<ICollection<UserViewModel>>> GetInActiveAsync();
         Task<User> GetByIdForLoginAsync(Guid id);
         Task<bool> SetRefreshTokenAsync(Guid userId, string refreshToken);
+        Task<Result<UserViewModel>> RegisterAsync(UserRegisterViewModel viewModel);
+        Task<Result<UserViewModel>> ChangePasswordAsync(ChangePasswordViewModel viewModel);
     }
 }

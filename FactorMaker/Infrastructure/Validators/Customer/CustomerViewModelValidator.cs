@@ -9,9 +9,9 @@ namespace FactorMaker.Infrastructure.Validators.Customer
     {
         public CustomerViewModelValidator()
         {
-            RuleFor(x => x.OwnerId)
-              .NotEmpty()
-              .WithMessage(x => string.Format(ErrorMessages.Required,nameof(x.OwnerId)));
+            //RuleFor(x => x.OwnerId)
+            //  .NotEmpty()
+            //  .WithMessage(x => string.Format(ErrorMessages.Required, nameof(x.OwnerId)));
 
             RuleFor(x => x.FirstName)
                .NotEmpty()
@@ -21,8 +21,8 @@ namespace FactorMaker.Infrastructure.Validators.Customer
                .NotEmpty()
                .WithMessage(x => string.Format(ErrorMessages.Required, nameof(x.LastName)));
 
-            RuleFor(x => x.NationalCode)
-                .Must(BeAValidNationalCode).WithMessage(ErrorMessages.NationalCodeInvalid);
+            //RuleFor(x => x.NationalCode)
+            //    .Must(BeAValidNationalCode).WithMessage(ErrorMessages.NationalCodeInvalid);
 
         }
 
