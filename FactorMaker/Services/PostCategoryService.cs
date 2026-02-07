@@ -134,7 +134,7 @@ namespace FactorMaker.Services
             {
                 var result = new Result<ICollection<PostCategoryViewModel>>();
 
-                var list = await UnitOfWork.BlogPostRepository.GetAllAsync();
+                var list = await UnitOfWork.PostCategoryRepository.GetAllAsync();
 
                 result.Data = list.Adapt<ICollection<PostCategoryViewModel>>();
                 result.IsSuccessful = true;

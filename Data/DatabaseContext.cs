@@ -99,7 +99,11 @@ namespace Data
             .HasForeignKey(x => x.StoreId)
             .OnDelete(DeleteBehavior.NoAction);
 
-
+            builder.Entity<BlogPost>()
+                .HasOne(bp => bp.CoverImage)
+                .WithMany()
+                .HasForeignKey(bp => bp.CoverImageId)
+                .IsRequired(false); // این خط بیان می‌کند که این رابطه اختیاری است
 
             Role programmerRole = new Role()
             {

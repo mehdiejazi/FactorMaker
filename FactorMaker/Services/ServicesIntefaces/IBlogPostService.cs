@@ -15,7 +15,7 @@ namespace FactorMaker.Services.ServiceIntefaces
         Task<Result<ICollection<BlogPostViewModel>>> GetAllAsync();
         Task<Result<ICollection<BlogPostViewModel>>> GetPublishedAsync();
         Task<Result<ICollection<BlogPostViewModel>>> GetPublishedHotAsync();
-        Task<Result<ICollection<BlogPostViewModel>>> GetsNotPublishedAsync();
+        Task<Result<ICollection<BlogPostViewModel>>> GetNotPublishedAsync();
         Task<Result<ICollection<BlogPostViewModel>>> GetByPostCategoryIdAsync(Guid postCategoryId);
         Task<Result<ICollection<BlogPostViewModel>>> GetByOwnerIdAsync(Guid ownerId);
         Task<Result<ICollection<BlogPostViewModel>>> GetByOwnerPublishedAsync(Guid ownerId);

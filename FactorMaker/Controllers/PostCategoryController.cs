@@ -26,8 +26,8 @@ namespace FactorMaker.Controllers
         [HttpPost("InsertAsync")]
         public async Task<IActionResult> InsertAsync(PostCategoryViewModel viewModel)
         {
-            var result = await PostCategoryService.InsertAsync(viewModel);
             viewModel.OwnerId = User.Id;
+            var result = await PostCategoryService.InsertAsync(viewModel);
             return Result(result);
         }
 

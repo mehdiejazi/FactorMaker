@@ -15,6 +15,16 @@ namespace Data.Repositories
         {
         }
 
+        public new async Task<ICollection<PostCategory>> GetAllAsync()
+        {
+            var list = await DbSet
+                .Include(p=>p.Owner)
+                    .ThenInclude(u=>u.Avatar)
+                .OrderByDescending(u => u.InsertDateTime)
+                .ToListAsync();
+
+            return list;
+        }
         public async Task<ICollection<PostCategory>> GetByOwnerIdAsync(Guid ownerId)
         {
             var result = await

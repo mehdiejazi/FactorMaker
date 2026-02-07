@@ -25,6 +25,7 @@ namespace Models
         public string ExtendedBody { get; set; }
         public DateTime PublishDateTime { get; set; }
         public virtual ImageAsset CoverImage { get; set; }
+        public Guid? CoverImageId { get; set; }
         public virtual ICollection<ImageAsset> Images { get; set; }
         public double StarRate { get; set; }
         //public virtual ICollection<StarRating> StarRatings { get; set; }

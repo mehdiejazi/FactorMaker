@@ -56,7 +56,14 @@ namespace FactorMaker.Services
 
                 var post = viewModel.Adapt<BlogPost>();
 
+                if (post.CoverImage != null)
+                {
+                    post.CoverImageId = post.CoverImage.Id;
+                    post.CoverImage = null;
+                }
+
                 await UnitOfWork.BlogPostRepository.InsertAsync(post);
+
                 await UnitOfWork.SaveAsync();
 
                 result.Data = post.Adapt<BlogPostViewModel>();
@@ -281,7 +288,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<BlogPostViewModel>>> GetsNotPublishedAsync()
+        public async Task<Result<ICollection<BlogPostViewModel>>> GetNotPublishedAsync()
         {
             try
             {

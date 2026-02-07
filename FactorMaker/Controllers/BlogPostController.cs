@@ -30,6 +30,7 @@ namespace FactorMaker.Controllers
             viewModel.OwnerId = User.Id;
             return Result(result);
         }
+        
         [HttpPost("UpdateAsync")]
         public async Task<IActionResult> UpdateAsync(BlogPostViewModel viewModel)
         {
@@ -66,10 +67,10 @@ namespace FactorMaker.Controllers
             var result = await BlogPostService.GetPublishedHotAsync();
             return Result(result);
         }
-        [HttpGet("GetsNotPublishedAsync")]
-        public async Task<IActionResult> GetsNotPublishedAsync()
+        [HttpGet("GetNotPublishedAsync")]
+        public async Task<IActionResult> GetNotPublishedAsync()
         {
-            var result = await BlogPostService.GetsNotPublishedAsync();
+            var result = await BlogPostService.GetNotPublishedAsync();
             return Result(result);
         }
         [HttpGet("GetByPostCategoryIdAsync")]
