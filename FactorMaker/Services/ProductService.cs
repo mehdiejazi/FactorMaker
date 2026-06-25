@@ -17,8 +17,8 @@ namespace FactorMaker.Services
     {
         public ProductService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-
         }
+
         public async Task<Result<ProductViewModel>> InsertAsync(ProductViewModel viewModel)
         {
             try
@@ -50,20 +50,20 @@ namespace FactorMaker.Services
 
                 result.Data = product.Adapt<ProductViewModel>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
+
         public async Task<Result<ProductViewModel>> UpdateAsync(ProductViewModel viewModel)
         {
             try
             {
                 var result = new Result<ProductViewModel>();
+                result.IsSuccessful = true;
 
                 Store store = await UnitOfWork.StoreRepository.GetByIdAsync(viewModel.StoreId);
                 if (store == null)
@@ -81,28 +81,33 @@ namespace FactorMaker.Services
 
                 if (result.IsSuccessful == false) return result;
 
-                Product product = UnitOfWork.ProductRepository.GetById(viewModel.Id);
+                Product product = await UnitOfWork.ProductRepository.GetByIdAsync(viewModel.Id);
                 if (product == null)
-                    throw new NullReferenceException(typeof(Product) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(Product) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 product.IsDeleted = viewModel.IsDeleted;
                 product.Name = viewModel.Name;
                 product.Price = viewModel.Price;
+                product.StoreId = viewModel.StoreId;
+                product.CategoryId = viewModel.CategoryId;
 
                 await UnitOfWork.ProductRepository.UpdateAsync(product);
                 await UnitOfWork.SaveAsync();
 
                 result.Data = product.Adapt<ProductViewModel>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
+
         public async Task<Result> DeleteByIdAsync(Guid id)
         {
             try
@@ -110,9 +115,12 @@ namespace FactorMaker.Services
                 var result = new Result();
 
                 Product product = await UnitOfWork.ProductRepository.GetByIdAsync(id);
-
                 if (product == null)
-                    throw new NullReferenceException(typeof(Product) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(Product) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 await UnitOfWork.ProductRepository.DeleteAsync(product);
                 await UnitOfWork.SaveAsync();
@@ -122,10 +130,10 @@ namespace FactorMaker.Services
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
+
         public async Task<Result<ProductViewModel>> GetByIdAsync(Guid id)
         {
             try
@@ -133,51 +141,47 @@ namespace FactorMaker.Services
                 var result = new Result<ProductViewModel>();
 
                 Product product = await UnitOfWork.ProductRepository.GetByIdAsync(id);
-
                 if (product == null)
-                    throw new NullReferenceException(typeof(Product) + " " + ErrorMessages.NotFound);
+                {
+                    result.AddErrorMessage(typeof(Product) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
 
                 result.Data = product.Adapt<ProductViewModel>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
+
         public async Task<Result<ICollection<ProductViewModel>>> GetAllAsync()
         {
             try
             {
                 var result = new Result<ICollection<ProductViewModel>>();
-
                 var list = await UnitOfWork.ProductRepository.GetAllAsync();
-
                 result.Data = list.Adapt<ICollection<ProductViewModel>>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
+
         public async Task<Result<ICollection<ProductViewModel>>> GetByStoreIdAsync(Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<ProductViewModel>>();
-
                 var list = await UnitOfWork.ProductRepository.GetByStoreIdAsync(storeId);
-
                 result.Data = list.Adapt<ICollection<ProductViewModel>>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception)
@@ -185,18 +189,15 @@ namespace FactorMaker.Services
                 throw;
             }
         }
-        public async Task<Result<ICollection<ProductViewModel>>> GetByStoreIdCategoryIdAsync
-            (Guid storeId, Guid categoryId)
+
+        public async Task<Result<ICollection<ProductViewModel>>> GetByStoreIdCategoryIdAsync(Guid storeId, Guid categoryId)
         {
             try
             {
                 var result = new Result<ICollection<ProductViewModel>>();
-
                 var list = await UnitOfWork.ProductRepository.GetByStoreIdCategoryIdAsync(storeId, categoryId);
-
                 result.Data = list.Adapt<ICollection<ProductViewModel>>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception)
@@ -204,8 +205,8 @@ namespace FactorMaker.Services
                 throw;
             }
         }
-        public async Task<Result<ICollection<ProductSaleTotalQuantityViewModel>>> GetTop10SaleByQuantityAsync
-            (User user, Guid storeId)
+
+        public async Task<Result<ICollection<ProductSaleTotalQuantityViewModel>>> GetTop10SaleByQuantityAsync(User user, Guid storeId)
         {
             try
             {
@@ -228,17 +229,13 @@ namespace FactorMaker.Services
                 }
 
                 var productSaleTotalQuantityDtos = await UnitOfWork.ProductRepository.GetTop10SaleByQuantityAsync(storeId);
-
-                result.Data = productSaleTotalQuantityDtos
-                    .Select(x => new ProductSaleTotalQuantityViewModel
-                    {
-                        Product = x.Product.Adapt<ProductViewModel>(),
-                        TotalQuantity = x.TotalQuantity
-                    })
-                    .ToList();
+                result.Data = productSaleTotalQuantityDtos.Select(x => new ProductSaleTotalQuantityViewModel
+                {
+                    Product = x.Product.Adapt<ProductViewModel>(),
+                    TotalQuantity = x.TotalQuantity
+                }).ToList();
 
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -246,8 +243,8 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<ProductSaleTotalPriceViewModel>>> GetTop10SaleByPriceAsync
-            (User user, Guid storeId)
+
+        public async Task<Result<ICollection<ProductSaleTotalPriceViewModel>>> GetTop10SaleByPriceAsync(User user, Guid storeId)
         {
             try
             {
@@ -270,17 +267,13 @@ namespace FactorMaker.Services
                 }
 
                 var productSaleTotalPriceDtos = await UnitOfWork.ProductRepository.GetTop10SaleByPriceAsync(storeId);
-
-                result.Data = productSaleTotalPriceDtos
-                    .Select(x => new ProductSaleTotalPriceViewModel
-                    {
-                        Product = x.Product.Adapt<ProductViewModel>(),
-                        TotalPrice = x.TotalPrice
-                    })
-                    .ToList();
+                result.Data = productSaleTotalPriceDtos.Select(x => new ProductSaleTotalPriceViewModel
+                {
+                    Product = x.Product.Adapt<ProductViewModel>(),
+                    TotalPrice = x.TotalPrice
+                }).ToList();
 
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -288,8 +281,8 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<ProductSaleTotalQuantityViewModel>>> GetSaleTotalByQuantityAsync
-            (User user, DateTime dtFrom, DateTime dtTo, Guid storeId)
+
+        public async Task<Result<ICollection<ProductSaleTotalQuantityViewModel>>> GetSaleTotalByQuantityAsync(User user, DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
             try
             {
@@ -311,19 +304,14 @@ namespace FactorMaker.Services
                     return result;
                 }
 
-                var productSaleTotalQuantityDtos = await UnitOfWork.ProductRepository
-                    .GetSaleTotalByQuantityAsync(dtFrom, dtTo, storeId);
-
-                result.Data = productSaleTotalQuantityDtos
-                    .Select(x => new ProductSaleTotalQuantityViewModel
-                    {
-                        Product = x.Product.Adapt<ProductViewModel>(),
-                        TotalQuantity = x.TotalQuantity
-                    })
-                    .ToList();
+                var productSaleTotalQuantityDtos = await UnitOfWork.ProductRepository.GetSaleTotalByQuantityAsync(dtFrom, dtTo, storeId);
+                result.Data = productSaleTotalQuantityDtos.Select(x => new ProductSaleTotalQuantityViewModel
+                {
+                    Product = x.Product.Adapt<ProductViewModel>(),
+                    TotalQuantity = x.TotalQuantity
+                }).ToList();
 
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -331,8 +319,8 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<ProductSaleTotalPriceViewModel>>> GetSaleTotalByPriceAsync
-            (User user, DateTime dtFrom, DateTime dtTo, Guid storeId)
+
+        public async Task<Result<ICollection<ProductSaleTotalPriceViewModel>>> GetSaleTotalByPriceAsync(User user, DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
             try
             {
@@ -354,19 +342,14 @@ namespace FactorMaker.Services
                     return result;
                 }
 
-                var productSaleTotalPriceDtos = await UnitOfWork.ProductRepository
-                    .GetSaleTotalByPriceAsync(dtFrom, dtTo, storeId);
-
-                result.Data = productSaleTotalPriceDtos
-                    .Select(x => new ProductSaleTotalPriceViewModel
-                    {
-                        Product = x.Product.Adapt<ProductViewModel>(),
-                        TotalPrice = x.TotalPrice
-                    })
-                    .ToList();
+                var productSaleTotalPriceDtos = await UnitOfWork.ProductRepository.GetSaleTotalByPriceAsync(dtFrom, dtTo, storeId);
+                result.Data = productSaleTotalPriceDtos.Select(x => new ProductSaleTotalPriceViewModel
+                {
+                    Product = x.Product.Adapt<ProductViewModel>(),
+                    TotalPrice = x.TotalPrice
+                }).ToList();
 
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)

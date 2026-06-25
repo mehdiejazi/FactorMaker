@@ -17,6 +17,7 @@ namespace FactorMaker.Services
         public StoreService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
+
         public async Task<Result> DeleteByIdAsync(Guid id)
         {
             try
@@ -37,7 +38,6 @@ namespace FactorMaker.Services
                 await UnitOfWork.SaveAsync();
 
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -45,12 +45,12 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<StoreViewModel>> GetByIdAsync(Guid id)
         {
             try
             {
                 var result = new Result<StoreViewModel>();
-
                 result.IsSuccessful = true;
 
                 var store = await UnitOfWork.StoreRepository.GetByIdAsync(id);
@@ -63,8 +63,6 @@ namespace FactorMaker.Services
                 if (result.IsSuccessful == false) return result;
 
                 result.Data = store.Adapt<StoreViewModel>();
-                result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -72,21 +70,16 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<ICollection<StoreViewModel>>> GetByOwnerIdAsync(Guid ownerId)
         {
             try
             {
                 var result = new Result<ICollection<StoreViewModel>>();
-
                 result.IsSuccessful = true;
 
                 var list = await UnitOfWork.StoreRepository.GetByOwnerIdAsync(ownerId);
-
-                if (result.IsSuccessful == false) return result;
-
                 result.Data = list.Adapt<ICollection<StoreViewModel>>();
-                result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -94,12 +87,12 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<StoreViewModel>> GetByStoreEnglishNameAsync(string storeEnglishName)
         {
             try
             {
                 var result = new Result<StoreViewModel>();
-
                 result.IsSuccessful = true;
 
                 var store = await UnitOfWork.StoreRepository.GetByStoreEnglishNameAsync(storeEnglishName);
@@ -112,8 +105,6 @@ namespace FactorMaker.Services
                 if (result.IsSuccessful == false) return result;
 
                 result.Data = store.Adapt<StoreViewModel>();
-                result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -121,12 +112,12 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<StoreViewModel>> InsertAsync(StoreViewModel viewModel)
         {
             try
             {
                 var result = new Result<StoreViewModel>();
-
                 var store = viewModel.Adapt<Store>();
 
                 var owner = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.OwnerId);
@@ -136,7 +127,6 @@ namespace FactorMaker.Services
                     result.AddErrorMessage(nameof(viewModel.OwnerId) + " " + ErrorMessages.NotFound);
                     return result;
                 }
-
 
                 if (await UnitOfWork.StoreRepository.IsExistByStoreEnglishNameAsync(viewModel.StoreEnglishName))
                 {
@@ -150,7 +140,6 @@ namespace FactorMaker.Services
 
                 result.Data = store.Adapt<StoreViewModel>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -158,6 +147,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<StoreViewModel>> UpdateAsync(StoreViewModel viewModel)
         {
             try
@@ -173,13 +163,12 @@ namespace FactorMaker.Services
                 }
 
                 var engStore = await UnitOfWork.StoreRepository.GetByStoreEnglishNameAsync(viewModel.StoreEnglishName);
-                if (engStore != null)
-                    if (engStore.Id.Equals(viewModel.Id) == false)
-                    {
-                        result.IsSuccessful = false;
-                        result.AddErrorMessage(nameof(viewModel.StoreEnglishName) + " " + ErrorMessages.AlreadyExists);
-                        return result;
-                    }
+                if (engStore != null && engStore.Id.Equals(viewModel.Id) == false)
+                {
+                    result.IsSuccessful = false;
+                    result.AddErrorMessage(nameof(viewModel.StoreEnglishName) + " " + ErrorMessages.AlreadyExists);
+                    return result;
+                }
 
                 if (result.IsSuccessful == false) return result;
 
@@ -188,14 +177,14 @@ namespace FactorMaker.Services
                 store.Name = viewModel.Name;
                 store.OwnerId = viewModel.OwnerId;
                 store.Url = viewModel.Url;
-                //store.Logo = await UnitOfWork.ImageAssetRepository.GetByIdAsync();
+                store.StoreEnglishName = viewModel.StoreEnglishName;
+                store.Description = viewModel.Description;
 
                 await UnitOfWork.StoreRepository.UpdateAsync(store);
                 await UnitOfWork.SaveAsync();
 
                 result.Data = store.Adapt<StoreViewModel>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -203,6 +192,5 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-
     }
 }

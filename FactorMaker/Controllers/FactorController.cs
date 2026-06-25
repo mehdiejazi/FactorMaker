@@ -12,12 +12,13 @@ namespace FactorMaker.Controllers
     {
         private FactorController() : base()
         {
-
         }
+
         public FactorController(IFactorService factorService)
         {
             FactorService = factorService;
         }
+
         private IFactorService FactorService { get; }
 
         [HttpGet("GetByOwnerIdAsync")]
@@ -28,7 +29,7 @@ namespace FactorMaker.Controllers
         }
 
         [HttpGet("GetByStoreIdAsync")]
-       public async Task<IActionResult> GetByStoreIdAsync(Guid storeId)
+        public async Task<IActionResult> GetByStoreIdAsync(Guid storeId)
         {
             var result = await FactorService.GetByStoreIdAsync(User, storeId);
             return Result(result);
@@ -90,7 +91,7 @@ namespace FactorMaker.Controllers
             return Result(result);
         }
 
-        [HttpGet("GetWeeklyFactorSaleAsync")]
+        [HttpGet("GetHourlyFactorSaleAsync")]
         public async Task<IActionResult> GetHourlyFactorSaleAsync(DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
             var result = await FactorService.GetHourlyFactorSaleAsync(User, dtFrom, dtTo, storeId);

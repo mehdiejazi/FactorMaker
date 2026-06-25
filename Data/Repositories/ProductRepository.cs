@@ -15,25 +15,22 @@ namespace Data.Repositories
         internal ProductRepository(DatabaseContext databaseContext) : base(databaseContext)
         {
         }
+
         public async Task<ICollection<Product>> GetByStoreIdAsync(Guid storeId)
         {
             var list = await DbSet
-                .Where(u => 
-                u.StoreId == storeId && 
-                u.IsDeleted == false)
-                .Include(p=>p.Category)
+                .Where(u => u.StoreId == storeId && u.IsDeleted == false)
+                .Include(p => p.Category)
                 .OrderBy(x => x.InsertDateTime)
                 .ToListAsync();
 
             return list;
         }
+
         public async Task<ICollection<Product>> GetByStoreIdCategoryIdAsync(Guid storeId, Guid categoryId)
         {
             var list = await DbSet
-                .Where(u => 
-                u.StoreId.Equals(storeId) && 
-                u.Category.Id.Equals(categoryId) && 
-                u.IsDeleted == false)
+                .Where(u => u.StoreId.Equals(storeId) && u.CategoryId.Equals(categoryId) && u.IsDeleted == false)
                 .Include(p => p.Category)
                 .OrderBy(x => x.InsertDateTime)
                 .ToListAsync();
@@ -44,11 +41,7 @@ namespace Data.Repositories
         public async Task<ICollection<ProductSaleTotalQuantityDto>> GetTop10SaleByQuantityAsync(Guid storeId)
         {
             var list = await DatabaseContext.Set<FactorItem>()
-                .Where(fi =>
-                    fi.IsDeleted == false &&
-                    fi.Factor.StoreId == storeId &&
-                    fi.Factor.IsDeleted == false &&
-                    fi.Factor.IsClosed)
+                .Where(fi => fi.IsDeleted == false && fi.Factor.StoreId == storeId && fi.Factor.IsDeleted == false && fi.Factor.IsClosed)
                 .GroupBy(fi => fi.Product)
                 .OrderByDescending(g => g.Sum(fi => fi.Quantity))
                 .Take(10)
@@ -65,36 +58,24 @@ namespace Data.Repositories
         public async Task<ICollection<ProductSaleTotalPriceDto>> GetTop10SaleByPriceAsync(Guid storeId)
         {
             var list = await DatabaseContext.Set<FactorItem>()
-                .Where(fi =>
-                    fi.IsDeleted == false &&
-                    fi.Factor.StoreId == storeId &&
-                    fi.Factor.IsDeleted == false &&
-                    fi.Factor.IsClosed)
+                .Where(fi => fi.IsDeleted == false && fi.Factor.StoreId == storeId && fi.Factor.IsDeleted == false && fi.Factor.IsClosed)
                 .GroupBy(fi => fi.Product)
-                .OrderByDescending(g => g.Sum(fi => fi.Price))
+                .OrderByDescending(g => g.Sum(fi => fi.Price * fi.Quantity * (1 - (fi.OffPercent / 100m))))
                 .Take(10)
                 .Select(g => new ProductSaleTotalPriceDto
                 {
                     Product = g.Key,
-                    TotalPrice = g.Sum(x => x.Price)
+                    TotalPrice = g.Sum(x => x.Price * x.Quantity * (1 - (x.OffPercent / 100m)))
                 })
                 .ToListAsync();
 
             return list;
-
         }
 
-        public async Task<ICollection<ProductSaleTotalQuantityDto>> GetSaleTotalByQuantityAsync
-            (DateTime dtFrom, DateTime dtTo, Guid storeId)
+        public async Task<ICollection<ProductSaleTotalQuantityDto>> GetSaleTotalByQuantityAsync(DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
             var list = await DatabaseContext.Set<FactorItem>()
-                .Where(fi =>
-                    fi.IsDeleted == false &&
-                    fi.Factor.StoreId == storeId &&
-                    fi.Factor.IsDeleted == false &&
-                    fi.Factor.IsClosed &&
-                    fi.Factor.SellDateTime >= dtFrom &&
-                    fi.Factor.SellDateTime < dtTo)
+                .Where(fi => fi.IsDeleted == false && fi.Factor.StoreId == storeId && fi.Factor.IsDeleted == false && fi.Factor.IsClosed && fi.Factor.SellDateTime >= dtFrom && fi.Factor.SellDateTime < dtTo)
                 .GroupBy(fi => fi.Product)
                 .OrderByDescending(g => g.Sum(fi => fi.Quantity))
                 .Select(g => new ProductSaleTotalQuantityDto
@@ -107,23 +88,16 @@ namespace Data.Repositories
             return list;
         }
 
-        public async Task<ICollection<ProductSaleTotalPriceDto>> GetSaleTotalByPriceAsync
-            (DateTime dtFrom, DateTime dtTo, Guid storeId)
+        public async Task<ICollection<ProductSaleTotalPriceDto>> GetSaleTotalByPriceAsync(DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
             var list = await DatabaseContext.Set<FactorItem>()
-               .Where(fi =>
-                    fi.IsDeleted == false &&
-                    fi.Factor.StoreId == storeId &&
-                    fi.Factor.IsDeleted == false &&
-                    fi.Factor.IsClosed &&
-                    fi.Factor.SellDateTime >= dtFrom &&
-                    fi.Factor.SellDateTime < dtTo)
+               .Where(fi => fi.IsDeleted == false && fi.Factor.StoreId == storeId && fi.Factor.IsDeleted == false && fi.Factor.IsClosed && fi.Factor.SellDateTime >= dtFrom && fi.Factor.SellDateTime < dtTo)
                .GroupBy(fi => fi.Product)
-               .OrderByDescending(g => g.Sum(fi => fi.Price))
+               .OrderByDescending(g => g.Sum(fi => fi.Price * fi.Quantity * (1 - (fi.OffPercent / 100m))))
                .Select(g => new ProductSaleTotalPriceDto
                {
                    Product = g.Key,
-                   TotalPrice = g.Sum(x => x.Price)
+                   TotalPrice = g.Sum(x => x.Price * x.Quantity * (1 - (x.OffPercent / 100m)))
                })
                .ToListAsync();
 

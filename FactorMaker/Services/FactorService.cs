@@ -20,7 +20,6 @@ namespace FactorMaker.Services
     {
         public FactorService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-
         }
 
         public async Task<Result<FactorViewModel>> InsertAsync(FactorViewModel viewModel)
@@ -48,6 +47,12 @@ namespace FactorMaker.Services
 
                 var factor = viewModel.Adapt<Factor>();
                 factor.Owner = null;
+                factor.Store = null;
+                factor.TotalPrice = 0;
+                if (factor.SellDateTime == default)
+                {
+                    factor.SellDateTime = DateTime.Now;
+                }
 
                 await UnitOfWork.FactorRepository.InsertAsync(factor);
                 await UnitOfWork.SaveAsync();
@@ -59,10 +64,10 @@ namespace FactorMaker.Services
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
+
         public async Task<Result<FactorViewModel>> UpdateAsync(FactorViewModel viewModel)
         {
             try
@@ -70,7 +75,7 @@ namespace FactorMaker.Services
                 var result = new Result<FactorViewModel>();
                 result.IsSuccessful = true;
 
-                var factor = await UnitOfWork.FactorRepository.GetByIdAsync(viewModel.Id);
+                var factor = await UnitOfWork.FactorRepository.GetWithItemsByIdAsync(viewModel.Id);
                 if (factor == null)
                 {
                     result.AddErrorMessage(typeof(Factor) + " " + ErrorMessages.NotFound);
@@ -84,9 +89,21 @@ namespace FactorMaker.Services
                     result.IsSuccessful = false;
                 }
 
+                var store = await UnitOfWork.StoreRepository.GetByIdAsync(viewModel.StoreId);
+                if (store == null)
+                {
+                    result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                }
+
                 if (result.IsSuccessful == false) return result;
 
                 factor.Description = viewModel.Description;
+                factor.OwnerId = viewModel.OwnerId;
+                factor.StoreId = viewModel.StoreId;
+                factor.IsClosed = viewModel.IsClosed;
+                factor.SellDateTime = viewModel.SellDateTime == default ? factor.SellDateTime : viewModel.SellDateTime;
+                factor.TotalPrice = CalculateFactorTotalPrice(factor);
 
                 await UnitOfWork.FactorRepository.UpdateAsync(factor);
                 await UnitOfWork.SaveAsync();
@@ -98,10 +115,10 @@ namespace FactorMaker.Services
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
+
         public async Task<Result> DeleteByIdAsync(Guid id)
         {
             try
@@ -130,6 +147,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<FactorViewModel>> GetByIdAsync(Guid id)
         {
             try
@@ -156,6 +174,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<ICollection<FactorViewModel>>> GetByOwnerIdAsync(Guid ownerId)
         {
             try
@@ -164,7 +183,6 @@ namespace FactorMaker.Services
                 result.IsSuccessful = true;
 
                 var factors = await UnitOfWork.FactorRepository.GetByOwnerIdAsync(ownerId);
-
                 result.Data = factors.Adapt<ICollection<FactorViewModel>>();
 
                 return result;
@@ -174,6 +192,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<TotalFactorViewModel>> CalculateFactorByIdAsync(Guid id)
         {
             var result = new Result<TotalFactorViewModel>();
@@ -184,6 +203,7 @@ namespace FactorMaker.Services
             {
                 result.AddErrorMessage(typeof(Factor) + " " + ErrorMessages.NotFound);
                 result.IsSuccessful = false;
+                return result;
             }
 
             var store = await UnitOfWork.StoreRepository.GetByIdAsync(factor.StoreId);
@@ -191,10 +211,8 @@ namespace FactorMaker.Services
             {
                 result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
                 result.IsSuccessful = false;
+                return result;
             }
-
-            if (result.IsSuccessful == false) return result;
-
 
             TotalFactorViewModel totalFactor = new TotalFactorViewModel()
             {
@@ -206,9 +224,8 @@ namespace FactorMaker.Services
                 TotalPrice = 0
             };
 
-            foreach (var item in factor.FactorItems)
+            foreach (var item in factor.FactorItems.Where(x => x.IsDeleted == false))
             {
-
                 var totalItem = new ViewModels.FactorItem.TotalFactorItemViewModel()
                 {
                     Offpercent = item.OffPercent,
@@ -216,14 +233,14 @@ namespace FactorMaker.Services
                     Quantity = item.Quantity
                 };
 
-                totalFactor.TotalPrice += (item.Product.Price - (item.Product.Price * (item.OffPercent / 100)) * item.Quantity);
+                totalFactor.TotalPrice += CalculateLineTotal(item.Price, item.Quantity, item.OffPercent);
                 totalFactor.FatorItems.Add(totalItem);
             }
 
             result.Data = totalFactor;
-
             return result;
         }
+
         public async Task<Result<FactorViewModel>> GetFactorWithItemsByIdAsync(User user, Guid id)
         {
             try
@@ -246,8 +263,11 @@ namespace FactorMaker.Services
                 if (result.IsSuccessful == false) return result;
 
                 if (factor.FactorItems != null)
+                {
                     factor.FactorItems = factor.FactorItems.Where(fi => fi.IsDeleted == false).ToList();
+                }
 
+                factor.TotalPrice = CalculateFactorTotalPrice(factor);
                 result.Data = factor.Adapt<FactorViewModel>();
 
                 return result;
@@ -257,6 +277,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<ICollection<FactorViewModel>>> GetByStoreIdAsync(User user, Guid storeId)
         {
             try
@@ -280,7 +301,6 @@ namespace FactorMaker.Services
                 }
 
                 var factors = await UnitOfWork.FactorRepository.GetByStoreIdAsync(storeId);
-
                 result.Data = factors.Adapt<ICollection<FactorViewModel>>();
 
                 return result;
@@ -290,87 +310,9 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<FactorsSummaryViewModel>> GetFactorSummaryByStoreId(User user, Guid storeId)
+
+        public async Task<Result<ICollection<FactorSaleMonthlyViewModel>>> GetMonthlyFactorSaleAsync(User user, int year, Guid storeId)
         {
-            try
-            {
-                var result = new Result<FactorsSummaryViewModel>();
-                result.IsSuccessful = true;
-
-                if (await HasAccessUserToStore(user, storeId) == false)
-                {
-                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
-                    result.IsSuccessful = false;
-                    return result;
-                }
-
-                var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
-                if (store == null)
-                {
-                    result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
-                    result.IsSuccessful = false;
-                    return result;
-                }
-
-                result.Data = new FactorsSummaryViewModel();
-
-                var pcal = new PersianCalendar();
-
-                ///------ Year ----------
-                var startDayPersianYear =
-                    new DateTime(pcal.GetYear(DateTime.Now), 1, 1, pcal);
-
-                var endDayPersianYear = new DateTime();
-
-                if (pcal.IsLeapYear(pcal.GetYear(DateTime.Now)))
-                    endDayPersianYear = new DateTime(pcal.GetYear(DateTime.Now), 12, 30, pcal);
-                else
-                    endDayPersianYear = new DateTime(pcal.GetYear(DateTime.Now), 12, 29, pcal);
-
-                result.Data.CountYear = await UnitOfWork.FactorRepository
-                    .GetCountByDateTimeStoreIdAsync(startDayPersianYear, endDayPersianYear, storeId);
-                result.Data.SumYear = await UnitOfWork.FactorRepository
-                    .GetSumTotalPriceByDateTimeStoreIdAsync(startDayPersianYear, endDayPersianYear, storeId);
-
-                ///----- Mounth ---------
-                var startDayPersianMounth = new DateTime(pcal.GetYear(DateTime.Now), pcal.GetMonth(DateTime.Now), 1, pcal);
-                var endDayPersianMounth = new DateTime();
-
-                if (pcal.GetMonth(DateTime.Now) <= 6)
-                {
-                    endDayPersianMounth = new DateTime(pcal.GetYear(DateTime.Now), pcal.GetMonth(DateTime.Now), 31, pcal);
-                }
-                else if (pcal.GetMonth(DateTime.Now) > 6 && pcal.GetMonth(DateTime.Now) <= 11)
-                {
-                    endDayPersianMounth = new DateTime(pcal.GetYear(DateTime.Now), pcal.GetMonth(DateTime.Now), 30, pcal);
-                }
-                else if (pcal.GetMonth(DateTime.Now) == 12)
-                {
-                    if (pcal.IsLeapYear(pcal.GetYear(DateTime.Now)))
-                        endDayPersianMounth = new DateTime(pcal.GetYear(DateTime.Now), pcal.GetMonth(DateTime.Now), 30, pcal);
-                    else
-                        endDayPersianMounth = new DateTime(pcal.GetYear(DateTime.Now), pcal.GetMonth(DateTime.Now), 29, pcal);
-                }
-
-                result.Data.CountMounth = await UnitOfWork.FactorRepository
-                    .GetCountByDateTimeStoreIdAsync(startDayPersianMounth, endDayPersianMounth, storeId);
-                result.Data.SumYear = await UnitOfWork.FactorRepository
-                    .GetSumTotalPriceByDateTimeStoreIdAsync(startDayPersianMounth, endDayPersianMounth, storeId);
-
-                //------- Week ----------------
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-        public async Task<Result<ICollection<FactorSaleMonthlyViewModel>>> GetMonthlyFactorSaleAsync
-            (User user, int year, Guid storeId)
-        {
-
             try
             {
                 var result = new Result<ICollection<FactorSaleMonthlyViewModel>>();
@@ -392,18 +334,12 @@ namespace FactorMaker.Services
                 }
 
                 PersianCalendar pcal = new PersianCalendar();
-
                 var startDayPersianYear = new DateTime(year, 1, 1, pcal);
+                var endDayPersianYear = pcal.IsLeapYear(year)
+                    ? new DateTime(year, 12, 30, 23, 59, 59, pcal)
+                    : new DateTime(year, 12, 29, 23, 59, 59, pcal);
 
-                var endDayPersianYear = new DateTime();
-
-                if (pcal.IsLeapYear(pcal.GetYear(DateTime.Now)))
-                    endDayPersianYear = new DateTime(year, 12, 30, pcal);
-                else
-                    endDayPersianYear = new DateTime(year, 12, 29, pcal);
-
-                var monthlySaleDtos = await UnitOfWork.FactorRepository
-                    .GetMonthlyFactorSaleAsync(startDayPersianYear, endDayPersianYear, storeId);
+                var monthlySaleDtos = await UnitOfWork.FactorRepository.GetMonthlyFactorSaleAsync(startDayPersianYear, endDayPersianYear, storeId);
 
                 result.Data = monthlySaleDtos.Select(dto => new FactorSaleMonthlyViewModel
                 {
@@ -420,12 +356,13 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<FactorSaleWeeklyViewModel>>> GetWeeklyFactorSaleAsync
-            (User user, int year, int month, Guid storeId)
+
+        public async Task<Result<ICollection<FactorSaleWeeklyViewModel>>> GetWeeklyFactorSaleAsync(User user, int year, int month, Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<FactorSaleWeeklyViewModel>>();
+                result.IsSuccessful = true;
 
                 if (await HasAccessUserToStore(user, storeId) == false)
                 {
@@ -443,18 +380,11 @@ namespace FactorMaker.Services
                 }
 
                 PersianCalendar pcal = new PersianCalendar();
-
                 var startDay = new DateTime(year, month, 1, pcal);
+                var daysInMonth = month <= 6 ? 31 : (month < 12 ? 30 : (pcal.IsLeapYear(year) ? 30 : 29));
+                var endDay = new DateTime(year, month, daysInMonth, 23, 59, 59, pcal);
 
-                var endDay = new DateTime();
-
-                if (pcal.IsLeapYear(pcal.GetYear(DateTime.Now)))
-                    endDay = new DateTime(year, month, 30, pcal);
-                else
-                    endDay = new DateTime(year, month, 29, pcal);
-
-                var monthlySalesDto = await UnitOfWork.FactorRepository
-                    .GetWeeklyFactorSaleAsync(startDay, endDay, storeId);
+                var monthlySalesDto = await UnitOfWork.FactorRepository.GetWeeklyFactorSaleAsync(startDay, endDay, storeId);
 
                 result.Data = monthlySalesDto.Select(dto => new FactorSaleWeeklyViewModel
                 {
@@ -471,12 +401,13 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<FactorSaleHourlyViewModel>>> GetHourlyFactorSaleAsync
-            (User user, DateTime dtFrom, DateTime dtTo, Guid storeId)
+
+        public async Task<Result<ICollection<FactorSaleHourlyViewModel>>> GetHourlyFactorSaleAsync(User user, DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<FactorSaleHourlyViewModel>>();
+                result.IsSuccessful = true;
 
                 if (await HasAccessUserToStore(user, storeId) == false)
                 {
@@ -509,12 +440,13 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<FactorSaleWeekDailyViewModel>>> GetWeekDailyFactorSaleAsync
-            (User user, DateTime dtFrom, DateTime dtTo, Guid storeId)
+
+        public async Task<Result<ICollection<FactorSaleWeekDailyViewModel>>> GetWeekDailyFactorSaleAsync(User user, DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
             try
             {
                 var result = new Result<ICollection<FactorSaleWeekDailyViewModel>>();
+                result.IsSuccessful = true;
 
                 if (await HasAccessUserToStore(user, storeId) == false)
                 {
@@ -547,5 +479,25 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
+        private decimal CalculateFactorTotalPrice(Factor factor)
+        {
+            if (factor?.FactorItems == null)
+            {
+                return factor?.TotalPrice ?? 0;
+            }
+
+            return factor.FactorItems
+                .Where(item => item.IsDeleted == false)
+                .Sum(item => CalculateLineTotal(item.Price, item.Quantity, item.OffPercent));
+        }
+
+        private decimal CalculateLineTotal(decimal price, int quantity, int offPercent)
+        {
+            var discountRatio = Math.Min(100, Math.Max(0, offPercent)) / 100m;
+            return price * quantity * (1 - discountRatio);
+        }
     }
 }
+
+

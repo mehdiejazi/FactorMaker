@@ -16,8 +16,8 @@ namespace FactorMaker.Services
     {
         public CustomerService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-
         }
+
         public async Task<Result<CustomerViewModel>> InsertAsync(CustomerViewModel viewModel)
         {
             try
@@ -25,13 +25,11 @@ namespace FactorMaker.Services
                 var result = new Result<CustomerViewModel>();
 
                 Customer customer = viewModel.Adapt<Customer>();
-
                 await UnitOfWork.CustomerRepository.InsertAsync(customer);
                 await UnitOfWork.SaveAsync();
 
                 result.Data = customer.Adapt<CustomerViewModel>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -39,6 +37,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<CustomerViewModel>> UpdateAsync(CustomerViewModel viewModel)
         {
             try
@@ -51,16 +50,20 @@ namespace FactorMaker.Services
                 {
                     result.AddErrorMessage(typeof(Customer) + " " + ErrorMessages.NotFound);
                     result.IsSuccessful = false;
+                    return result;
                 }
 
-                if (result.IsSuccessful == false) return result;
+                customer.FirstName = viewModel.FirstName;
+                customer.LastName = viewModel.LastName;
+                customer.NationalCode = viewModel.NationalCode;
+                customer.StoreId = viewModel.StoreId;
+                customer.IsDeleted = viewModel.IsDeleted;
 
                 await UnitOfWork.CustomerRepository.UpdateAsync(customer);
                 await UnitOfWork.SaveAsync();
 
                 result.Data = customer.Adapt<CustomerViewModel>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -68,6 +71,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result> DeleteByIdAsync(Guid id)
         {
             try
@@ -88,7 +92,6 @@ namespace FactorMaker.Services
                 await UnitOfWork.SaveAsync();
 
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -96,12 +99,12 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<CustomerViewModel>> GetByIdAsync(Guid id)
         {
             try
             {
                 var result = new Result<CustomerViewModel>();
-
                 result.IsSuccessful = true;
 
                 var customer = await UnitOfWork.CustomerRepository.GetByIdAsync(id);
@@ -113,9 +116,7 @@ namespace FactorMaker.Services
 
                 if (result.IsSuccessful == false) return result;
 
-                result.IsSuccessful = true;
                 result.Data = customer.Adapt<CustomerViewModel>();
-
                 return result;
             }
             catch (Exception ex)
@@ -123,17 +124,15 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<ICollection<CustomerViewModel>>> GetAllAsync()
         {
             try
             {
                 var result = new Result<ICollection<CustomerViewModel>>();
-
                 var customers = await UnitOfWork.CustomerRepository.GetAllAsync();
-
                 result.Data = customers.Adapt<ICollection<CustomerViewModel>>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -141,7 +140,8 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
-        public async Task<Result<ICollection<CustomerViewModel>>> GetByStoreIdAsync(User user,Guid storeId)
+
+        public async Task<Result<ICollection<CustomerViewModel>>> GetByStoreIdAsync(User user, Guid storeId)
         {
             try
             {
@@ -156,10 +156,8 @@ namespace FactorMaker.Services
                 }
 
                 var customers = await UnitOfWork.CustomerRepository.GetByStoreIdAsync(storeId);
-
                 result.Data = customers.Adapt<ICollection<CustomerViewModel>>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -167,6 +165,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<ICollection<CustomerViewModel>>> GetTop10ByQuantityAsync(User user, Guid storeId)
         {
             try
@@ -190,10 +189,8 @@ namespace FactorMaker.Services
                 }
 
                 var customers = await UnitOfWork.CustomerRepository.GetTop10CustomersByQuantityAsync(storeId);
-
                 result.Data = customers.Adapt<ICollection<CustomerViewModel>>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
@@ -201,6 +198,7 @@ namespace FactorMaker.Services
                 throw ex;
             }
         }
+
         public async Task<Result<ICollection<CustomerViewModel>>> GetTop10ByPriceAsync(User user, Guid storeId)
         {
             try
@@ -224,10 +222,8 @@ namespace FactorMaker.Services
                 }
 
                 var customers = await UnitOfWork.CustomerRepository.GetTop10CustomersByQuantityAsync(storeId);
-
                 result.Data = customers.Adapt<ICollection<CustomerViewModel>>();
                 result.IsSuccessful = true;
-
                 return result;
             }
             catch (Exception ex)
