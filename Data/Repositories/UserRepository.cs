@@ -15,7 +15,6 @@ namespace Data.Repositories
         {
         }
 
-
         public async new Task<User> GetByIdAsync(Guid Id)
         {
             var user = await DbSet
@@ -41,7 +40,6 @@ namespace Data.Repositories
                 .Include(u => u.Avatar)
                 .Include(u => u.RefreshToken)
                 .Include(u => u.Stores)
-
                 .FirstOrDefaultAsync();
             return user;
         }
@@ -64,7 +62,7 @@ namespace Data.Repositories
                 .Where(u => u.IsActive)
                 .Include(u => u.Avatar)
                 .Include(u => u.Role)
-                .Include(u=>u.Stores)
+                .Include(u => u.Stores)
                 .OrderBy(u => u.InsertDateTime)
                 .ToListAsync();
 
@@ -86,31 +84,31 @@ namespace Data.Repositories
 
         public async Task<bool> IsExistByUsernameAsync(string userName)
         {
-            var ret = await DbSet
-                .AnyAsync(u => u.UserName == userName);
+            return await DbSet.AnyAsync(u => u.UserName == userName);
+        }
 
-            return ret;
+        public async Task<bool> IsExistByEmailAsync(string email)
+        {
+            var normalizedEmail = email?.Trim().ToLower();
+            if (string.IsNullOrWhiteSpace(normalizedEmail))
+            {
+                return false;
+            }
+
+            return await DbSet.AnyAsync(u => u.Email != null && u.Email.ToLower() == normalizedEmail);
         }
 
         public async Task<bool> HasAccessToStoreAsync(Guid id, Guid storeId)
         {
-            bool hasAny = await DbSet
-                .AnyAsync(u => u.Id.Equals(id) && u.Stores.Any(s => s.Id.Equals(storeId)));
-
-            return hasAny;
-
+            return await DbSet.AnyAsync(u => u.Id.Equals(id) && u.Stores.Any(s => s.Id.Equals(storeId)));
         }
 
         public async Task<User> GetByRefreshTokenAsync(string refreshToken)
         {
-            var user = await DbSet
+            return await DbSet
                 .Where(u => u.RefreshToken.RefreshToken == refreshToken)
                 .Include(u => u.RefreshToken)
                 .FirstOrDefaultAsync();
-
-            return user;
         }
-
-
     }
 }

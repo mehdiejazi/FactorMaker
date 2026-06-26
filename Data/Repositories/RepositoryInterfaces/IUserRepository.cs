@@ -11,6 +11,7 @@ namespace Data.Repositories.RepositoryInterfaces
         Task<ICollection<User>> GetActiveAsync();
         Task<ICollection<User>> GetInActiveAsync();
         Task<bool> IsExistByUsernameAsync(string userName);
+        Task<bool> IsExistByEmailAsync(string email);
         Task<bool> HasAccessToStoreAsync(Guid id, Guid storeId);
         Task<User> GetByRefreshTokenAsync(string refreshToken);
     }
