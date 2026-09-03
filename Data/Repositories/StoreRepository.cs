@@ -36,6 +36,18 @@ namespace Data.Repositories
             return list;
         }
 
+        public async Task<ICollection<Store>> GetActiveAsync()
+        {
+            var list = await DbSet
+                .Where(x => x.IsDeleted == false)
+                .Include(u => u.Logo)
+                .Include(u => u.Owner)
+                .OrderByDescending(u => u.InsertDateTime)
+                .ToListAsync();
+
+            return list;
+        }
+
         public async Task<Store> GetByStoreEnglishNameAsync(string storeEnglishName)
         {
             var entity = await DbSet

@@ -7,6 +7,7 @@ using Models;
 using Resources;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ViewModels.Customer;
 
@@ -56,6 +57,7 @@ namespace FactorMaker.Services
                 customer.FirstName = viewModel.FirstName;
                 customer.LastName = viewModel.LastName;
                 customer.NationalCode = viewModel.NationalCode;
+                customer.Gender = viewModel.Gender;
                 customer.StoreId = viewModel.StoreId;
                 customer.IsDeleted = viewModel.IsDeleted;
 
@@ -166,11 +168,11 @@ namespace FactorMaker.Services
             }
         }
 
-        public async Task<Result<ICollection<CustomerViewModel>>> GetTop10ByQuantityAsync(User user, Guid storeId)
+        public async Task<Result<ICollection<CustomerSaleTotalQuantityViewModel>>> GetTop10ByQuantityAsync(User user, Guid storeId)
         {
             try
             {
-                var result = new Result<ICollection<CustomerViewModel>>();
+                var result = new Result<ICollection<CustomerSaleTotalQuantityViewModel>>();
                 result.IsSuccessful = true;
 
                 if (await HasAccessUserToStore(user, storeId) == false)
@@ -189,7 +191,12 @@ namespace FactorMaker.Services
                 }
 
                 var customers = await UnitOfWork.CustomerRepository.GetTop10CustomersByQuantityAsync(storeId);
-                result.Data = customers.Adapt<ICollection<CustomerViewModel>>();
+                result.Data = customers.Select(x => new CustomerSaleTotalQuantityViewModel
+                {
+                    Customer = x.Customer.Adapt<CustomerViewModel>(),
+                    TotalQuantity = x.TotalQuantity
+                }).ToList();
+
                 result.IsSuccessful = true;
                 return result;
             }
@@ -199,11 +206,11 @@ namespace FactorMaker.Services
             }
         }
 
-        public async Task<Result<ICollection<CustomerViewModel>>> GetTop10ByPriceAsync(User user, Guid storeId)
+        public async Task<Result<ICollection<CustomerSaleTotalPriceViewModel>>> GetTop10ByPriceAsync(User user, Guid storeId)
         {
             try
             {
-                var result = new Result<ICollection<CustomerViewModel>>();
+                var result = new Result<ICollection<CustomerSaleTotalPriceViewModel>>();
                 result.IsSuccessful = true;
 
                 if (await HasAccessUserToStore(user, storeId) == false)
@@ -221,8 +228,51 @@ namespace FactorMaker.Services
                     return result;
                 }
 
-                var customers = await UnitOfWork.CustomerRepository.GetTop10CustomersByQuantityAsync(storeId);
-                result.Data = customers.Adapt<ICollection<CustomerViewModel>>();
+                var customers = await UnitOfWork.CustomerRepository.GetTop10CustomersByPriceAsync(storeId);
+                result.Data = customers.Select(x => new CustomerSaleTotalPriceViewModel
+                {
+                    Customer = x.Customer.Adapt<CustomerViewModel>(),
+                    TotalPrice = x.TotalPrice
+                }).ToList();
+
+                result.IsSuccessful = true;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Result<ICollection<CustomerGenderStatViewModel>>> GetGenderStatsByStoreIdAsync(User user, Guid storeId)
+        {
+            try
+            {
+                var result = new Result<ICollection<CustomerGenderStatViewModel>>();
+                result.IsSuccessful = true;
+
+                if (await HasAccessUserToStore(user, storeId) == false)
+                {
+                    result.AddErrorMessage(ErrorMessages.UnauthorizedAccess);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var store = await UnitOfWork.StoreRepository.GetByIdAsync(storeId);
+                if (store == null)
+                {
+                    result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var stats = await UnitOfWork.CustomerRepository.GetGenderStatsByStoreIdAsync(storeId);
+                result.Data = stats.Select(x => new CustomerGenderStatViewModel
+                {
+                    Gender = x.Gender,
+                    Count = x.Count
+                }).ToList();
+
                 result.IsSuccessful = true;
                 return result;
             }

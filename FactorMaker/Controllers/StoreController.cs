@@ -63,7 +63,13 @@ namespace FactorMaker.Controllers
             return Result(result);
         }
 
-        [Authorize]
+        [HttpGet("GetActiveAsync")]
+        public async Task<IActionResult> GetActiveAsync()
+        {
+            var result = await StoreService.GetActiveAsync();
+            return Result(result);
+        }
+
         [HttpGet("GetByStoreEnglishNameAsync")]
         public async Task<IActionResult> GetByStoreEnglishNameAsync(string storeEnglishName)
         {

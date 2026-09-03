@@ -57,6 +57,13 @@ namespace FactorMaker.Controllers
             return Result(result);
         }
 
+        [HttpGet("GetAdminAsync")]
+        public async Task<IActionResult> GetAdminAsync([FromQuery] ImageAssetAdminFilterRequestViewModel filter)
+        {
+            var result = await ImageAssetService.GetAdminAsync(filter);
+            return Result(result);
+        }
+
         [HttpPost("InsertAsync")]
         public async Task<IActionResult> InsertAsync(IFormFile imageDataFile,string fileName)
         {

@@ -14,6 +14,7 @@ namespace FactorMaker.Services.ServiceIntefaces
         Task<Result<ICollection<ImageAssetViewModel>>> GetDeletedByUserIdAsync(Guid userId);
         Task<Result<ICollection<ImageAssetViewModel>>> GetNotDeletedByUserIdAsync(Guid userId);
         Task<Result<ImageAssetViewModel>> GetByIdAsync(Guid id);
+        Task<Result<ICollection<ImageAssetViewModel>>> GetAdminAsync(ImageAssetAdminFilterRequestViewModel filter);
         Task<Result<ImageAssetViewModel>> InsertAsync(IFormFile imageDataFile, string fileName, Guid userId);
 
     }

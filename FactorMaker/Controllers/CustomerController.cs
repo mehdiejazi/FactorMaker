@@ -65,7 +65,14 @@ namespace FactorMaker.Controllers
         [HttpPost("GetTop10ByPriceAsync")]
         public async Task<IActionResult> GetTop10ByPriceAsync(Guid storeId)
         {
-            var result = await CustomerService.GetTop10ByPriceAsync(User,storeId);
+            var result = await CustomerService.GetTop10ByPriceAsync(User, storeId);
+            return Result(result);
+        }
+
+        [HttpGet("GetGenderStatsByStoreIdAsync")]
+        public async Task<IActionResult> GetGenderStatsByStoreIdAsync(Guid storeId)
+        {
+            var result = await CustomerService.GetGenderStatsByStoreIdAsync(User, storeId);
             return Result(result);
         }
 

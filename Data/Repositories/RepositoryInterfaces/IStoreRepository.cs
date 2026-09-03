@@ -8,6 +8,7 @@ namespace Data.Repositories.RepositoryInterfaces
     public interface IStoreRepository : Data.Base.IRepository<Store>
     {
         Task<ICollection<Store>> GetByOwnerIdAsync(Guid ownerId);
+        Task<ICollection<Store>> GetActiveAsync();
         Task<Store> GetByStoreEnglishNameAsync(string storeEnglishName);
         Task<bool> IsExistByStoreEnglishNameAsync(string storeEnglishName);
 

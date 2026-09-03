@@ -40,6 +40,10 @@ Set-Location D:\Project\FactorMaker\FactorMaker
 dotnet run
 ```
 
+API در محیط توسعه روی این آدرس بالا می‌آید:
+
+- `https://localhost:5005`
+
 نکته: دیتابیس در startup با `EnsureCreated()` ساخته می‌شود.
 
 ## Frontend Setup
@@ -52,14 +56,18 @@ npx ng serve
 
 فرانت به‌صورت پیش‌فرض از این آدرس API استفاده می‌کند:
 
-- `https://localhost:5001`
+- `https://localhost:5005`
+
+فرانت در محیط توسعه روی این آدرس بالا می‌آید:
+
+- `http://localhost:4500`
 
 ## Default Login
 
 کاربر اولیه از طریق seed دیتابیس پروژه ساخته می‌شود:
 
 - `UserName: Programmer`
-- `Password: prog123`
+- `Password: prog@123`
 
 ## Seed Demo Data
 

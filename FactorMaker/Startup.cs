@@ -57,7 +57,7 @@ namespace FactorMaker
                     builder =>
                     {
                         builder
-                            .WithOrigins("http://localhost:5001")
+                            .WithOrigins("http://localhost:4500")
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     });

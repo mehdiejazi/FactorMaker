@@ -13,6 +13,7 @@ namespace FactorMaker.Services.ServiceIntefaces
         Task<Result> DeleteByIdAsync(Guid id);
         Task<Result<StoreViewModel>> GetByIdAsync(Guid id);
         Task<Result<ICollection<StoreViewModel>>> GetByOwnerIdAsync(Guid ownerId);
+        Task<Result<ICollection<StoreViewModel>>> GetActiveAsync();
         Task<Result<StoreViewModel>> GetByStoreEnglishNameAsync(string storeEnglishName);
     }
 }

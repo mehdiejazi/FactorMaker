@@ -8,6 +8,7 @@ using Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using ViewModels.ImageAsset;
@@ -171,6 +172,53 @@ namespace FactorMaker.Services
                     result.Data = entity.Adapt<ImageAssetViewModel>();
                     result.IsSuccessful = true;
                 }
+
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<Result<ICollection<ImageAssetViewModel>>> GetAdminAsync(ImageAssetAdminFilterRequestViewModel filter)
+        {
+            try
+            {
+                var result = new Result<ICollection<ImageAssetViewModel>>();
+                result.IsSuccessful = true;
+
+                var imageAssets = await UnitOfWork.ImageAssetRepository.GetAllAsync();
+                var query = imageAssets.AsQueryable();
+
+                if (filter?.OwnerId.HasValue == true)
+                {
+                    query = query.Where(current => current.OwnerId == filter.OwnerId.Value);
+                }
+
+                if (filter?.FromDate.HasValue == true)
+                {
+                    var fromDate = filter.FromDate.Value.Date;
+                    query = query.Where(current => current.InsertDateTime >= fromDate);
+                }
+
+                if (filter?.ToDate.HasValue == true)
+                {
+                    var toDateExclusive = filter.ToDate.Value.Date.AddDays(1);
+                    query = query.Where(current => current.InsertDateTime < toDateExclusive);
+                }
+
+                result.Data = query
+                    .OrderByDescending(current => current.InsertDateTime)
+                    .Select(item => new ImageAssetViewModel
+                    {
+                        FileName = item.FileName,
+                        Id = item.Id,
+                        InsertDateTime = item.InsertDateTime,
+                        IsDeleted = item.IsDeleted,
+                        OwnerUser = item.Owner.Adapt<UserViewModel>(),
+                        Url = item.Url
+                    })
+                    .ToList();
 
                 return result;
             }

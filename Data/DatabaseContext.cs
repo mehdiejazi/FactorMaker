@@ -117,7 +117,7 @@ namespace Data
             User user = new User()
             {
                 UserName = "Programmer",
-                Password = Utilities.HashSHA1("prog123"),
+                Password = Utilities.HashSHA1("prog@123"),
                 FirstName = "Programmer",
                 LastName = "Programmer",
                 IsActive = true,

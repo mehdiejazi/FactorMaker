@@ -88,6 +88,23 @@ namespace FactorMaker.Services
             }
         }
 
+        public async Task<Result<ICollection<StoreViewModel>>> GetActiveAsync()
+        {
+            try
+            {
+                var result = new Result<ICollection<StoreViewModel>>();
+                result.IsSuccessful = true;
+
+                var list = await UnitOfWork.StoreRepository.GetActiveAsync();
+                result.Data = list.Adapt<ICollection<StoreViewModel>>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<Result<StoreViewModel>> GetByStoreEnglishNameAsync(string storeEnglishName)
         {
             try

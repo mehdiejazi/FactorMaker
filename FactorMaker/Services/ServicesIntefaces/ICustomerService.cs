@@ -14,10 +14,9 @@ namespace FactorMaker.Services.ServiceIntefaces
         Task<Result> DeleteByIdAsync(Guid id);
         Task<Result<CustomerViewModel>> GetByIdAsync(Guid id);
         Task<Result<ICollection<CustomerViewModel>>> GetAllAsync();
-        Task<Result<ICollection<CustomerViewModel>>> GetTop10ByQuantityAsync(User user,Guid storeId);
-        Task<Result<ICollection<CustomerViewModel>>> GetTop10ByPriceAsync(User user,Guid storeId);
+        Task<Result<ICollection<CustomerSaleTotalQuantityViewModel>>> GetTop10ByQuantityAsync(User user, Guid storeId);
+        Task<Result<ICollection<CustomerSaleTotalPriceViewModel>>> GetTop10ByPriceAsync(User user, Guid storeId);
         Task<Result<ICollection<CustomerViewModel>>> GetByStoreIdAsync(User user, Guid storeId);
-
-
+        Task<Result<ICollection<CustomerGenderStatViewModel>>> GetGenderStatsByStoreIdAsync(User user, Guid storeId);
     }
 }

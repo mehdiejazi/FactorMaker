@@ -18,6 +18,7 @@ namespace Data.Repositories
         public new async Task<ICollection<ImageAsset>> GetAllAsync()
         {
             var list = await DbSet
+                .Include(x => x.Owner)
                 .OrderByDescending(u => u.InsertDateTime)
                 .ToListAsync();
 
