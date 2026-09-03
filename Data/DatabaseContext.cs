@@ -10,20 +10,6 @@ namespace Data
         public DatabaseContext
             (DbContextOptions<DatabaseContext> options) : base(options)
         {
-            try
-            {
-
-                //Database.EnsureDeleted();
-                Database.EnsureCreated();
-
-                //Database.Migrate();
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
         }
 
         private readonly DbContextOptions options;

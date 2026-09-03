@@ -11,6 +11,7 @@ using Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -88,6 +89,10 @@ namespace FactorMaker
 
             services.AddSingleton<MyServer>();
 
+            services.AddDbContext<DatabaseContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("FactorMakerConnectionString")));
+
             services.AddTransient<IUnitOfWork, UnitOfWork>(sp =>
             {
                 Data.Tools.Options options =
@@ -149,6 +154,13 @@ namespace FactorMaker
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                scope.ServiceProvider
+                    .GetRequiredService<DatabaseContext>()
+                    .Database.Migrate();
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
