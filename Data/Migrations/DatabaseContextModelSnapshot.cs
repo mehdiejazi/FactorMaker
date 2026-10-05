@@ -350,6 +350,9 @@ namespace Data.Migrations
                     b.Property<DateTime>("DeleteDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("ImageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("InsertDateTime")
                         .HasColumnType("datetime2");
 
@@ -362,6 +365,15 @@ namespace Data.Migrations
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("ShortDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ShowOnLanding")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("StoreId")
                         .HasColumnType("uniqueidentifier");
 
@@ -371,6 +383,8 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("ImageId");
 
                     b.HasIndex("StoreId");
 
@@ -456,6 +470,9 @@ namespace Data.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CoverImageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("DeleteDateTime")
                         .HasColumnType("datetime2");
 
@@ -466,6 +483,9 @@ namespace Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublic")
                         .HasColumnType("bit");
 
                     b.Property<Guid?>("LogoId")
@@ -480,6 +500,12 @@ namespace Data.Migrations
                     b.Property<string>("StoreEnglishName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Tagline")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ThemePalette")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("UpdateDateTime")
                         .HasColumnType("datetime2");
 
@@ -488,11 +514,52 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CoverImageId");
+
                     b.HasIndex("LogoId");
 
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Stores");
+                });
+
+            modelBuilder.Entity("Models.StoreSocialLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DeleteDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Label")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Platform")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdateDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StoreId");
+
+                    b.ToTable("StoreSocialLinks");
                 });
 
             modelBuilder.Entity("Models.User", b =>
@@ -707,6 +774,10 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Models.ImageAsset", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId");
+
                     b.HasOne("Models.Store", "Store")
                         .WithMany("Products")
                         .HasForeignKey("StoreId")
@@ -731,6 +802,10 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Models.Store", b =>
                 {
+                    b.HasOne("Models.ImageAsset", "CoverImage")
+                        .WithMany()
+                        .HasForeignKey("CoverImageId");
+
                     b.HasOne("Models.ImageAsset", "Logo")
                         .WithMany()
                         .HasForeignKey("LogoId");
@@ -739,6 +814,15 @@ namespace Data.Migrations
                         .WithMany("Stores")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Models.StoreSocialLink", b =>
+                {
+                    b.HasOne("Models.Store", "Store")
+                        .WithMany("SocialLinks")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

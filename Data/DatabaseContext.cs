@@ -109,17 +109,24 @@ namespace Data
                 .HasForeignKey(bp => bp.CoverImageId)
                 .IsRequired(false); // این خط بیان می‌کند که این رابطه اختیاری است
 
+            var programmerRoleId = new Guid("1d259eb2-778f-46ca-ad9e-14efbc348253");
+            var programmerUserId = new Guid("0b8cabe1-be79-4a1c-831b-38fb626acec0");
+            var programmerRoleInsertDateTime = new DateTime(2026, 9, 4, 1, 33, 49, 434, DateTimeKind.Local).AddTicks(9927);
+            var programmerUserInsertDateTime = new DateTime(2026, 9, 4, 1, 33, 49, 441, DateTimeKind.Local).AddTicks(5536);
+
             Role programmerRole = new Role()
             {
-                Id = Guid.NewGuid(),
+                Id = programmerRoleId,
                 Name = "Programmer",
                 Description = "Full access Programmer.",
+                InsertDateTime = programmerRoleInsertDateTime,
                 RoleActionPermissions = null
             };
             builder.Entity<Role>().HasData(new[] { programmerRole });
 
             User user = new User()
             {
+                Id = programmerUserId,
                 UserName = "Programmer",
                 Password = Utilities.HashSHA1("prog@123"),
                 FirstName = "Programmer",
@@ -127,6 +134,7 @@ namespace Data
                 IsActive = true,
                 NationalCode = "00000000",
                 RoleId = programmerRole.Id,
+                InsertDateTime = programmerUserInsertDateTime,
                 
             };
             builder.Entity<User>().HasData(new[] { user });
