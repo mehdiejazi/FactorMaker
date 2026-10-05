@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ViewModels.Base;
 using ViewModels.ImageAsset;
 
@@ -12,6 +13,12 @@ namespace ViewModels.Store
         public string Url { get; set; }
         public Guid? LogoId { get; set; }
         public ImageAssetViewModel Logo { get; set; }
+        public Guid? CoverImageId { get; set; }
+        public ImageAssetViewModel CoverImage { get; set; }
+        public string Tagline { get; set; }
         public string Description { get; set; }
+        public string ThemePalette { get; set; }
+        public bool IsPublic { get; set; }
+        public ICollection<StoreSocialLinkViewModel> SocialLinks { get; set; }
     }
 }

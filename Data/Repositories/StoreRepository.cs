@@ -19,6 +19,8 @@ namespace Data.Repositories
             var user = await DbSet
                 .Where(u => u.Id.Equals(Id))
                 .Include(u => u.Logo)
+                .Include(u => u.CoverImage)
+                .Include(u => u.SocialLinks)
                 .Include(u=>u.Owner)
                 .FirstOrDefaultAsync();
 
@@ -31,6 +33,8 @@ namespace Data.Repositories
                 x.OwnerId.Equals(ownerId) &&
                 x.IsDeleted == false)
                 .Include(u => u.Logo)
+                .Include(u => u.CoverImage)
+                .Include(u => u.SocialLinks)
                 .Include(u => u.Owner)
                 .ToListAsync();
             return list;
@@ -39,8 +43,10 @@ namespace Data.Repositories
         public async Task<ICollection<Store>> GetActiveAsync()
         {
             var list = await DbSet
-                .Where(x => x.IsDeleted == false)
+                .Where(x => x.IsDeleted == false && x.IsPublic)
                 .Include(u => u.Logo)
+                .Include(u => u.CoverImage)
+                .Include(u => u.SocialLinks)
                 .Include(u => u.Owner)
                 .OrderByDescending(u => u.InsertDateTime)
                 .ToListAsync();
@@ -55,6 +61,8 @@ namespace Data.Repositories
                 x.StoreEnglishName.Equals(storeEnglishName) &&
                 x.IsDeleted == false)
                 .Include(u => u.Logo)
+                .Include(u => u.CoverImage)
+                .Include(u => u.SocialLinks)
                 .Include(u => u.Owner)
                 .FirstOrDefaultAsync();
             return entity;
@@ -70,6 +78,8 @@ namespace Data.Repositories
         {
             var list = await DbSet
                 .Include(u => u.Logo)
+                .Include(u => u.CoverImage)
+                .Include(u => u.SocialLinks)
                 .Include(u => u.Owner)
                 .OrderBy(u => u.InsertDateTime)
                 .ToListAsync();

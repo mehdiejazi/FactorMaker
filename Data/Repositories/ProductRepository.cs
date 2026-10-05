@@ -21,7 +21,8 @@ namespace Data.Repositories
             var list = await DbSet
                 .Where(u => u.StoreId == storeId && u.IsDeleted == false)
                 .Include(p => p.Category)
-                .OrderBy(x => x.InsertDateTime)
+                .Include(p => p.Image)
+                .OrderBy(x => x.SortOrder).ThenBy(x => x.InsertDateTime)
                 .ToListAsync();
 
             return list;
@@ -32,7 +33,8 @@ namespace Data.Repositories
             var list = await DbSet
                 .Where(u => u.StoreId.Equals(storeId) && u.CategoryId.Equals(categoryId) && u.IsDeleted == false)
                 .Include(p => p.Category)
-                .OrderBy(x => x.InsertDateTime)
+                .Include(p => p.Image)
+                .OrderBy(x => x.SortOrder).ThenBy(x => x.InsertDateTime)
                 .ToListAsync();
 
             return list;

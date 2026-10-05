@@ -7,6 +7,7 @@ using Models;
 using Resources;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ViewModels.Store;
 
@@ -113,7 +114,7 @@ namespace FactorMaker.Services
                 result.IsSuccessful = true;
 
                 var store = await UnitOfWork.StoreRepository.GetByStoreEnglishNameAsync(storeEnglishName);
-                if (store == null)
+                if (store == null || !store.IsPublic)
                 {
                     result.AddErrorMessage(typeof(Store) + " " + ErrorMessages.NotFound);
                     result.IsSuccessful = false;
@@ -136,6 +137,9 @@ namespace FactorMaker.Services
             {
                 var result = new Result<StoreViewModel>();
                 var store = viewModel.Adapt<Store>();
+                store.ThemePalette = NormalizePalette(viewModel.ThemePalette);
+                store.SocialLinks = BuildSocialLinks(viewModel.SocialLinks, store.Id);
+                store.Url = store.SocialLinks.FirstOrDefault(x => x.IsPrimary)?.Url ?? viewModel.Url;
 
                 var owner = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.OwnerId);
                 if (owner == null)
@@ -191,11 +195,22 @@ namespace FactorMaker.Services
 
                 store.IsDeleted = viewModel.IsDeleted;
                 store.LogoId = viewModel.LogoId;
+                store.CoverImageId = viewModel.CoverImageId;
                 store.Name = viewModel.Name;
                 store.OwnerId = viewModel.OwnerId;
                 store.Url = viewModel.Url;
                 store.StoreEnglishName = viewModel.StoreEnglishName;
                 store.Description = viewModel.Description;
+                store.Tagline = viewModel.Tagline;
+                store.ThemePalette = NormalizePalette(viewModel.ThemePalette);
+                store.IsPublic = viewModel.IsPublic;
+
+                store.SocialLinks.Clear();
+                foreach (var socialLink in BuildSocialLinks(viewModel.SocialLinks, store.Id))
+                {
+                    store.SocialLinks.Add(socialLink);
+                }
+                store.Url = store.SocialLinks.FirstOrDefault(x => x.IsPrimary)?.Url ?? viewModel.Url;
 
                 await UnitOfWork.StoreRepository.UpdateAsync(store);
                 await UnitOfWork.SaveAsync();
@@ -208,6 +223,45 @@ namespace FactorMaker.Services
             {
                 throw ex;
             }
+        }
+
+        private static ICollection<StoreSocialLink> BuildSocialLinks(
+            ICollection<StoreSocialLinkViewModel> links,
+            Guid storeId)
+        {
+            var normalizedLinks = (links ?? new List<StoreSocialLinkViewModel>())
+                .Where(x => !string.IsNullOrWhiteSpace(x.Url))
+                .Select(x => new StoreSocialLink
+                {
+                    StoreId = storeId,
+                    Platform = (x.Platform ?? string.Empty).Trim(),
+                    Url = x.Url.Trim(),
+                    Label = (x.Label ?? string.Empty).Trim(),
+                    IsPrimary = x.IsPrimary
+                })
+                .ToList();
+
+            if (normalizedLinks.Count > 0 && normalizedLinks.All(x => !x.IsPrimary))
+            {
+                normalizedLinks[0].IsPrimary = true;
+            }
+
+            if (normalizedLinks.Count(x => x.IsPrimary) > 1)
+            {
+                var primary = normalizedLinks.First(x => x.IsPrimary);
+                foreach (var link in normalizedLinks.Where(x => x != primary))
+                {
+                    link.IsPrimary = false;
+                }
+            }
+
+            return normalizedLinks;
+        }
+
+        private static string NormalizePalette(string palette)
+        {
+            var supported = new[] { "forest", "ocean", "burgundy", "indigo", "graphite" };
+            return supported.Contains(palette) ? palette : "forest";
         }
     }
 }

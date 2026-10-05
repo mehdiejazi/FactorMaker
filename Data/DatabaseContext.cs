@@ -40,6 +40,18 @@ namespace Data
                 .HasForeignKey(f => f.StoreId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<Store>()
+                .HasOne(s => s.CoverImage)
+                .WithMany()
+                .HasForeignKey(s => s.CoverImageId)
+                .IsRequired(false);
+
+            builder.Entity<StoreSocialLink>()
+                .HasOne(x => x.Store)
+                .WithMany(x => x.SocialLinks)
+                .HasForeignKey(x => x.StoreId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<RoleActionPermission>()
                 .HasKey(ra => new { ra.ActionPermissionId, ra.RoleId });
 
@@ -78,6 +90,12 @@ namespace Data
             .WithMany(s => s.Products)
             .HasForeignKey(x => x.StoreId)
             .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Product>()
+                .HasOne(x => x.Image)
+                .WithMany()
+                .HasForeignKey(x => x.ImageId)
+                .IsRequired(false);
 
             builder.Entity<Category>()
             .HasOne(c => c.Store)
@@ -123,6 +141,7 @@ namespace Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Store> Stores { get; set; }
+        public DbSet<StoreSocialLink> StoreSocialLinks { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<RoleActionPermission> RoleActionPermission { get; set; }
         public DbSet<Role> Roles { get; set; }

@@ -43,6 +43,7 @@ namespace FactorMaker.Services
                 if (result.IsSuccessful == false) return result;
 
                 viewModel.Category = null;
+                viewModel.Image = null;
                 Product product = viewModel.Adapt<Product>();
 
                 await UnitOfWork.ProductRepository.InsertAsync(product);
@@ -92,6 +93,10 @@ namespace FactorMaker.Services
                 product.IsDeleted = viewModel.IsDeleted;
                 product.Name = viewModel.Name;
                 product.Price = viewModel.Price;
+                product.ImageId = viewModel.ImageId;
+                product.ShortDescription = viewModel.ShortDescription;
+                product.ShowOnLanding = viewModel.ShowOnLanding;
+                product.SortOrder = viewModel.SortOrder;
                 product.StoreId = viewModel.StoreId;
                 product.CategoryId = viewModel.CategoryId;
 
