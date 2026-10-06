@@ -166,7 +166,10 @@ namespace FactorMaker
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            if (!env.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
             app.UseApiErrorHandlerMiddleware();
             app.UseJwtAuthenticationMiddleware();
 
