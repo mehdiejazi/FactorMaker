@@ -147,6 +147,7 @@ namespace FactorMaker.Services
                 store.CoverImageId = viewModel.CoverImageId ?? viewModel.CoverImage?.Id;
                 store.ThemePalette = NormalizePalette(viewModel.ThemePalette);
                 store.IsPublic = viewModel.IsPublic;
+                store.TaxPercent = NormalizeTaxPercent(viewModel.TaxPercent);
                 store.SocialLinks = new List<StoreSocialLink>();
 
                 var owner = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.OwnerId);
@@ -217,6 +218,7 @@ namespace FactorMaker.Services
                 store.Tagline = viewModel.Tagline;
                 store.ThemePalette = NormalizePalette(viewModel.ThemePalette);
                 store.IsPublic = viewModel.IsPublic;
+                store.TaxPercent = NormalizeTaxPercent(viewModel.TaxPercent);
 
                 if (store.SocialLinks == null)
                 {
@@ -274,6 +276,13 @@ namespace FactorMaker.Services
             }
 
             return normalizedLinks;
+        }
+
+        private static decimal NormalizeTaxPercent(decimal taxPercent)
+        {
+            if (taxPercent < 0) return 0;
+            if (taxPercent > 100) return 100;
+            return decimal.Round(taxPercent, 2);
         }
 
         private static string NormalizePalette(string palette)

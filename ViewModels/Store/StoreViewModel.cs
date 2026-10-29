@@ -19,6 +19,7 @@ namespace ViewModels.Store
         public string Description { get; set; }
         public string ThemePalette { get; set; } = "forest";
         public bool IsPublic { get; set; } = true;
+        public decimal TaxPercent { get; set; } = 9;
         public ICollection<StoreSocialLinkViewModel> SocialLinks { get; set; }
     }
 }

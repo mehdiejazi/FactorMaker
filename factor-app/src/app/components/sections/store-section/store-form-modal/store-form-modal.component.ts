@@ -153,6 +153,7 @@ export class StoreFormModalComponent implements OnInit {
     }
     this.store.themePalette = this.store.themePalette || 'forest';
     this.store.isPublic = this.store.id ? this.store.isPublic : true;
+    this.store.taxPercent = this.store.taxPercent ?? 9;
     this.activeTab = 'intro';
 
     if (store?.id)

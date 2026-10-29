@@ -114,6 +114,11 @@
                 <input class="form-check-input" type="checkbox" id="storeIsPublic" name="isPublic" [(ngModel)]="store.isPublic">
                 <label class="form-check-label" for="storeIsPublic">صفحه عمومی فروشگاه فعال باشد</label>
             </div>
+
+            <div class="mt-3">
+                <label class="form-label" for="storeTaxPercent">درصد مالیات فاکتور</label>
+                <input class="form-control" type="number" id="storeTaxPercent" name="taxPercent" min="0" max="100" step="0.01" [(ngModel)]="store.taxPercent">
+            </div>
         </section>
     </form>
 </div>

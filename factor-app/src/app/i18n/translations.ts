@@ -190,6 +190,8 @@ export const EN_TRANSLATIONS: Record<string, string> = {
   'لیست پست‌ها': 'Posts list',
   'ماژول مدیریتی فعال در پنل': 'Active management modules in the panel',
   'مالیات (۹%):': 'Tax (9%):',
+  'مالیات': 'Tax',
+  'درصد مالیات فاکتور': 'Invoice tax (%)',
   'ماه': 'Month',
   'متشکرم از خریدتان': 'Thank you for your purchase',
   'متن اصلی': 'Main content',

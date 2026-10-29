@@ -14,6 +14,7 @@ export interface Store extends ModelBase {
     tagline: string;
     themePalette: string;
     isPublic: boolean;
+    taxPercent: number;
     socialLinks: StoreSocialLink[];
 }
 

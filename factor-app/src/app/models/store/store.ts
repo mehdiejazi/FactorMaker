@@ -16,6 +16,7 @@ export class Store extends ModelBase implements Interfaces.Store {
     public tagline: string;
     public themePalette: string = 'forest';
     public isPublic: boolean = true;
+    public taxPercent: number = 9;
     public socialLinks: StoreSocialLink[] = [];
 }
 

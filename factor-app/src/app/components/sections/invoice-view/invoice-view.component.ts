@@ -190,7 +190,12 @@ export class InvoiceViewComponent implements OnInit {
 
   public getTaxAmount(): number {
     const total = this.getTotal();
-    return total * 0.09; // 9% TAX
+    return total * (this.taxPercent / 100);
+  }
+
+  public get taxPercent(): number {
+    const value = Number(this.factor?.store?.taxPercent);
+    return Number.isFinite(value) && value >= 0 ? value : 9;
   }
 
   public getFinalTotal(): number {

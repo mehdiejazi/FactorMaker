@@ -292,6 +292,7 @@ namespace FactorMaker.Services
                     Tagline = BuildSignupTagline(storeName, description),
                     ThemePalette = "forest",
                     IsPublic = true,
+                    TaxPercent = 9,
                     Owner = user,
                     OwnerId = user.Id,
                     SocialLinks = new List<StoreSocialLink>()
