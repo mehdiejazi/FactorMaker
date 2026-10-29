@@ -1,4 +1,4 @@
-using Data;
+﻿using Data;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,8 @@ namespace FactorMaker.Infrastructure
         {
             "RoleController",
             "RoleActionPermissionController",
-            "ActionPermissionController"
+            "ActionPermissionController",
+            "UserController"
         };
 
         public static void EnsureStoreOwnerRole(DatabaseContext database)
@@ -38,6 +39,19 @@ namespace FactorMaker.Infrastructure
                 database.SaveChanges();
             }
 
+            // Admin-only controllers (users, roles, permissions) must never be granted to store owners.
+            var adminGrants = database.RoleActionPermission
+                .Where(rap => rap.RoleId == storeOwner.Id)
+                .Join(database.ActionPermissions, rap => rap.ActionPermissionId, ap => ap.Id, (rap, ap) => new { rap, ap.ControllerName })
+                .ToList()
+                .Where(x => AdminControllers.Contains(x.ControllerName))
+                .Select(x => x.rap)
+                .ToList();
+            if (adminGrants.Count > 0)
+            {
+                database.RoleActionPermission.RemoveRange(adminGrants);
+                database.SaveChanges();
+            }
             var hasPermissions = database.RoleActionPermission
                 .Any(permission => permission.RoleId == storeOwner.Id && !permission.IsDeleted);
             if (hasPermissions)
