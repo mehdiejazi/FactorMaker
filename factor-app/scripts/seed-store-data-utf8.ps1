@@ -89,7 +89,7 @@ function Ensure-Success {
   )
 
   if (-not $Response.isSuccessful) {
-    throw "$Message: $($Response.errorMessages -join '; ')"
+    throw "${Message}: $($Response.errorMessages -join '; ')"
   }
 }
 
