@@ -59,6 +59,9 @@ namespace FactorMaker.Controllers
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var result = await BlogPostService.GetByIdAsync(id);
+            if (result?.Data != null && !result.Data.IsPublished &&
+                !(AccessGuard.IsAdmin(User) || (User != null && result.Data.OwnerId == User.Id)))
+                return Result(AccessGuard.Denied());
             return Result(result);
         }
         [HttpGet("GetAllAsync")]

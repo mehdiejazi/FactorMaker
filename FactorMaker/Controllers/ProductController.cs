@@ -4,6 +4,8 @@ using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ViewModels.Product;
 
@@ -72,6 +74,14 @@ namespace FactorMaker.Controllers
         public async Task<IActionResult> GetByStoreIdAsync(Guid storeId)
         {
             var result = await ProductService.GetByStoreIdAsync(storeId);
+            // Owners (and admins) see every product of their own store; everyone else only
+            // sees landing products of a public store.
+            if (result?.Data != null && !await AccessGuard.CanAccessStoreAsync(User, storeId))
+            {
+                result.Data = await AccessGuard.IsPublicStoreAsync(storeId)
+                    ? result.Data.Where(x => x.ShowOnLanding).ToList()
+                    : new List<ProductViewModel>();
+            }
             return Result(result);
         }
 

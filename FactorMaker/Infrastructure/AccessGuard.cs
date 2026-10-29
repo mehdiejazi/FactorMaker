@@ -109,6 +109,9 @@ namespace FactorMaker.Infrastructure
         }
 
         /// <summary>Filters a list result down to rows the user owns (no-op for admins).</summary>
+        public Task<bool> IsPublicStoreAsync(Guid storeId) =>
+            Database.Stores.AsNoTracking().AnyAsync(x => x.Id == storeId && !x.IsDeleted && x.IsPublic);
+
         public void FilterByOwner<T>(User user, Result<ICollection<T>> result, Func<T, Guid> ownerIdOf)
         {
             if (result?.Data == null || IsAdmin(user)) return;
