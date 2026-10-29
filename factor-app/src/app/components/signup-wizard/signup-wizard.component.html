@@ -1,0 +1,191 @@
+﻿<div class="signup-shell">
+  <div class="signup-panel">
+    <div class="signup-hero">
+      <div class="hero-badge">ویزارد شروع فروشگاه</div>
+      <h1>ثبت‌نام صاحب فروشگاه اینترنتی</h1>
+      <p>
+        با یک مسیر مرحله‌ای حساب خود را بسازید، روش شروع را انتخاب کنید و اطلاعات پایه فروشگاه را تکمیل کنید.
+      </p>
+
+      <div class="hero-notes">
+        <div class="hero-note">
+          <mat-icon>alt_route</mat-icon>
+          <span>سه مسیر شروع: Gmail، اینستاگرام و ایمیل عادی</span>
+        </div>
+        <div class="hero-note">
+          <mat-icon>storefront</mat-icon>
+          <span>ساخت همزمان حساب مدیر و اولین فروشگاه</span>
+        </div>
+        <div class="hero-note">
+          <mat-icon>tips_and_updates</mat-icon>
+          <span>راهنمای هر مرحله داخل خود ویزارد نمایش داده می‌شود</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="signup-card">
+      <div class="stepper">
+        <button type="button" [class.active]="currentStep === 1" [class.done]="currentStep > 1" (click)="goToStep(1)">1. شروع</button>
+        <button type="button" [class.active]="currentStep === 2" [class.done]="currentStep > 2" (click)="goToStep(2)">2. حساب</button>
+        <button type="button" [class.active]="currentStep === 3" [class.done]="currentStep > 3" (click)="goToStep(3)">3. فروشگاه</button>
+        <button type="button" [class.active]="currentStep === 4">4. پایان</button>
+      </div>
+
+      <div *ngIf="currentStep === 1" class="step-content">
+        <div class="step-heading">
+          <h2>روش شروع را انتخاب کنید</h2>
+          <p>هر مسیر، راهنمای مخصوص خودش را دارد و در پایان یک حساب واحد برای شما می‌سازد.</p>
+        </div>
+
+        <div class="provider-grid">
+          <button type="button" class="provider-card gmail" (click)="selectProvider('google')">
+            <div>
+              <strong>شروع با Gmail</strong>
+              <span>مناسب فروشگاه‌هایی که ارتباطات کاری‌شان با جیمیل است</span>
+            </div>
+            <mat-icon>mail</mat-icon>
+          </button>
+
+          <button type="button" class="provider-card instagram" (click)="selectProvider('instagram')">
+            <div>
+              <strong>شروع با اینستاگرام</strong>
+              <span>برای فروشگاه‌هایی که از پیج اینستاگرام وارد فرایند می‌شوند</span>
+            </div>
+            <mat-icon>photo_camera</mat-icon>
+          </button>
+
+          <button type="button" class="provider-card email" (click)="selectProvider('email')">
+            <div>
+              <strong>شروع با ایمیل عادی</strong>
+              <span>ثبت‌نام مستقیم با ایمیل و نام کاربری دلخواه</span>
+            </div>
+            <mat-icon>alternate_email</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="currentStep === 2" class="step-content">
+        <div class="step-heading">
+          <h2>{{ providerTitle }}</h2>
+          <p>{{ providerDescription }}</p>
+        </div>
+
+        <div class="guide-box">
+          <mat-icon>info</mat-icon>
+          <span *ngIf="selectedProvider === 'google'">از Gmail کاری استفاده کنید تا مکاتبات فروشگاه یکپارچه بماند.</span>
+          <span *ngIf="selectedProvider === 'instagram'">آیدی اینستاگرام به ما کمک می‌کند برند شما را سریع‌تر در پنل شناسایی کنیم.</span>
+          <span *ngIf="selectedProvider === 'email'">اگر هنوز ایمیل برند ندارید، همین حالا می‌توانید با ایمیل شخصی ثبت‌نام را شروع کنید.</span>
+        </div>
+
+        <div class="form-grid">
+          <label>
+            <span>نام</span>
+            <input [(ngModel)]="registerRequest.firstName" name="firstName" type="text" placeholder="مثلاً علی">
+          </label>
+
+          <label>
+            <span>نام خانوادگی</span>
+            <input [(ngModel)]="registerRequest.lastName" name="lastName" type="text" placeholder="مثلاً رضایی">
+          </label>
+
+          <label>
+            <span>نام کاربری</span>
+            <input [(ngModel)]="registerRequest.userName" name="userName" type="text" dir="ltr" placeholder="shop.owner">
+          </label>
+
+          <label>
+            <span>ایمیل</span>
+            <input [(ngModel)]="registerRequest.email" name="email" type="email" dir="ltr" placeholder="store@example.com">
+          </label>
+
+          <label *ngIf="selectedProvider === 'instagram'" class="full">
+            <span>آیدی یا لینک اینستاگرام</span>
+            <input [(ngModel)]="registerRequest.instagramPage" name="instagramPage" type="text" dir="ltr" placeholder="instagram.com/yourshop یا @yourshop">
+          </label>
+
+          <label>
+            <span>رمز عبور</span>
+            <input [(ngModel)]="registerRequest.password" name="password" type="password" dir="ltr" placeholder="حداقل 6 کاراکتر">
+          </label>
+
+          <label>
+            <span>تکرار رمز عبور</span>
+            <input [(ngModel)]="passwordConfirmation" name="passwordConfirmation" type="password" dir="ltr" placeholder="رمز عبور را تکرار کنید">
+          </label>
+        </div>
+      </div>
+
+      <div *ngIf="currentStep === 3" class="step-content">
+        <div class="step-heading">
+          <h2>اطلاعات فروشگاه را تکمیل کنید</h2>
+          <p>این اطلاعات برای ساخت فروشگاه اولیه و آدرس قابل نمایش آن استفاده می‌شود.</p>
+        </div>
+
+        <div class="form-grid">
+          <label>
+            <span>نام فروشگاه</span>
+            <input [(ngModel)]="registerRequest.storeName" (blur)="createSlugFromName()" name="storeName" type="text" placeholder="مثلاً فروشگاه آرتین">
+          </label>
+
+          <label>
+            <span>نام انگلیسی فروشگاه</span>
+            <input [(ngModel)]="registerRequest.storeEnglishName" name="storeEnglishName" type="text" dir="ltr" placeholder="artin-shop">
+          </label>
+
+          <label>
+            <span>آدرس سایت یا پیج</span>
+            <input [(ngModel)]="registerRequest.storeUrl" name="storeUrl" type="text" dir="ltr" placeholder="https://example.com">
+          </label>
+
+          <label class="full">
+            <span>توضیح کوتاه فروشگاه</span>
+            <textarea [(ngModel)]="registerRequest.storeDescription" name="storeDescription" rows="4" placeholder="دسته‌بندی محصولات، سبک فروش و مزیت فروشگاه را بنویسید"></textarea>
+          </label>
+        </div>
+      </div>
+
+      <div *ngIf="currentStep === 4" class="step-content success-step">
+        <div class="success-icon">
+          <mat-icon>{{ isSuccess ? 'check_circle' : 'login' }}</mat-icon>
+        </div>
+        <h2>ثبت‌نام شما آماده است</h2>
+        <p *ngIf="isSuccess">حساب کاربری و فروشگاه اولیه شما ساخته شده است.</p>
+        <p *ngIf="!isSuccess">اگر ورود خودکار کامل نشده باشد، از صفحه ورود ادامه دهید.</p>
+        <div class="summary-box">
+          <div><strong>روش شروع:</strong> {{ providerTitle }}</div>
+          <div><strong>فروشگاه:</strong> {{ registerRequest.storeName || '-' }}</div>
+          <div><strong>نام کاربری:</strong> {{ registerRequest.userName || '-' }}</div>
+          <div><strong>ایمیل:</strong> {{ registerRequest.email || '-' }}</div>
+        </div>
+      </div>
+
+      <div class="alerts-container" *ngIf="errorMessages.length > 0">
+        <app-alert *ngFor="let errorMessage of errorMessages" AlertType="Error" data-localization-skip [TextMessage]="errorMessage"></app-alert>
+      </div>
+
+      <div class="alerts-container" *ngIf="informationMessages.length > 0">
+        <app-alert *ngFor="let informationMessage of informationMessages" AlertType="Info" data-localization-skip [TextMessage]="informationMessage"></app-alert>
+      </div>
+
+      <div class="alerts-container" *ngIf="warningMessages.length > 0">
+        <app-alert *ngFor="let warningMessage of warningMessages" AlertType="Warning" data-localization-skip [TextMessage]="warningMessage"></app-alert>
+      </div>
+
+      <div class="actions" *ngIf="currentStep < 4">
+        <button type="button" class="btn btn-secondary" *ngIf="currentStep > 1" (click)="previousStep()">مرحله قبل</button>
+        <button type="button" class="btn btn-ghost" *ngIf="currentStep === 2 || currentStep === 3" (click)="goToLogin()">بازگشت به ورود</button>
+        <button type="button" class="btn btn-primary" *ngIf="currentStep === 2" (click)="nextStep()">ادامه به اطلاعات فروشگاه</button>
+        <button type="button" class="btn btn-primary" *ngIf="currentStep === 3 && !isLoading" (click)="submit()">ایجاد حساب و فروشگاه</button>
+        <button type="button" class="btn btn-primary loading" *ngIf="currentStep === 3 && isLoading" disabled>
+          <span class="spinner"></span>
+          <span>در حال ثبت‌نام...</span>
+        </button>
+      </div>
+
+      <div class="actions" *ngIf="currentStep === 4">
+        <button type="button" class="btn btn-secondary" (click)="goToLogin()">رفتن به ورود</button>
+        <button type="button" class="btn btn-primary" *ngIf="isSuccess" (click)="goToDashboard()">ورود به داشبورد</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<app-nav-bar class="fade layout-nav" [class.show]="navReady"></app-nav-bar>
+
+<div class="layout-shell" [class.layout-shell--rtl]="languageService.isRtl" [class.layout-shell--ltr]="!languageService.isRtl">
+  <div
+    class="layout-main"
+    [class.layout-main--rtl]="languageService.isRtl"
+    [class.layout-main--ltr]="!languageService.isRtl">
+    <ng-container *ngIf="languageService.isRtl; else ltrLayout">
+      <div
+        class="layout-content"
+        [attr.dir]="languageService.direction">
+        <div class="fade route-stage" [class.show]="routeReady">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+
+      <app-side-bar
+        *ngIf="settingsService.isSideBarOpen"
+        id="sidebar"
+        class="layout-sidebar"
+        [attr.dir]="languageService.direction"></app-side-bar>
+    </ng-container>
+
+    <ng-template #ltrLayout>
+      <app-side-bar
+        *ngIf="settingsService.isSideBarOpen"
+        id="sidebar"
+        class="layout-sidebar"
+        [attr.dir]="languageService.direction"></app-side-bar>
+
+      <div
+        class="layout-content"
+        [attr.dir]="languageService.direction">
+        <div class="fade route-stage" [class.show]="routeReady">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>

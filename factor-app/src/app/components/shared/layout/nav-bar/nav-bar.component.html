@@ -1,0 +1,39 @@
+<nav class="app-navbar nav-enter" [attr.dir]="languageService.direction">
+  <div class="app-navbar__group app-navbar__group--brand">
+    <button type="button" class="app-navbar__icon-button" (click)="sideBarClose()">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <a routerLink="/dashboard" class="app-navbar__brand">
+      <span class="app-navbar__brand-mark"><mat-icon>receipt_long</mat-icon></span>
+      <span>فاکتورنو</span>
+    </a>
+  </div>
+
+  <div class="app-navbar__group app-navbar__group--actions">
+    <div class="app-language-switcher" data-localization-skip="true">
+      <button
+        type="button"
+        class="app-language-switcher__button"
+        [class.app-language-switcher__button--active]="languageService.currentLanguage === 'fa'"
+        (click)="setLanguage('fa')">
+        فارسی
+      </button>
+      <button
+        type="button"
+        class="app-language-switcher__button"
+        [class.app-language-switcher__button--active]="languageService.currentLanguage === 'en'"
+        (click)="setLanguage('en')">
+        English
+      </button>
+    </div>
+
+    <button type="button" class="app-navbar__logout" (click)="onClickLogout()" title="خروج">
+      <mat-icon>logout</mat-icon>
+      <span>خروج</span>
+    </button>
+
+    <img *ngIf="!settings.getUser().avatar" src="assets/images/noavatar.png" class="img-avatar rounded-circle">
+    <img *ngIf="settings.getUser().avatar" [lazyLoad]="settings.getUser().avatar.url" class="img-avatar rounded-circle">
+  </div>
+</nav>

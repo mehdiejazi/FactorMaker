@@ -1,0 +1,64 @@
+<div class="modal-header bg-dark text-light">
+    <h5 class="modal-title">{{ title }} محصول</h5>
+    <button type="button" class="btn-close text-light" aria-label="Close" (click)="hideConfirmationModal()"></button>
+</div>
+
+<div class="modal-body bg-dark text-light">
+    <form class="was-validated needs-validation" *ngIf="product">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">تصویر محصول</label>
+                <div class="card product-image-picker">
+                    <img [src]="product.image?.url || 'assets/images/noimage.png'" [alt]="product.name || 'تصویر محصول'">
+                    <div class="product-image-picker__actions">
+                        <button (click)="selectImage()" type="button" class="btn btn-primary btn-sm">انتخاب</button>
+                        <button *ngIf="product.image" (click)="removeImage()" type="button" class="btn btn-outline-danger btn-sm">حذف</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <label class="form-label">نام محصول</label>
+                    <input [(ngModel)]="product.name" name="name" type="text" class="form-control" required>
+                    <div class="invalid-feedback">لطفاً نام محصول را وارد نمایید</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">قیمت</label>
+                    <input [(ngModel)]="product.price" name="price" type="number" min="1" class="form-control" required>
+                    <div class="invalid-feedback">لطفاً قیمت را وارد نمایید</div>
+                </div>
+
+                <div>
+                    <label class="form-label">دسته‌بندی</label>
+                    <div class="input-group">
+                        <input disabled type="text" class="form-control" placeholder="انتخاب دسته‌بندی" name="category-name" [(ngModel)]="product.category.name" (click)="selectCategory()">
+                        <button type="button" class="btn btn-primary" (click)="selectCategory()">انتخاب</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">توضیح کوتاه</label>
+                <textarea class="form-control" rows="3" maxlength="300" name="shortDescription" [(ngModel)]="product.shortDescription" placeholder="توضیح کوتاهی که زیر محصول در صفحه عمومی نمایش داده می‌شود"></textarea>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">ترتیب نمایش در لندینگ</label>
+                <input class="form-control" type="number" min="0" name="sortOrder" [(ngModel)]="product.sortOrder">
+            </div>
+            <div class="col-md-6 d-flex align-items-end pb-2">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="showOnLanding" name="showOnLanding" [(ngModel)]="product.showOnLanding">
+                    <label class="form-check-label" for="showOnLanding">در صفحه عمومی نمایش داده شود</label>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer bg-dark text-light">
+    <button type="submit" class="btn btn-sm btn-primary" (click)="onConfirm()">تایید</button>
+    <button type="button" class="btn btn-sm btn-secondary ms-1" (click)="onCancel()">انصراف</button>
+</div>

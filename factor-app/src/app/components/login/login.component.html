@@ -1,0 +1,129 @@
+﻿<div class="login-wrapper">
+  <div class="login-left">
+    <div class="login-form-container">
+      <div class="login-header">
+        <div class="login-logo-icon">
+          <mat-icon class="logo-icon">store</mat-icon>
+        </div>
+        <h1 class="login-title">سامانه فروشگاه</h1>
+        <p class="login-subtitle">به سامانه مدیریت فروشگاه خوش آمدید</p>
+      </div>
+
+      <form class="login-form" (ngSubmit)="onClickLogin()">
+        <div class="form-group">
+          <label class="form-label">نام کاربری</label>
+          <div class="input-wrapper">
+            <mat-icon class="input-icon">person</mat-icon>
+            <input
+              type="text"
+              class="form-input"
+              placeholder="نام کاربری را وارد کنید"
+              dir="ltr"
+              [(ngModel)]="loginRequest.userName"
+              name="userName"
+              required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">رمز عبور</label>
+          <div class="input-wrapper">
+            <mat-icon class="input-icon">lock</mat-icon>
+            <input
+              type="password"
+              class="form-input"
+              placeholder="رمز عبور را وارد کنید"
+              dir="ltr"
+              [(ngModel)]="loginRequest.password"
+              name="password"
+              required>
+          </div>
+        </div>
+
+        <button
+          *ngIf="!isLoading"
+          type="submit"
+          class="btn-login">
+          <span>ورود به سامانه</span>
+          <mat-icon class="btn-icon">arrow_back</mat-icon>
+        </button>
+
+        <button
+          *ngIf="isLoading"
+          type="button"
+          class="btn-login btn-loading"
+          disabled>
+          <div class="spinner"></div>
+          <span>لطفا منتظر بمانید...</span>
+        </button>
+
+        <button
+          type="button"
+          class="btn-forgot"
+          (click)="$event.preventDefault()">
+          رمز عبور خود را فراموش کرده‌ام
+        </button>
+      </form>
+
+      <div class="alerts-container" *ngIf="errorMessages.length > 0">
+        <app-alert
+          *ngFor="let errorMessage of errorMessages"
+          AlertType="Error"
+          data-localization-skip
+          [TextMessage]="errorMessage">
+        </app-alert>
+      </div>
+
+      <div class="alerts-container" *ngIf="informationMessages.length > 0">
+        <app-alert
+          *ngFor="let informationMessage of informationMessages"
+          AlertType="Info"
+          data-localization-skip
+          [TextMessage]="informationMessage">
+        </app-alert>
+      </div>
+
+      <div class="alerts-container" *ngIf="warningMessages.length > 0">
+        <app-alert
+          *ngFor="let warningMessage of warningMessages"
+          AlertType="Warning"
+          data-localization-skip
+          [TextMessage]="warningMessage">
+        </app-alert>
+      </div>
+
+      <div class="login-footer">
+        <p class="copyright">© 2024 تمام حقوق محفوظ است</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-right">
+    <div class="login-illustration">
+      <div class="illustration-content">
+        <img src="../../../assets/images/Work time-amico.svg" alt="login illustration" class="illustration-img">
+        <div class="illustration-text">
+          <h3>از راحتی‌های سامانه استفاده کنید</h3>
+          <div class="benefits-wrapper">
+            <div class="benefit-card">
+              <mat-icon class="benefit-icon">done_all</mat-icon>
+              <span class="benefit-text">مدیریت ساده و سریع فروشگاه</span>
+            </div>
+            <div class="benefit-card">
+              <mat-icon class="benefit-icon">analytics</mat-icon>
+              <span class="benefit-text">گزارش‌های دقیق و جامع فروش</span>
+            </div>
+            <div class="benefit-card">
+              <mat-icon class="benefit-icon">inventory_2</mat-icon>
+              <span class="benefit-text">کنترل کامل موجودی انبار</span>
+            </div>
+            <div class="benefit-card">
+              <mat-icon class="benefit-icon">people</mat-icon>
+              <span class="benefit-text">مدیریت کارآمد مشتریان</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

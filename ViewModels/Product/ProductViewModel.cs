@@ -15,7 +15,7 @@ namespace ViewModels.Product
         public Guid? ImageId { get; set; }
         public ImageAssetViewModel Image { get; set; }
         public string ShortDescription { get; set; }
-        public bool ShowOnLanding { get; set; }
+        public bool ShowOnLanding { get; set; } = true;
         public int SortOrder { get; set; }
         public CategoryViewModel Category { get; set; }
         public Guid CategoryId { get; set; }

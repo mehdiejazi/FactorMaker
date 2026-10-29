@@ -33,10 +33,11 @@ namespace FactorMaker.Infrastructure.Attributes
 
             var path = context.HttpContext.Request.Path.Value;
 
-            var urlIsAthurized = 
-                (user.Role.RoleActionPermissions
-                .Where(x => x.ActionPermission.Url == path)
-                .Any());
+            var urlIsAthurized =
+                user.Role?.RoleActionPermissions != null &&
+                user.Role.RoleActionPermissions
+                .Any(x => x.ActionPermission != null &&
+                    string.Equals(x.ActionPermission.Url, path, StringComparison.OrdinalIgnoreCase));
 
             if (urlIsAthurized == false)
             {

@@ -1,0 +1,35 @@
+﻿<div class="app-list-toolbar">
+    <button type="button" class="btn btn-success" (click)="onClickAddNew()">جدید</button>
+</div>
+
+<div class="mb-3">
+    <app-alert *ngIf="isLoading" AlertType="Download" TextMessage="در حال واکشی اطلاعات ..."></app-alert>
+    <app-alert *ngIf="error?.message" [AlertType]="'Error'" [TextMessage]="'خطا در واکشی اطلاعات'"></app-alert>
+    <app-alert *ngFor="let errorMessage of errorMessages" [AlertType]="'Error'" [TextMessage]="errorMessage" data-localization-skip></app-alert>
+    <app-alert *ngIf="categories?.length == 0 && !isLoading" AlertType="Info" TextMessage="اطلاعاتی برای نمایش وجود ندارد"></app-alert>
+    <app-alert *ngIf="formSuccessful" [AlertType]="'Success'" [TextMessage]="'اطلاعات با موفقیت ثبت گردید'"></app-alert>
+</div>
+
+<div class="table-responsive app-list-table-wrap" *ngIf="categories?.length">
+    <table class="table table-hover table-sm align-middle app-list-table">
+        <thead>
+            <tr>
+                <th scope="col">نام</th>
+                <th scope="col" class="text-end">عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (cat of categories; track cat.id) {
+            <tr>
+                <td class="fw-semibold" data-localization-skip>{{cat.name}}</td>
+                <td class="text-end">
+                    <div class="app-list-actions">
+                        <button type="button" class="btn btn-outline-primary btn-sm app-list-action" (click)="onClickEdit(cat)">ویرایش</button>
+                        <button type="button" class="btn btn-outline-danger btn-sm app-list-action" (click)="onClickDelete(cat)">حذف</button>
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

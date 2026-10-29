@@ -1,0 +1,12 @@
+﻿<div class="container">
+    <app-section-header></app-section-header>
+
+    <div class="row" *ngIf="settings.getStore().id">
+        <app-category-list></app-category-list>
+    </div>
+
+    <div *ngIf="!settings.getStore().id" class="row">
+        <app-alert AlertType="Info" TextMessage="لطفا یک فروشگاه را انتخاب نمایید"></app-alert>
+    </div>
+
+</div>

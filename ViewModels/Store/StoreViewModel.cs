@@ -17,8 +17,8 @@ namespace ViewModels.Store
         public ImageAssetViewModel CoverImage { get; set; }
         public string Tagline { get; set; }
         public string Description { get; set; }
-        public string ThemePalette { get; set; }
-        public bool IsPublic { get; set; }
+        public string ThemePalette { get; set; } = "forest";
+        public bool IsPublic { get; set; } = true;
         public ICollection<StoreSocialLinkViewModel> SocialLinks { get; set; }
     }
 }

@@ -1,0 +1,55 @@
+﻿<div class="app-list-toolbar">
+    <button type="button" class="btn btn-success" (click)="onClickAddNew()">جدید</button>
+    <div class="btn-group btn-group-sm app-list-filters" role="group" *ngIf="factors?.length > 0">
+        <input type="radio" class="btn-check" (click)="filter('all')" name="filterStatus" id="factorFilterAll"
+            autocomplete="off" checked>
+        <label class="btn" for="factorFilterAll">همه</label>
+
+        <input type="radio" class="btn-check" (click)="filter('not deleted')" name="filterStatus" id="factorFilterActive"
+            autocomplete="off">
+        <label class="btn" for="factorFilterActive">حذف نشده</label>
+
+        <input type="radio" class="btn-check" (click)="filter('deleted')" name="filterStatus" id="factorFilterDeleted"
+            autocomplete="off">
+        <label class="btn" for="factorFilterDeleted">حذف شده</label>
+    </div>
+</div>
+
+<div class="mb-3">
+    <app-alert *ngIf="isLoading" AlertType="Download" TextMessage="در حال واکشی اطلاعات ..."></app-alert>
+    <app-alert *ngIf="error?.message" [AlertType]="'Error'" [TextMessage]="'خطا در واکشی اطلاعات'"></app-alert>
+    <app-alert *ngFor="let errorMessage of errorMessages" AlertType="Error" [TextMessage]="errorMessage" data-localization-skip></app-alert>
+    <app-alert *ngIf="factors?.length == 0 && !isLoading" AlertType="Info" TextMessage="اطلاعاتی برای نمایش وجود ندارد"></app-alert>
+    <app-alert *ngIf="formSuccessful" [AlertType]="'Success'" [TextMessage]="'اطلاعات با موفقیت ثبت گردید'"></app-alert>
+</div>
+
+<div class="table-responsive app-list-table-wrap" *ngIf="filterFactors?.length">
+    <table class="table table-hover table-sm align-middle app-list-table">
+        <thead>
+            <tr>
+                <th scope="col">توضیحات</th>
+                <th scope="col">وضعیت</th>
+                <th scope="col" class="text-end">عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (factor of filterFactors; track factor.id) {
+            <tr>
+                <td class="fw-semibold" data-localization-skip>{{factor.description}}</td>
+                <td>
+                    <span *ngIf="factor.isDeleted" class="app-list-chip app-list-status--danger">حذف شده</span>
+                    <span *ngIf="!factor.isDeleted" class="app-list-chip app-list-status--success">فعال</span>
+                </td>
+                <td class="text-end">
+                    <div class="app-list-actions" *ngIf="factor.isDeleted == false">
+                        <button type="button" class="btn btn-outline-primary btn-sm app-list-action" (click)="onClickEdit(factor)">ویرایش</button>
+                        <button type="button" class="btn btn-outline-danger btn-sm app-list-action" (click)="onClickDelete(factor)">حذف</button>
+                        <button type="button" class="btn btn-outline-light btn-sm app-list-action" (click)="onClickDetail(factor)">جزئیات</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm app-list-action" (click)="onClickViewInvoice(factor)" title="نمایش فاکتور">چاپ</button>
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

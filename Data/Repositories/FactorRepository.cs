@@ -44,6 +44,8 @@ namespace Data.Repositories
                             .Include(x => x.FactorItems)
                                 .ThenInclude(i => i.Product)
                             .Include(x => x.Owner)
+                            .Include(x => x.Store)
+                                .ThenInclude(s => s.Logo)
                             .OrderByDescending(x => x.InsertDateTime)
                             .FirstOrDefault();
 
@@ -58,6 +60,8 @@ namespace Data.Repositories
                             .Include(x => x.FactorItems)
                                 .ThenInclude(i => i.Product)
                             .Include(x => x.Owner)
+                            .Include(x => x.Store)
+                                .ThenInclude(s => s.Logo)
                             .OrderByDescending(x => x.InsertDateTime)
                             .FirstOrDefaultAsync();
 

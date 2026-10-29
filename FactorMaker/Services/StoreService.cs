@@ -137,9 +137,17 @@ namespace FactorMaker.Services
             {
                 var result = new Result<StoreViewModel>();
                 var store = viewModel.Adapt<Store>();
+                store.Owner = null;
+                store.Logo = null;
+                store.CoverImage = null;
+                store.Factors = null;
+                store.Products = null;
+                store.Categories = null;
+                store.LogoId = viewModel.LogoId ?? viewModel.Logo?.Id;
+                store.CoverImageId = viewModel.CoverImageId ?? viewModel.CoverImage?.Id;
                 store.ThemePalette = NormalizePalette(viewModel.ThemePalette);
-                store.SocialLinks = BuildSocialLinks(viewModel.SocialLinks, store.Id);
-                store.Url = store.SocialLinks.FirstOrDefault(x => x.IsPrimary)?.Url ?? viewModel.Url;
+                store.IsPublic = viewModel.IsPublic;
+                store.SocialLinks = new List<StoreSocialLink>();
 
                 var owner = await UnitOfWork.UserRepository.GetByIdAsync(viewModel.OwnerId);
                 if (owner == null)
@@ -157,6 +165,11 @@ namespace FactorMaker.Services
                 }
 
                 await UnitOfWork.StoreRepository.InsertAsync(store);
+                foreach (var socialLink in BuildSocialLinks(viewModel.SocialLinks, store.Id))
+                {
+                    store.SocialLinks.Add(socialLink);
+                }
+                store.Url = store.SocialLinks.FirstOrDefault(x => x.IsPrimary)?.Url ?? viewModel.Url;
                 await UnitOfWork.SaveAsync();
 
                 result.Data = store.Adapt<StoreViewModel>();
@@ -204,6 +217,11 @@ namespace FactorMaker.Services
                 store.Tagline = viewModel.Tagline;
                 store.ThemePalette = NormalizePalette(viewModel.ThemePalette);
                 store.IsPublic = viewModel.IsPublic;
+
+                if (store.SocialLinks == null)
+                {
+                    store.SocialLinks = new List<StoreSocialLink>();
+                }
 
                 store.SocialLinks.Clear();
                 foreach (var socialLink in BuildSocialLinks(viewModel.SocialLinks, store.Id))

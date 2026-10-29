@@ -1,0 +1,55 @@
+<main class="stores-page">
+  <div class="container-xl py-4">
+    <section class="hero-card">
+      <div>
+        <span class="hero-badge">فهرست عمومی فروشگاه‌ها</span>
+        <h1>فروشگاه‌های فعال</h1>
+        <p>
+          این صفحه همه فروشگاه‌های فعالی را که از API پروژه برمی‌گردند نمایش می‌دهد.
+          از اینجا می‌توانید وارد صفحه عمومی هر فروشگاه شوید یا در صورت ثبت شدن، لینک خارجی آن را باز کنید.
+        </p>
+      </div>
+      <div class="hero-actions">
+        <a routerLink="/home" class="btn btn-outline-light btn-sm">بازگشت به خانه</a>
+        <a routerLink="/login" class="btn btn-primary btn-sm">ورود به پنل</a>
+      </div>
+    </section>
+
+    <div *ngIf="isLoading" class="alert alert-info mt-4">در حال بارگذاری فروشگاه‌های فعال...</div>
+
+    <div *ngIf="!isLoading && errorMessages.length" class="alert alert-danger mt-4">
+      <div *ngFor="let msg of errorMessages" data-localization-skip>{{ msg }}</div>
+    </div>
+
+    <div *ngIf="!isLoading && !errorMessages.length && !stores.length" class="alert alert-secondary mt-4">
+      هنوز فروشگاه فعالی برای نمایش ثبت نشده است.
+    </div>
+
+    <section *ngIf="!isLoading && stores.length" class="store-grid mt-4">
+      <article class="store-card" *ngFor="let store of stores; trackBy: trackByStore">
+        <div class="store-top">
+          <div class="store-logo">
+            <img *ngIf="store.logo?.url; else logoFallback" [src]="store.logo?.url" [alt]="store.name" data-localization-skip />
+            <ng-template #logoFallback>
+              <span data-localization-skip>{{ (store.name || '?').slice(0, 1) }}</span>
+            </ng-template>
+          </div>
+          <div class="store-meta">
+            <h2 data-localization-skip>{{ store.name }}</h2>
+            <p class="store-slug" data-localization-skip>{{ store.storeEnglishName }}</p>
+            <p class="store-tagline" *ngIf="store.tagline" data-localization-skip>{{ store.tagline }}</p>
+          </div>
+        </div>
+
+        <p class="store-desc" data-localization-skip>
+          {{ store.description || 'برای این فروشگاه هنوز توضیح عمومی ثبت نشده است.' }}
+        </p>
+
+        <div class="store-actions">
+          <a [routerLink]="getStoreLink(store)" class="btn btn-primary btn-sm">مشاهده صفحه فروشگاه</a>
+          <a *ngIf="store.url" [href]="getExternalUrl(store.url)" target="_blank" rel="noopener" class="btn btn-outline-light btn-sm">لینک خارجی</a>
+        </div>
+      </article>
+    </section>
+  </div>
+</main>

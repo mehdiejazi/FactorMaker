@@ -26,8 +26,12 @@ namespace FactorMaker.Controllers
         [HttpPost("InsertAsync")]
         public async Task<IActionResult> InsertAsync(BlogPostViewModel viewModel)
         {
+            if (User != null)
+            {
+                viewModel.OwnerId = User.Id;
+            }
+
             var result = await BlogPostService.InsertAsync(viewModel);
-            viewModel.OwnerId = User.Id;
             return Result(result);
         }
         

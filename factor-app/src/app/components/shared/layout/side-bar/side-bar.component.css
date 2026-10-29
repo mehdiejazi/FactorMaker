@@ -1,0 +1,112 @@
+:host {
+  display: block;
+  font-weight: 400;
+  padding: 0;
+  background: var(--app-surface);
+  color: var(--app-text);
+}
+
+:host .collaping {
+  height: 0;
+}
+
+:host .nav-link {
+  color: var(--app-text-muted);
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color .16s ease, color .16s ease, border-color .16s ease;
+}
+
+:host .nav-link.active,
+:host .nav-link.bg-gradient,
+:host .nav-pills .nav-link.active {
+  background: var(--app-primary-soft);
+  border-color: rgba(37, 99, 235, 0.24);
+  color: var(--app-primary-hover);
+  border-radius: 8px;
+}
+
+:host .nav-link:hover {
+  background: var(--app-surface-muted);
+  color: var(--app-text);
+}
+
+.nav-pills .nav-link {
+  border-radius: 1.5rem;
+}
+
+.store-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.6rem;
+  border: 1px solid var(--app-border-soft);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: var(--app-shadow-sm);
+  transition: transform 0.18s ease, background-color 0.18s ease;
+}
+
+.store-profile-card:hover {
+  transform: translateY(-1px);
+  background-color: var(--app-primary-soft);
+}
+
+.store-avatar-wrap {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+}
+
+.store-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--app-border);
+}
+
+.store-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--app-primary-soft);
+  border: 1px solid rgba(37, 99, 235, 0.24);
+  color: var(--app-primary);
+}
+
+.store-profile-meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.store-profile-label {
+  font-size: 0.68rem;
+  color: var(--app-text-muted);
+}
+
+.store-profile-name {
+  font-size: 0.86rem;
+  color: var(--app-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.store-profile-hint {
+  font-size: 0.67rem;
+  color: var(--app-text-muted);
+}
+
+.store-profile-arrow {
+  margin-inline-start: auto;
+  color: var(--app-primary);
+}
