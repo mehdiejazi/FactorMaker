@@ -275,7 +275,7 @@ namespace FactorMaker.Services
                     LastName = viewModel.LastName,
                     UserName = viewModel.UserName,
                     Email = viewModel.Email?.Trim(),
-                    Password = Utilities.HashSHA1(viewModel.Password),
+                    Password = PasswordHasher.Hash(viewModel.Password),
                     RoleId = defaultRole.Id,
                     IsActive = true,
                 };
@@ -477,7 +477,7 @@ namespace FactorMaker.Services
 
                 if (result.IsSuccessful == false) return result;
 
-                user.Password = Utilities.HashSHA1(viewModel.Password);
+                user.Password = PasswordHasher.Hash(viewModel.Password);
                 user.IsForcedChangePassword = false;
 
                 await UnitOfWork.UserRepository.UpdateAsync(user);

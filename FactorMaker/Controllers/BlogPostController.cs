@@ -8,7 +8,7 @@ using ViewModels.BlgoPost;
 
 namespace FactorMaker.Controllers
 {
-    //[Authorize]
+    [Authenticated]
     public class BlogPostController : BaseApiControllerWithUser
     {
         private BlogPostController() : base()
@@ -47,6 +47,7 @@ namespace FactorMaker.Controllers
             var result = await BlogPostService.DeleteByIdAsync(id);
             return Result(result);
         }
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet("GetByIdAsync")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
@@ -59,12 +60,14 @@ namespace FactorMaker.Controllers
             var result = await BlogPostService.GetAllAsync();
             return Result(result);
         }
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet("GetPublishedAsync")]
         public async Task<IActionResult> GetPublishedAsync()
         {
             var result = await BlogPostService.GetPublishedAsync();
             return Result(result);
         }
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet("GetPublishedHotAsync")]
         public async Task<IActionResult> GetPublishedHotAsync()
         {
@@ -89,12 +92,14 @@ namespace FactorMaker.Controllers
             var result = await BlogPostService.GetByOwnerIdAsync(ownerId);
             return Result(result);
         }
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet("GetByOwnerPublishedAsync")]
         public async Task<IActionResult> GetByOwnerPublishedAsync(Guid ownerId)
         {
             var result = await BlogPostService.GetByOwnerPublishedAsync(ownerId);
             return Result(result);
         }
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet("GetByOwnerPublishedHotAsync")]
         public async Task<IActionResult> GetByOwnerPublishedHotAsync(Guid ownerId)
         {

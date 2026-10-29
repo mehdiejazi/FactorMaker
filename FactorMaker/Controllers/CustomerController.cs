@@ -1,4 +1,5 @@
-﻿using FactorMaker.Services.ServiceIntefaces;
+﻿using FactorMaker.Infrastructure.Attributes;
+using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -7,7 +8,7 @@ using ViewModels.Customer;
 
 namespace FactorMaker.Controllers
 {
-    //[Authorize]
+    [Authenticated]
     public class CustomerController : BaseApiControllerWithUser
     {
         private CustomerController() : base()

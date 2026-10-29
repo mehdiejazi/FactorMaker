@@ -1,5 +1,6 @@
 ﻿using Common;
 using Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Models;
 using System;
@@ -12,6 +13,11 @@ namespace FactorMaker.Infrastructure.Attributes
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
+            if (context.ActionDescriptor.EndpointMetadata.OfType<IAllowAnonymous>().Any())
+            {
+                return;
+            }
+
             User user = context.HttpContext.Items["User"] as User;
 
             if (user == null)
@@ -26,7 +32,7 @@ namespace FactorMaker.Infrastructure.Attributes
                 return;
             }
 
-            if (user.Role.Name == "Programmer")
+            if (user.Role?.Name == "Programmer")
             {
                 return;
             }

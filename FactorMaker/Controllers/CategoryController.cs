@@ -1,4 +1,5 @@
-﻿using FactorMaker.Services.ServiceIntefaces;
+﻿using FactorMaker.Infrastructure.Attributes;
+using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -7,6 +8,7 @@ using ViewModels.Category;
 
 namespace FactorMaker.Controllers
 {
+    [Authenticated]
     public class CategoryController : BaseApiControllerWithUser
     {
         private CategoryController() : base()
@@ -54,6 +56,8 @@ namespace FactorMaker.Controllers
             var result = await CategoryService.GetAllAsync();
             return Result(result);
         }
+
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
 
         [HttpGet("GetByStoreIdAsync")]
         public async Task<IActionResult> GetByStoreIdAsync(Guid storeId)

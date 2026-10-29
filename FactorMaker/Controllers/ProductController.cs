@@ -1,4 +1,5 @@
-﻿using FactorMaker.Services.ServiceIntefaces;
+﻿using FactorMaker.Infrastructure.Attributes;
+using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -7,7 +8,7 @@ using ViewModels.Product;
 
 namespace FactorMaker.Controllers
 {
-    //[Authorize]
+    [Authenticated]
     public class ProductController : BaseApiControllerWithUser
     {
         private ProductController() : base()
@@ -54,6 +55,8 @@ namespace FactorMaker.Controllers
             var result = await ProductService.UpdateAsync(viewModel);
             return Result(result);
         }
+
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
 
         [HttpGet("GetByStoreIdAsync")]
         public async Task<IActionResult> GetByStoreIdAsync(Guid storeId)

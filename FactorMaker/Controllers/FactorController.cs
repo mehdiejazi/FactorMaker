@@ -8,6 +8,7 @@ using ViewModels.Factor;
 
 namespace FactorMaker.Controllers
 {
+    [Authenticated]
     public class FactorController : BaseApiControllerWithUser
     {
         private FactorController() : base()

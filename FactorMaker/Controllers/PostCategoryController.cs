@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using FactorMaker.Infrastructure.Attributes;
+using Common;
 using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,7 @@ using ViewModels.PostCategory;
 
 namespace FactorMaker.Controllers
 {
+    [Authenticated]
     public class PostCategoryController : BaseApiControllerWithUser
     {
         private PostCategoryController() : base()

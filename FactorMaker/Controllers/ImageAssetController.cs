@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using FactorMaker.Infrastructure.Attributes;
+using Common;
 using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,7 @@ using ViewModels.ImageAsset;
 
 namespace FactorMaker.Controllers
 {
+    [Authenticated]
     public class ImageAssetController : BaseApiControllerWithUser
     {
         private ImageAssetController() : base()

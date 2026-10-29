@@ -50,7 +50,7 @@ namespace FactorMaker.Services
                 return result;
             }
 
-            if (string.Compare(foundUser.Password, Utilities.HashSHA1(loginRequest.Password), false) != 0)
+            if (PasswordHasher.Verify(foundUser.Password, loginRequest.Password) == false)
             {
                 result.AddErrorMessage(ErrorMessages.LoginFailed);
                 result.IsSuccessful = false;
@@ -69,6 +69,13 @@ namespace FactorMaker.Services
                 result.AddErrorMessage(ErrorMessages.UserIsInactive);
                 result.IsSuccessful = false;
                 return result;
+            }
+
+            if (PasswordHasher.NeedsRehash(foundUser.Password))
+            {
+                foundUser.Password = PasswordHasher.Hash(loginRequest.Password);
+                await UnitOfWork.UserRepository.UpdateAsync(foundUser);
+                await UnitOfWork.SaveAsync();
             }
 
             string token = JwtUtility.GenerateJwtToken(foundUser, AuthSettings);
