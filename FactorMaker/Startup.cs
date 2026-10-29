@@ -1,4 +1,4 @@
-using Common;
+﻿using Common;
 using Data;
 using FactorMaker.Infrastructure;
 using FactorMaker.Infrastructure.ApplicationSettings;
@@ -122,6 +122,7 @@ namespace FactorMaker
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<AccessGuard>();
 
             services.AddMemoryCache();
 
