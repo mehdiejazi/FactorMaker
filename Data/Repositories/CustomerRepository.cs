@@ -28,55 +28,60 @@ namespace Data.Repositories
 
         public async Task<ICollection<CustomerSaleTotalQuantityDto>> GetTop10CustomersByQuantityAsync(Guid storeId)
         {
-            var list = await DatabaseContext.Set<FactorItem>()
+            var list = (await DatabaseContext.Set<FactorItem>()
                 .Where(fi => fi.IsDeleted == false
                     && fi.Factor.StoreId == storeId
                     && fi.Factor.IsDeleted == false
                     && fi.Factor.IsClosed)
-                .GroupBy(fi => fi.Factor.Owner)
+                .Include(x => x.Factor).ThenInclude(x => x.Owner)
+                .ToListAsync())
+                .GroupBy(fi => fi.Factor.Owner.Id)
                 .OrderByDescending(g => g.Sum(fi => fi.Quantity))
                 .Take(10)
                 .Select(g => new CustomerSaleTotalQuantityDto
                 {
-                    Customer = g.Key,
+                    Customer = g.First().Factor.Owner,
                     TotalQuantity = g.Sum(x => x.Quantity)
                 })
-                .ToListAsync();
+                .ToList();
 
             return list;
         }
 
         public async Task<ICollection<CustomerSaleTotalPriceDto>> GetTop10CustomersByPriceAsync(Guid storeId)
         {
-            var list = await DatabaseContext.Set<FactorItem>()
+            var list = (await DatabaseContext.Set<FactorItem>()
                 .Where(fi => fi.IsDeleted == false
                     && fi.Factor.StoreId == storeId
                     && fi.Factor.IsDeleted == false
                     && fi.Factor.IsClosed)
-                .GroupBy(fi => fi.Factor.Owner)
+                .Include(x => x.Factor).ThenInclude(x => x.Owner)
+                .ToListAsync())
+                .GroupBy(fi => fi.Factor.Owner.Id)
                 .OrderByDescending(g => g.Sum(fi => fi.Price * fi.Quantity * (1 - (fi.OffPercent / 100m))))
                 .Take(10)
                 .Select(g => new CustomerSaleTotalPriceDto
                 {
-                    Customer = g.Key,
+                    Customer = g.First().Factor.Owner,
                     TotalPrice = g.Sum(x => x.Price * x.Quantity * (1 - (x.OffPercent / 100m)))
                 })
-                .ToListAsync();
+                .ToList();
 
             return list;
         }
 
         public async Task<ICollection<CustomerGenderStatDto>> GetGenderStatsByStoreIdAsync(Guid storeId)
         {
-            var stats = await DbSet
+            var stats = (await DbSet
                 .Where(customer => customer.StoreId == storeId && customer.IsDeleted == false)
+                .ToListAsync())
                 .GroupBy(customer => customer.Gender)
                 .Select(group => new CustomerGenderStatDto
                 {
                     Gender = group.Key,
                     Count = group.Count()
                 })
-                .ToListAsync();
+                .ToList();
 
             return stats;
         }

@@ -100,12 +100,13 @@ namespace Data.Repositories
         {
             PersianCalendar persianCalendar = new PersianCalendar();
 
-            var monthlySales = await DbSet
+            var monthlySales = (await DbSet
                         .Where(f => f.IsClosed &&
                                     f.SellDateTime >= dtFrom &&
                                     f.SellDateTime < dtTo &&
                                     f.StoreId.Equals(storeId) &&
                                     f.IsDeleted == false)
+                        .ToListAsync())
                         .GroupBy(f => new
                         {
                             Year = persianCalendar.GetYear(f.SellDateTime),
@@ -120,7 +121,7 @@ namespace Data.Repositories
                         })
                         .OrderBy(result => result.Year)
                         .ThenBy(result => result.Month)
-                        .ToListAsync();
+                        .ToList();
 
             return monthlySales;
         }
@@ -130,12 +131,13 @@ namespace Data.Repositories
         {
             PersianCalendar persianCalendar = new PersianCalendar();
 
-            var weeklySales = await DbSet
+            var weeklySales = (await DbSet
                         .Where(f => f.IsClosed &&
                                     f.SellDateTime >= dtFrom &&
                                     f.SellDateTime < dtTo &&
                                     f.StoreId.Equals(storeId) &&
                                     f.IsDeleted == false)
+                        .ToListAsync())
                         .GroupBy(f => new
                         {
                             Year = persianCalendar.GetYear(f.SellDateTime),
@@ -150,7 +152,7 @@ namespace Data.Repositories
                         })
                         .OrderBy(result => result.Year)
                         .ThenBy(result => result.Week)
-                        .ToListAsync();
+                        .ToList();
 
             return weeklySales;
         }
@@ -158,13 +160,14 @@ namespace Data.Repositories
         public async Task<ICollection<FactorSaleHourlyDto>> GetHourlyFactorSaleAsync
              (DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
-            var hourlySales = await DbSet
+            var hourlySales = (await DbSet
                  .Where(f => f.IsClosed &&
                              f.SellDateTime >= dtFrom &&
                              f.SellDateTime < dtTo &&
                              f.StoreId.Equals(storeId) &&
                              f.IsDeleted == false)
-               .GroupBy(f => f.SellDateTime.Hour)
+                .ToListAsync())
+                .GroupBy(f => f.SellDateTime.Hour)
                .Select(group => new FactorSaleHourlyDto
                {
                    Hour = group.Key,
@@ -172,7 +175,7 @@ namespace Data.Repositories
                    TotalPrice = group.Sum(f => f.TotalPrice)
                })
                .OrderBy(result => result.Hour)
-               .ToListAsync();
+               .ToList();
 
             return hourlySales;
         }
@@ -182,13 +185,14 @@ namespace Data.Repositories
         {
             PersianCalendar persianCalendar = new PersianCalendar();
 
-            var hourlySales = await DbSet
+            var hourlySales = (await DbSet
                  .Where(f => f.IsClosed &&
                              f.SellDateTime < dtTo &&
                              f.SellDateTime >= dtFrom &&
                              f.StoreId.Equals(storeId) &&
                              f.IsDeleted == false)
-               .GroupBy(f => new { DayOfWeek = persianCalendar.GetDayOfWeek(f.SellDateTime) })
+                .ToListAsync())
+                .GroupBy(f => new { DayOfWeek = persianCalendar.GetDayOfWeek(f.SellDateTime) })
                .Select(group => new FactorSaleWeekDailyDto
                {
                    DayOfWeek = group.Key.DayOfWeek,
@@ -196,7 +200,7 @@ namespace Data.Repositories
                    TotalPrice = group.Sum(f => f.TotalPrice)
                })
                .OrderBy(result => result.DayOfWeek)
-               .ToListAsync();
+               .ToList();
 
             return hourlySales;
         }
