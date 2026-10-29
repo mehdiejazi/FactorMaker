@@ -1,0 +1,471 @@
+﻿<div class="container dashboard-shell">
+  <app-section-header></app-section-header>
+
+  <div *ngIf="isLoading" class="mb-3">
+    <app-alert AlertType="Download" TextMessage="در حال بارگذاری داده های داشبورد ..."></app-alert>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+    <div *ngIf="!hasSelectedStore" class="mb-3">
+      <app-alert AlertType="Info" TextMessage="لطفا اول فروشگاه را انتخاب کنید"></app-alert>
+    </div>
+
+    <ng-container *ngIf="hasSelectedStore">
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-md-6 col-xl-3">
+          <div class="card metric-card h-100">
+            <div class="card-body">
+              <div class="metric-head">
+                <span>درآمد امروز</span>
+                <mat-icon>payments</mat-icon>
+              </div>
+              <div class="metric-value">{{ formatCurrency(todayRevenue) }}</div>
+              <span class="badge text-bg-success rounded-pill">{{ todayFactorsCount | persianNumber }} فاکتور</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+          <div class="card metric-card h-100">
+            <div class="card-body">
+              <div class="metric-head">
+                <span>کالاهای ثبت شده</span>
+                <mat-icon>inventory_2</mat-icon>
+              </div>
+              <div class="metric-value">{{ totalProductsCount | persianNumber }}</div>
+              <span class="badge text-bg-primary rounded-pill">در فروشگاه فعال</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3" *ngFor="let card of summaryCards">
+          <div class="card metric-card metric-secondary h-100">
+            <div class="card-body">
+              <div class="metric-head">
+                <span>{{ card.label }}</span>
+                <mat-icon>monitoring</mat-icon>
+              </div>
+              <div class="metric-value">{{ formatCurrency(card.amount) }}</div>
+              <span class="badge text-bg-dark rounded-pill">{{ card.count | persianNumber }} فاکتور</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-xl-7">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>query_stats</mat-icon>
+              <span>درآمد 7 روز گذشته</span>
+            </div>
+            <div class="card-body">
+              <div *ngIf="revenueData.length; else noRevenueData" class="chart-wrap">
+                <div class="bar-chart">
+                  <div *ngFor="let item of revenueData" class="bar-item" [title]="formatCurrency(item.revenue)">
+                    <div class="bar-track">
+                      <div class="bar" [style.height.%]="getBarHeight(item.revenue, revenueValues(revenueData))"></div>
+                    </div>
+                    <div class="bar-label">{{ item.label }}</div>
+                    <div class="bar-value">{{ item.revenue | rial }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-5">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>sell</mat-icon>
+              <span>پرفروش ترین کالاها</span>
+            </div>
+            <div class="card-body p-0">
+              <div *ngIf="topProducts.length; else noTopProducts" class="table-responsive">
+                <table class="table table-hover align-middle low-stock-table mb-0">
+                  <thead>
+                    <tr>
+                      <th>کالا</th>
+                      <th>تعداد فروش</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of topProducts">
+                      <td class="fw-semibold" data-localization-skip>{{ item.product?.name }}</td>
+                      <td>{{ item.totalQuantity | persianNumber }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-6">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>schedule</mat-icon>
+              <span>فروش امروز به تفکیک ساعت</span>
+            </div>
+            <div class="card-body">
+              <div *ngIf="hourlyRevenueData.length; else noHourlyRevenue" class="mini-chart-list">
+                <div *ngFor="let item of hourlyRevenueData" class="mini-chart-row">
+                  <div class="mini-chart-label">{{ item.label }}</div>
+                  <div class="mini-chart-track">
+                    <div class="mini-chart-bar" [style.width.%]="getBarHeight(item.revenue, revenueValues(hourlyRevenueData))"></div>
+                  </div>
+                  <div class="mini-chart-value">{{ item.revenue | rial }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>calendar_view_week</mat-icon>
+              <span>فروش 7 روز اخیر به تفکیک روز</span>
+            </div>
+            <div class="card-body">
+              <div *ngIf="weekdayRevenueData.length; else noWeekdayRevenue" class="mini-chart-list">
+                <div *ngFor="let item of weekdayRevenueData" class="mini-chart-row">
+                  <div class="mini-chart-label">{{ item.label }}</div>
+                  <div class="mini-chart-track">
+                    <div class="mini-chart-bar weekday" [style.width.%]="getBarHeight(item.revenue, revenueValues(weekdayRevenueData))"></div>
+                  </div>
+                  <div class="mini-chart-value">{{ item.revenue | rial }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-xl-6">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>calendar_month</mat-icon>
+              <span>فروش سال جاری به تفکیک ماه</span>
+            </div>
+            <div class="card-body">
+              <div *ngIf="monthlyRevenueData.length; else noMonthlyRevenue" class="mini-chart-list">
+                <div *ngFor="let item of monthlyRevenueData" class="mini-chart-row">
+                  <div class="mini-chart-label">{{ item.label }}</div>
+                  <div class="mini-chart-track">
+                    <div class="mini-chart-bar" [style.width.%]="getBarHeight(item.revenue, revenueValues(monthlyRevenueData))"></div>
+                  </div>
+                  <div class="mini-chart-value">{{ item.revenue | rial }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-6">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>payments</mat-icon>
+              <span>پرفروش ترین کالاها بر اساس مبلغ</span>
+            </div>
+            <div class="card-body p-0">
+              <div *ngIf="topProductsByPrice.length; else noTopProductsByPrice" class="table-responsive">
+                <table class="table table-hover align-middle low-stock-table mb-0">
+                  <thead>
+                    <tr>
+                      <th>کالا</th>
+                      <th>مبلغ فروش</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of topProductsByPrice">
+                      <td class="fw-semibold" data-localization-skip>{{ item.product?.name }}</td>
+                      <td>{{ item.totalPrice | rial }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-xl-6">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>groups</mat-icon>
+              <span>مشتریان برتر بر اساس تعداد خرید</span>
+            </div>
+            <div class="card-body p-0">
+              <div *ngIf="topCustomersByQuantity.length; else noTopCustomersQuantity" class="table-responsive">
+                <table class="table table-hover align-middle low-stock-table mb-0">
+                  <thead>
+                    <tr>
+                      <th>مشتری</th>
+                      <th>تعداد</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of topCustomersByQuantity">
+                      <td class="fw-semibold" data-localization-skip>{{ item.customer?.fullName }}</td>
+                      <td>{{ item.totalQuantity | persianNumber }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-6">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>account_balance_wallet</mat-icon>
+              <span>مشتریان برتر بر اساس مبلغ خرید</span>
+            </div>
+            <div class="card-body p-0">
+              <div *ngIf="topCustomersByPrice.length; else noTopCustomersPrice" class="table-responsive">
+                <table class="table table-hover align-middle low-stock-table mb-0">
+                  <thead>
+                    <tr>
+                      <th>مشتری</th>
+                      <th>مبلغ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of topCustomersByPrice">
+                      <td class="fw-semibold" data-localization-skip>{{ item.customer?.fullName }}</td>
+                      <td>{{ item.totalPrice | rial }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-xl-6">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>pie_chart</mat-icon>
+              <span>سهم فروش کالا بر اساس تعداد</span>
+            </div>
+            <div class="card-body">
+              <ng-container *ngIf="productPieByQuantity.length; else noProductPieQuantity">
+                <div class="pie-track mb-3">
+                  <div *ngFor="let item of productPieByQuantity" class="pie-segment" [ngStyle]="pieSliceStyle(item, productPieByQuantity)"></div>
+                </div>
+                <div class="pie-legend">
+                  <div *ngFor="let item of productPieByQuantity" class="pie-legend-item">
+                    <span class="pie-dot" [style.backgroundColor]="item.color"></span>
+                    <span data-localization-skip>{{ item.label }}</span>
+                    <strong>{{ item.value | persianNumber }}</strong>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-6">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>pie_chart</mat-icon>
+              <span>سهم فروش کالا بر اساس مبلغ</span>
+            </div>
+            <div class="card-body">
+              <ng-container *ngIf="productPieByPrice.length; else noProductPiePrice">
+                <div class="pie-track mb-3">
+                  <div *ngFor="let item of productPieByPrice" class="pie-segment" [ngStyle]="pieSliceStyle(item, productPieByPrice)"></div>
+                </div>
+                <div class="pie-legend">
+                  <div *ngFor="let item of productPieByPrice" class="pie-legend-item">
+                    <span class="pie-dot" [style.backgroundColor]="item.color"></span>
+                    <span data-localization-skip>{{ item.label }}</span>
+                    <strong>{{ item.value | rial }}</strong>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-xl-4">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>donut_large</mat-icon>
+              <span>سهم فروش دسته بندی بر اساس تعداد</span>
+            </div>
+            <div class="card-body">
+              <ng-container *ngIf="categoryPieByQuantity.length; else noCategoryPieQuantity">
+                <div class="pie-track mb-3">
+                  <div *ngFor="let item of categoryPieByQuantity" class="pie-segment" [ngStyle]="pieSliceStyle(item, categoryPieByQuantity)"></div>
+                </div>
+                <div class="pie-legend">
+                  <div *ngFor="let item of categoryPieByQuantity" class="pie-legend-item">
+                    <span class="pie-dot" [style.backgroundColor]="item.color"></span>
+                    <span data-localization-skip>{{ item.label }}</span>
+                    <strong>{{ item.value | persianNumber }}</strong>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>donut_large</mat-icon>
+              <span>سهم فروش دسته بندی بر اساس مبلغ</span>
+            </div>
+            <div class="card-body">
+              <ng-container *ngIf="categoryPieByPrice.length; else noCategoryPiePrice">
+                <div class="pie-track mb-3">
+                  <div *ngFor="let item of categoryPieByPrice" class="pie-segment" [ngStyle]="pieSliceStyle(item, categoryPieByPrice)"></div>
+                </div>
+                <div class="pie-legend">
+                  <div *ngFor="let item of categoryPieByPrice" class="pie-legend-item">
+                    <span class="pie-dot" [style.backgroundColor]="item.color"></span>
+                    <span data-localization-skip>{{ item.label }}</span>
+                    <strong>{{ item.value | rial }}</strong>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>wc</mat-icon>
+              <span>مشتریان بر اساس جنسیت</span>
+            </div>
+            <div class="card-body">
+              <ng-container *ngIf="customerGenderStats.length; else noGenderStats">
+                <div class="pie-track mb-3">
+                  <div *ngFor="let item of customerGenderStats" class="pie-segment" [ngStyle]="pieSliceStyle(item, customerGenderStats)"></div>
+                </div>
+                <div class="pie-legend">
+                  <div *ngFor="let item of customerGenderStats" class="pie-legend-item">
+                    <span class="pie-dot" [style.backgroundColor]="item.color"></span>
+                    <span>{{ item.label }}</span>
+                    <strong>{{ item.value | persianNumber }}</strong>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-12 col-xl-6">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>category</mat-icon>
+              <span>پرفروش ترین دسته بندی های ماه</span>
+            </div>
+            <div class="card-body">
+              <div *ngIf="categorySales.length; else noCategorySales" class="mini-chart-list">
+                <div *ngFor="let item of categorySales" class="mini-chart-row">
+                  <div class="mini-chart-label" data-localization-skip>{{ item.category?.name }}</div>
+                  <div class="mini-chart-track">
+                    <div class="mini-chart-bar accent" [style.width.%]="getBarHeight(item.totalQuantity, quantityValues(categorySales))"></div>
+                  </div>
+                  <div class="mini-chart-value">{{ item.totalQuantity | persianNumber }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-6">
+          <div class="card panel-card h-100">
+            <div class="card-header panel-header d-flex align-items-center gap-2">
+              <mat-icon>receipt_long</mat-icon>
+              <span>آخرین فاکتورهای فروشگاه</span>
+            </div>
+            <div class="card-body p-0">
+              <div *ngIf="recentFactors.length; else noRecentFactors" class="table-responsive">
+                <table class="table table-hover align-middle low-stock-table mb-0">
+                  <thead>
+                    <tr>
+                      <th>مشتری</th>
+                      <th>تاریخ</th>
+                      <th>مبلغ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let factor of recentFactors">
+                      <td class="fw-semibold" data-localization-skip>{{ factor.owner?.fullName || factor.owner?.firstName }}</td>
+                      <td>{{ factor.sellDateTime | date:'yyyy/MM/dd HH:mm' }}</td>
+                      <td>{{ factor.totalPrice | rial }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #noRevenueData>
+    <div class="empty-inline"><mat-icon>insert_chart_outlined</mat-icon><span>هیچ داده ای برای نمایش وجود ندارد</span></div>
+  </ng-template>
+  <ng-template #noTopProducts>
+    <div class="empty-inline"><mat-icon>inventory</mat-icon><span>هنوز داده فروش کافی ثبت نشده است</span></div>
+  </ng-template>
+  <ng-template #noHourlyRevenue>
+    <div class="empty-inline"><mat-icon>schedule</mat-icon><span>برای امروز فروش بسته ای ثبت نشده است</span></div>
+  </ng-template>
+  <ng-template #noWeekdayRevenue>
+    <div class="empty-inline"><mat-icon>calendar_view_week</mat-icon><span>در 7 روز اخیر داده فروش کافی وجود ندارد</span></div>
+  </ng-template>
+  <ng-template #noCategorySales>
+    <div class="empty-inline"><mat-icon>category</mat-icon><span>برای این ماه داده دسته بندی وجود ندارد</span></div>
+  </ng-template>
+  <ng-template #noRecentFactors>
+    <div class="empty-inline"><mat-icon>receipt_long</mat-icon><span>فاکتوری برای نمایش وجود ندارد</span></div>
+  </ng-template>
+  <ng-template #noMonthlyRevenue>
+    <div class="empty-inline"><mat-icon>calendar_month</mat-icon><span>برای سال جاری داده ماهانه وجود ندارد</span></div>
+  </ng-template>
+  <ng-template #noTopProductsByPrice>
+    <div class="empty-inline"><mat-icon>payments</mat-icon><span>داده مبلغی برای کالاها وجود ندارد</span></div>
+  </ng-template>
+  <ng-template #noTopCustomersQuantity>
+    <div class="empty-inline"><mat-icon>groups</mat-icon><span>داده مشتری بر اساس تعداد وجود ندارد</span></div>
+  </ng-template>
+  <ng-template #noTopCustomersPrice>
+    <div class="empty-inline"><mat-icon>account_balance_wallet</mat-icon><span>داده مشتری بر اساس مبلغ وجود ندارد</span></div>
+  </ng-template>
+  <ng-template #noProductPieQuantity>
+    <div class="empty-inline"><mat-icon>pie_chart</mat-icon><span>داده pie کالا بر اساس تعداد وجود ندارد</span></div>
+  </ng-template>
+  <ng-template #noProductPiePrice>
+    <div class="empty-inline"><mat-icon>pie_chart</mat-icon><span>داده pie کالا بر اساس مبلغ وجود ندارد</span></div>
+  </ng-template>
+  <ng-template #noCategoryPieQuantity>
+    <div class="empty-inline"><mat-icon>donut_large</mat-icon><span>داده pie دسته بندی بر اساس تعداد وجود ندارد</span></div>
+  </ng-template>
+  <ng-template #noCategoryPiePrice>
+    <div class="empty-inline"><mat-icon>donut_large</mat-icon><span>داده pie دسته بندی بر اساس مبلغ وجود ندارد</span></div>
+  </ng-template>
+  <ng-template #noGenderStats>
+    <div class="empty-inline"><mat-icon>wc</mat-icon><span>داده جنسیت مشتریان وجود ندارد</span></div>
+  </ng-template>
+</div>
+

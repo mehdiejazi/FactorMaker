@@ -1,0 +1,146 @@
+<div class="factor-detail-page">
+    <div class="card factor-top-card mb-3">
+        <div class="card-body factor-top-body">
+            <div class="factor-title-wrap">
+                <h4 class="factor-title mb-1">جزئیات فاکتور</h4>
+                <p class="factor-subtitle mb-0">مدیریت اقلام، تخفیف‌ها و وضعیت نهایی فاکتور</p>
+            </div>
+
+            <div class="factor-header-actions">
+                <span *ngIf="factor?.isClosed" class="app-list-chip app-list-status--danger">بسته شده</span>
+                <span *ngIf="factor && !factor?.isClosed" class="app-list-chip app-list-status--success">باز</span>
+
+                <button type="button" *ngIf="!factor?.isClosed" class="btn btn-success btn-sm" (click)="onClickCloseFactor()">
+                    <mat-icon class="small me-1">task_alt</mat-icon>
+                    بستن فاکتور
+                </button>
+                <button type="button" *ngIf="factor" class="btn btn-danger btn-sm" (click)="onClickDeleteFactor()">
+                    <mat-icon class="small me-1">delete</mat-icon>
+                    حذف فاکتور
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <app-alert *ngIf="!errorMessages?.length && !factor" AlertType="Download" TextMessage="در حال واکشی اطلاعات ..."></app-alert>
+        <app-alert *ngFor="let errorMessage of errorMessages" AlertType="Error" [TextMessage]="errorMessage" data-localization-skip></app-alert>
+        <app-alert *ngIf="factor?.id == ''" AlertType="Info" TextMessage="اطلاعاتی برای نمایش وجود ندارد"></app-alert>
+        <app-alert *ngIf="factor?.isClosed" AlertType="Warning" TextMessage="این فاکتور بسته شده است و امکان ویرایش ندارد"></app-alert>
+        <app-alert *ngIf="formSuccessful" AlertType="Success" TextMessage="اطلاعات با موفقیت ثبت گردید"></app-alert>
+    </div>
+
+    <div class="card mb-3" *ngIf="factor">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="factor-summary-box">
+                        <span class="factor-summary-label">مشتری</span>
+                        <strong class="factor-summary-value" data-localization-skip>{{ factor.owner?.fullName || '-' }}</strong>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="factor-summary-box">
+                        <span class="factor-summary-label">تاریخ فروش</span>
+                        <strong class="factor-summary-value" data-localization-skip>{{ factor.sellDateTime || '-' }}</strong>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="factor-summary-box">
+                        <span class="factor-summary-label">تاریخ ثبت</span>
+                        <strong class="factor-summary-value" data-localization-skip>{{ factor.insertDateTime || '-' }}</strong>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3" *ngIf="factor.isDeleted">
+                    <div class="factor-summary-box">
+                        <span class="factor-summary-label">تاریخ حذف</span>
+                        <strong class="factor-summary-value" data-localization-skip>{{ factor.deleteDateTime || '-' }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="factor-description mt-3">
+                <span class="factor-summary-label">توضیحات</span>
+                <p class="mb-0">
+                    <span *ngIf="factor.description; else emptyFactorDescription" data-localization-skip>{{ factor.description }}</span>
+                    <ng-template #emptyFactorDescription>توضیحی ثبت نشده است</ng-template>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" *ngIf="factor">
+        <div class="card-body">
+            <div class="factor-items-head mb-3">
+                <h5 class="mb-0">آیتم‌های فاکتور</h5>
+                <button type="button" *ngIf="!factor?.isClosed" class="btn btn-success btn-sm" (click)="onClickAddNew()">
+                    <mat-icon class="small me-1">add</mat-icon>
+                    افزودن آیتم
+                </button>
+            </div>
+
+            <app-alert *ngIf="!factor?.factorItems || factor.factorItems?.length == 0" AlertType="Info"
+                TextMessage="برای این فاکتور هنوز آیتمی ثبت نشده است"></app-alert>
+
+            <div class="table-responsive app-list-table-wrap" *ngIf="factor?.factorItems?.length">
+                <table class="table table-hover table-sm align-middle app-list-table factor-items-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">محصول</th>
+                            <th scope="col">توضیحات</th>
+                            <th scope="col" class="text-center">تعداد</th>
+                            <th scope="col">تخفیف</th>
+                            <th scope="col">قیمت واحد</th>
+                            <th scope="col">مبلغ نهایی</th>
+                            <th scope="col" class="text-end">عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of factor.factorItems; trackBy: trackFactorItem">
+                            <td class="fw-semibold" data-localization-skip>{{ item.product?.name || '-' }}</td>
+                            <td class="factor-muted" data-localization-skip>{{ item.description || '-' }}</td>
+                            <td class="text-center">
+                                <div class="factor-qty-control">
+                                    <button type="button" class="btn btn-outline-light btn-sm factor-qty-btn"
+                                        *ngIf="!factor?.isClosed" (click)="onClickDecQuantity(item)">
+                                        <mat-icon class="small">remove</mat-icon>
+                                    </button>
+                                    <span class="factor-qty-badge">{{ (item.quantity || 0) | persianNumber }}</span>
+                                    <button type="button" class="btn btn-outline-light btn-sm factor-qty-btn"
+                                        *ngIf="!factor?.isClosed" (click)="onClickIncQuantity(item)">
+                                        <mat-icon class="small">add</mat-icon>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>{{ (item.offPercent || 0) | persianNumber }}%</td>
+                            <td>{{ (item.price || 0) | rial }}</td>
+                            <td class="fw-bold">{{ getItemFinalPrice(item) | rial }}</td>
+                            <td class="text-end">
+                                <div class="app-list-actions" *ngIf="!factor?.isClosed">
+                                    <button type="button" class="btn btn-outline-primary btn-sm app-list-action"
+                                        (click)="onClickEdit(item)">ویرایش</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm app-list-action"
+                                        (click)="onClickDelete(item)">حذف</button>
+                                </div>
+                                <span *ngIf="factor?.isClosed" class="factor-muted">فاکتور بسته است</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" class="fw-semibold">جمع کل</td>
+                            <td class="text-center">{{ getTotalQuantity() | persianNumber }}</td>
+                            <td>تخفیف کل</td>
+                            <td>{{ getTotalDiscount() | rial }}</td>
+                            <td class="fw-bold">{{ getTotalFinalPrice() | rial }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using FactorMaker.Infrastructure;
+using Common;
 using FactorMaker.Infrastructure.Attributes;
 using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
@@ -15,12 +16,14 @@ namespace FactorMaker.Controllers
         {
 
         }
-        public StoreController(IStoreService storeService)
+        public StoreController(IStoreService storeService, AccessGuard accessGuard)
         {
             StoreService = storeService;
+            AccessGuard = accessGuard;
         }
         private IStoreService StoreService   
         { get; }
+        private AccessGuard AccessGuard { get; }
 
         [Authorize]
         [HttpPost("InsertAsync")]
@@ -35,6 +38,7 @@ namespace FactorMaker.Controllers
         [HttpPost("UpdateAsync")]
         public async Task<IActionResult> UpdateAsync(StoreViewModel viewModel)
         {
+            if (!await AccessGuard.CanAccessStoreByIdAsync(User, viewModel.Id)) return Result(AccessGuard.Denied());
             var result = await StoreService.UpdateAsync(viewModel);
             return Result(result);
         }
@@ -43,6 +47,7 @@ namespace FactorMaker.Controllers
         [HttpGet("DeleteByIdAsync")]
         public async Task<IActionResult> DeleteByIdAsync(Guid id)
         {
+            if (!await AccessGuard.CanAccessStoreByIdAsync(User, id)) return Result(AccessGuard.Denied());
             var result = await StoreService.DeleteByIdAsync(id);
             return Result(result);
         }
@@ -51,6 +56,7 @@ namespace FactorMaker.Controllers
         [HttpGet("GetByIdAsync")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
+            if (!await AccessGuard.CanAccessStoreByIdAsync(User, id)) return Result(AccessGuard.Denied());
             var result = await StoreService.GetByIdAsync(id);
             return Result(result);
         }

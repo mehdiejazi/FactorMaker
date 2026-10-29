@@ -1,0 +1,371 @@
+<main class="home-page">
+  <nav class="nav-menu navbar navbar-expand-lg fixed-top">
+    <div class="container nav-shell">
+      <a class="navbar-brand brand" href="#home">
+        <span class="brand-mark">
+          <mat-icon>receipt_long</mat-icon>
+        </span>
+        <span>
+          <strong>فکتورساز</strong>
+          <small>مدیریت فروشگاه و فاکتور</small>
+        </span>
+      </a>
+
+      <button class="navbar-toggler nav-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#homeNav" aria-controls="homeNav" aria-expanded="false" aria-label="منو">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <div class="collapse navbar-collapse" id="homeNav">
+        <ul class="navbar-nav ms-auto me-auto nav-links-list">
+          <li class="nav-item"><a class="nav-link" href="#home">خانه</a></li>
+          <li class="nav-item"><a class="nav-link" href="#features">ویژگی‌ها</a></li>
+          <li class="nav-item"><a class="nav-link" href="#stats">آمار</a></li>
+          <li class="nav-item"><a class="nav-link" href="#story">معرفی</a></li>
+          <li class="nav-item"><a class="nav-link" href="#help">شروع کار</a></li>
+          <li class="nav-item"><a class="nav-link" href="#stores">فروشگاه‌ها</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contactus">تماس</a></li>
+        </ul>
+        <a routerLink="/login" class="btn btn-download-nav">
+          <mat-icon>login</mat-icon>
+          ورود به پنل
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero-section" id="home">
+    <div class="hero-shapes">
+      <div class="hero-shape hero-shape-1"></div>
+      <div class="hero-shape hero-shape-2"></div>
+      <div class="hero-shape hero-shape-3"></div>
+    </div>
+
+    <div class="container hero-layout">
+      <section class="hero-copy animate-in">
+        <div class="hero-badge">
+          <mat-icon>sell</mat-icon>
+          فاکتور، فروشگاه و ویترین عمومی در یک پنل
+        </div>
+        <h1>سامانه سبک و سریع برای مدیریت فروشگاه و صدور فاکتور</h1>
+        <p class="tagline">
+          فکتورساز کمک می‌کند محصولات، مشتری‌ها، فاکتورها و صفحه عمومی فروشگاه را منظم نگه دارید؛
+          از ثبت سفارش تا چاپ و PDF، همه چیز در یک جریان ساده انجام می‌شود.
+        </p>
+
+        <div class="hero-actions">
+          <a routerLink="/signup" class="btn btn-hero-primary">شروع ثبت‌نام</a>
+          <a routerLink="/stores/active" class="btn btn-hero-outline">مشاهده فروشگاه‌های فعال</a>
+        </div>
+
+        <div class="quick-links">
+          <a *ngFor="let link of quickLinks" [routerLink]="link.href">{{ link.label }}</a>
+        </div>
+      </section>
+
+      <aside class="hero-phone-wrap animate-in">
+        <img src="assets/images/factor-hero-phone.png" alt="نمای موبایلی فکتورساز" class="hero-phone">
+      </aside>
+    </div>
+
+    <div class="hero-wave">
+      <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#f8fffe"></path>
+      </svg>
+    </div>
+  </header>
+
+  <section class="client-logos py-4">
+    <div class="container text-center">
+      <p class="clients-label mb-3">مناسب برای فروشگاه‌های کوچک، تیم‌های فروش و کسب‌وکارهای خدماتی</p>
+      <div class="client-strip">
+        <span>فروشگاه پوشاک</span>
+        <span>خدمات فنی</span>
+        <span>فروش عمده</span>
+        <span>کسب‌وکار خانگی</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dark-section" id="features">
+    <div class="container">
+      <div class="section-title">
+        <span class="section-tag">مزایای فکتورساز</span>
+        <h3>هر چیزی که برای فروش روزانه لازم دارید</h3>
+        <p class="section-subtitle">یک پنل کاربردی برای ثبت، پیگیری و ارائه فروشگاه شما.</p>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-md-6 col-xl-4 mb-4" *ngFor="let feature of features">
+          <article class="feature-card">
+            <div class="feature-icon-wrap">
+              <mat-icon>{{ feature.icon }}</mat-icon>
+            </div>
+            <h4>{{ feature.title }}</h4>
+            <p>{{ feature.description }}</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-section" id="stats">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-12 col-md-4 mb-3 mb-md-0" *ngFor="let stat of stats">
+          <div class="stat-card">
+            <mat-icon>verified</mat-icon>
+            <div class="stat-number">{{ stat.value }}</div>
+            <div class="stat-label">{{ stat.label }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="promo-banner">
+    <div class="container promo-layout">
+      <div>
+        <h3 class="banner-header">لندینگ عمومی هم به داده واقعی پروژه وصل است</h3>
+        <p class="banner-text">
+          کاربر می‌تواند از همین صفحه وارد پنل شود، فروشگاه‌های فعال را ببیند و وارد صفحه اختصاصی هر فروشگاه شود.
+        </p>
+        <a routerLink="/invoice" class="btn btn-promo">پیش‌نمایش فاکتور</a>
+      </div>
+      <div class="promo-icon-wrap">
+        <mat-icon>workspace_premium</mat-icon>
+      </div>
+    </div>
+  </section>
+
+  <section class="section light-bg" id="story">
+    <div class="container">
+      <div class="section-title">
+        <span class="section-tag">آنچه سیستم پوشش می‌دهد</span>
+        <h3>آشنایی بیشتر با جریان کاری فکتورساز</h3>
+      </div>
+
+      <div class="modern-tabs">
+        <div class="story-tabs">
+          <button
+            type="button"
+            class="story-tab"
+            *ngFor="let story of stories; let i = index"
+            [class.story-tab--active]="selectedStoryIndex === i"
+            (click)="selectStory(i)">
+            <mat-icon>{{ story.icon }}</mat-icon>
+            {{ story.title }}
+          </button>
+        </div>
+
+        <div class="story-panel">
+          <div class="story-content">
+            <p class="story-lead">{{ stories[selectedStoryIndex].lead }}</p>
+            <h2>{{ stories[selectedStoryIndex].title }}</h2>
+            <p>{{ stories[selectedStoryIndex].body }}</p>
+          </div>
+
+          <div class="story-visual">
+            <div class="story-visual-card">
+              <mat-icon>{{ stories[selectedStoryIndex].icon }}</mat-icon>
+              <span>{{ stories[selectedStoryIndex].title }}</span>
+            </div>
+            <div class="story-visual-line"></div>
+            <div class="story-visual-card story-visual-card--accent">
+              <mat-icon>done_all</mat-icon>
+              <span>آماده استفاده</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dark-section steps-section" id="help">
+    <div class="container">
+      <div class="section-title">
+        <span class="section-tag">شروع کار</span>
+        <h3>در چند قدم ساده</h3>
+        <p class="section-subtitle">از ساخت فروشگاه تا خروجی نهایی فاکتور.</p>
+      </div>
+
+      <div class="row align-items-center">
+        <div class="col-md-7">
+          <ul class="list-unstyled ui-steps">
+            <li class="step-item" *ngFor="let step of workflow">
+              <div class="circle-icon">{{ step.index }}</div>
+              <div>
+                <h5>{{ step.title }}</h5>
+                <p>{{ step.description }}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="col-md-5 text-center">
+          <img src="assets/images/factor-hero-phone.png" alt="فرایند فکتورساز" class="steps-phone">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section testimonials-section">
+    <div class="container">
+      <div class="section-title">
+        <span class="section-tag">بازخورد کاربران</span>
+        <h3>برای فروشگاه‌هایی که هر روز فاکتور می‌زنند</h3>
+        <p class="section-subtitle">نمونه تجربه‌هایی که این مدل محصول باید پشتیبانی کند.</p>
+      </div>
+
+      <div class="testimonial-grid">
+        <article class="testimonial-card" *ngFor="let item of testimonials">
+          <mat-icon class="quote-icon">format_quote</mat-icon>
+          <p>{{ item.text }}</p>
+          <div class="testimonial-footer">
+            <div class="testimonial-avatar" [style.background]="item.tone">{{ item.initial }}</div>
+            <div>
+              <strong>{{ item.name }}</strong>
+              <span>{{ item.role }}</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section gallery-section" id="stores">
+    <div class="container">
+      <div class="section-title">
+        <span class="section-tag">گالری تجربه</span>
+        <h3>بخش‌های اصلی محصول</h3>
+        <p class="section-subtitle">نمایی از مسیرهایی که کاربر در پنل و سایت عمومی تجربه می‌کند.</p>
+      </div>
+
+      <div class="gallery-grid">
+        <article class="gallery-card" *ngFor="let item of galleryItems">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <h4>{{ item.title }}</h4>
+          <p>{{ item.description }}</p>
+        </article>
+      </div>
+
+      <div class="store-preview-panel mt-4">
+        <div class="section-title mb-3">
+          <span class="section-tag">فروشگاه‌های فعال</span>
+          <h3>نمونه فروشگاه‌های عمومی همین پروژه</h3>
+          <a routerLink="/stores/active" class="btn btn-hero-outline btn-sm mt-2">نمایش همه فروشگاه‌ها</a>
+        </div>
+
+        <div *ngIf="isLoadingStores" class="loading-box">در حال بارگذاری فروشگاه‌های فعال...</div>
+        <div *ngIf="!isLoadingStores && !activeStores.length" class="loading-box">فروشگاه فعالی برای نمایش پیدا نشد.</div>
+
+        <div class="row" *ngIf="!isLoadingStores && activeStores.length">
+          <div class="col-12 col-md-6 col-xl-4 mb-4" *ngFor="let store of activeStores; trackBy: trackByStore">
+            <article class="store-card">
+              <div class="store-card-head">
+                <div class="store-logo">
+                  <img *ngIf="store.logo?.url; else storeFallback" [src]="store.logo?.url" [alt]="store.name" data-localization-skip>
+                  <ng-template #storeFallback>
+                    <span data-localization-skip>{{ (store.name || '?').slice(0, 1) }}</span>
+                  </ng-template>
+                </div>
+                <div>
+                  <div class="store-badge">فعال</div>
+                  <h4 data-localization-skip>{{ store.name }}</h4>
+                  <p class="store-slug" data-localization-skip>{{ store.storeEnglishName }}</p>
+                  <p class="store-tagline" *ngIf="store.tagline" data-localization-skip>{{ store.tagline }}</p>
+                </div>
+              </div>
+
+              <p class="store-desc" data-localization-skip>
+                {{ store.description || 'برای این فروشگاه هنوز توضیح عمومی ثبت نشده است.' }}
+              </p>
+
+              <div class="store-actions">
+                <a [routerLink]="getStoreLink(store)" class="btn btn-hero-primary btn-sm">صفحه فروشگاه</a>
+                <a *ngIf="getStoreExternalUrl(store.url)" [href]="getStoreExternalUrl(store.url)" target="_blank" rel="noopener" class="btn btn-hero-outline btn-sm">لینک خارجی</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="download-section" id="contactus">
+    <div class="dl-blob dl-blob-1"></div>
+    <div class="dl-blob dl-blob-2"></div>
+
+    <div class="container dl-container">
+      <div class="dl-header">
+        <div class="dl-app-icon-wrap">
+          <mat-icon>receipt_long</mat-icon>
+        </div>
+        <div class="dl-app-meta">
+          <h2 class="dl-app-name">فکتورساز</h2>
+          <p class="dl-app-dev">پنل مدیریت فروشگاه، سفارش و فاکتور</p>
+          <div class="dl-stars-row">
+            <mat-icon>star</mat-icon>
+            <mat-icon>star</mat-icon>
+            <mat-icon>star</mat-icon>
+            <mat-icon>star</mat-icon>
+            <mat-icon>star_half</mat-icon>
+            <span>۴.۸</span>
+          </div>
+        </div>
+        <div class="dl-header-btns">
+          <a routerLink="/login" class="dl-store-btn dl-store-btn--play">
+            <mat-icon>login</mat-icon>
+            <span>ورود به پنل</span>
+          </a>
+          <a routerLink="/signup" class="dl-store-btn dl-store-btn--myket">
+            <mat-icon>person_add</mat-icon>
+            <span>شروع ثبت‌نام</span>
+          </a>
+          <a routerLink="/stores/active" class="dl-store-btn dl-store-btn--bazaar">
+            <mat-icon>storefront</mat-icon>
+            <span>فروشگاه‌های فعال</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="dl-stats-strip">
+        <div class="dl-stat-pill"><mat-icon>public</mat-icon> صفحه عمومی فروشگاه</div>
+        <div class="dl-stat-pill"><mat-icon>receipt</mat-icon> خروجی فاکتور</div>
+        <div class="dl-stat-pill"><mat-icon>dashboard</mat-icon> داشبورد فروش</div>
+        <div class="dl-stat-pill"><mat-icon>lock</mat-icon> ورود امن با JWT</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer-section">
+    <div class="container footer-grid">
+      <div>
+        <div class="footer-brand">
+          <span class="brand-mark"><mat-icon>receipt_long</mat-icon></span>
+          <div>
+            <div class="footer-brand-name">فکتورساز</div>
+            <div class="footer-brand-tagline">هوشمند، سریع، قابل توسعه</div>
+          </div>
+        </div>
+        <p class="footer-desc">
+          فکتورساز یک نمونه کاربردی برای مدیریت فروشگاه، محصول، مشتری، فاکتور و ویترین عمومی فروشگاه است.
+        </p>
+      </div>
+
+      <div>
+        <h6 class="footer-h">مسیرهای سریع</h6>
+        <div class="footer-links">
+          <a routerLink="/home">خانه</a>
+          <a routerLink="/login">ورود</a>
+          <a routerLink="/signup">ثبت‌نام</a>
+          <a routerLink="/stores/active">فروشگاه‌های فعال</a>
+        </div>
+      </div>
+
+      <div class="footer-metric">
+        <span>فروشگاه‌های فعال</span>
+        <strong>{{ activeStoreCount }}</strong>
+      </div>
+    </div>
+  </footer>
+</main>

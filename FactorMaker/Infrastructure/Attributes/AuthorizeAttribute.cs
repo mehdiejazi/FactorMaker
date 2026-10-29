@@ -1,5 +1,6 @@
 ﻿using Common;
 using Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Models;
 using System;
@@ -12,6 +13,11 @@ namespace FactorMaker.Infrastructure.Attributes
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
+            if (context.ActionDescriptor.EndpointMetadata.OfType<IAllowAnonymous>().Any())
+            {
+                return;
+            }
+
             User user = context.HttpContext.Items["User"] as User;
 
             if (user == null)
@@ -26,17 +32,18 @@ namespace FactorMaker.Infrastructure.Attributes
                 return;
             }
 
-            if (user.Role.Name == "Programmer")
+            if (user.Role?.Name == "Programmer")
             {
                 return;
             }
 
             var path = context.HttpContext.Request.Path.Value;
 
-            var urlIsAthurized = 
-                (user.Role.RoleActionPermissions
-                .Where(x => x.ActionPermission.Url == path)
-                .Any());
+            var urlIsAthurized =
+                user.Role?.RoleActionPermissions != null &&
+                user.Role.RoleActionPermissions
+                .Any(x => x.ActionPermission != null &&
+                    string.Equals(x.ActionPermission.Url, path, StringComparison.OrdinalIgnoreCase));
 
             if (urlIsAthurized == false)
             {

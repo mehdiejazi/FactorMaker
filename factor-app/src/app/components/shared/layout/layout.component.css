@@ -1,0 +1,121 @@
+.bg-secondary-blue {
+    background-color: #3949AB;
+}
+
+.layout-shell {
+    width: 100%;
+    background:
+        radial-gradient(circle at 0 0, rgba(37, 99, 235, 0.06), transparent 28rem),
+        linear-gradient(180deg, var(--app-bg) 0%, #eef3f7 100%);
+}
+
+.layout-main {
+    display: flex;
+    width: 100%;
+    min-height: calc(100vh - 60px);
+    direction: ltr;
+    background: transparent;
+}
+
+.layout-main--rtl {
+}
+
+.layout-main--ltr {
+}
+
+.layout-nav.fade {
+    transition: opacity .25s ease-out;
+}
+
+.layout-sidebar {
+    flex: 0 0 280px;
+    width: 280px;
+    max-width: 100%;
+    min-height: calc(100vh - 60px);
+    animation: sidebar-enter .2s ease-out both;
+    background: #ffffff;
+    border-inline-start: 1px solid var(--app-border-soft);
+    box-shadow: -8px 0 24px rgba(23, 32, 51, 0.04);
+}
+
+.layout-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: calc(100vh - 60px);
+    padding-top: 1.1rem;
+    transition: none;
+    color: var(--app-text);
+}
+
+.route-stage {
+    min-height: calc(100vh - 92px);
+    padding-inline: 1rem;
+}
+
+.route-stage.fade {
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity .16s ease-out, transform .16s ease-out;
+}
+
+.route-stage.fade.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .layout-nav.fade,
+    .layout-content,
+    .route-stage {
+        transition: none;
+        transform: none;
+    }
+
+    .route-stage.fade {
+        opacity: 1;
+    }
+
+    .layout-sidebar {
+        animation: none;
+    }
+}
+
+@keyframes sidebar-enter {
+    from {
+        opacity: 0;
+        transform: translateX(var(--sidebar-enter-offset, 10px));
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+:host-context(.rtl) .layout-sidebar {
+    --sidebar-enter-offset: 10px;
+}
+
+:host-context(.ltr) .layout-sidebar {
+    --sidebar-enter-offset: -10px;
+    border-inline-start: 0;
+    border-inline-end: 1px solid var(--app-border-soft);
+    box-shadow: 8px 0 24px rgba(23, 32, 51, 0.04);
+}
+
+@media (max-width: 767.98px) {
+    .layout-main,
+    .layout-main--ltr,
+    .layout-main--rtl {
+        flex-direction: column;
+    }
+
+    .layout-sidebar {
+        width: 100%;
+        min-height: auto;
+    }
+
+    .layout-content {
+        min-height: auto;
+    }
+}

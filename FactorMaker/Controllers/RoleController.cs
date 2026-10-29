@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using FactorMaker.Infrastructure.Attributes;
+using Common;
 using FactorMaker.Services.ServiceIntefaces;
 using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
@@ -9,7 +10,7 @@ using ViewModels.Role;
 
 namespace FactorMaker.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class RoleController : BaseApiController
     {
         private RoleController() : base()

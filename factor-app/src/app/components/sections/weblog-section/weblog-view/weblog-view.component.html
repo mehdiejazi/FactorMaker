@@ -1,0 +1,112 @@
+<main class="post-page">
+  <div class="post-shell">
+    <app-alert *ngIf="isLoading" AlertType="Download" TextMessage="در حال واکشی اطلاعات پست ..."></app-alert>
+    <app-alert *ngIf="error?.message && !isLoading" AlertType="Error" TextMessage="خطا در واکشی اطلاعات پست"></app-alert>
+    <app-alert *ngIf="!isLoading && !error?.message && !blogPost?.id" AlertType="Info"
+      TextMessage="پستی برای نمایش پیدا نشد"></app-alert>
+
+    <article *ngIf="blogPost?.id && !isLoading" class="post-article">
+      <header class="post-hero" [class.no-cover]="!blogPost.coverImage?.url">
+        <img *ngIf="blogPost.coverImage?.url" [lazyLoad]="blogPost.coverImage.url" class="post-cover"
+          [alt]="blogPost.title" data-localization-skip>
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+          <a routerLink="/home" class="back-link">
+            <mat-icon class="small">arrow_forward</mat-icon>
+            بازگشت به خانه
+          </a>
+
+          <div class="hero-kicker">
+            <span class="kicker-dot"></span>
+            مطلب عمومی فاکتورساز
+          </div>
+
+          <h1 class="post-title" data-localization-skip>{{ blogPost.title }}</h1>
+
+          <p class="post-lead" *ngIf="hasBody" data-localization-skip>{{ blogPost.body }}</p>
+
+          <div class="post-meta">
+            <div class="author-row">
+              <img *ngIf="!hasAuthorAvatar" src="assets/images/noavatar.png" class="author-avatar" alt="no avatar">
+              <img *ngIf="hasAuthorAvatar" [lazyLoad]="blogPost.owner.avatar.url" class="author-avatar"
+                [alt]="blogPost.owner?.fullName || 'author avatar'" data-localization-skip>
+              <div>
+                <div class="author-name">
+                  <span *ngIf="blogPost.owner?.fullName; else noAuthor" data-localization-skip>
+                    {{ blogPost.owner?.fullName }}
+                  </span>
+                  <ng-template #noAuthor>بدون نویسنده</ng-template>
+                </div>
+                <div class="author-subtitle">{{ displayDate }}</div>
+              </div>
+            </div>
+
+            <div class="meta-pills">
+              <span class="meta-pill">{{ readingTime }}</span>
+              <span class="meta-pill">بازدید {{ blogPost.visitCount || 0 | persianNumber }}</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="article-body">
+        <aside class="article-sidebar">
+          <div class="sidebar-panel">
+            <span class="sidebar-label">وضعیت مطلب</span>
+            <div class="status-list">
+              <span class="app-list-chip" [ngClass]="blogPost.isPublished ? 'app-list-status--success' : 'app-list-status--danger'">
+                {{ blogPost.isPublished ? 'منتشر شده' : 'پیش نویس' }}
+              </span>
+              <span class="app-list-chip app-list-status--danger" *ngIf="blogPost.isHot">داغ</span>
+              <span class="app-list-chip app-list-status--primary" *ngIf="blogPost.isStarRatingEnabled">
+                امتیازدهی فعال
+              </span>
+            </div>
+          </div>
+
+          <div class="sidebar-panel" *ngIf="blogPost.postCategories?.length">
+            <span class="sidebar-label">دسته‌بندی‌ها</span>
+            <div class="category-chips">
+              <span *ngFor="let postCategory of blogPost.postCategories" class="app-list-chip" data-localization-skip>
+                {{ postCategory.name }}
+              </span>
+            </div>
+          </div>
+
+          <div class="sidebar-panel">
+            <span class="sidebar-label">امتیاز</span>
+            <strong class="rating-value">{{ blogPost.starRate || 0 | persianNumber }}</strong>
+          </div>
+        </aside>
+
+        <div class="article-content">
+          <section class="content-section" *ngIf="hasBody">
+            <span class="section-eyebrow">خلاصه</span>
+            <p data-localization-skip>{{ blogPost.body }}</p>
+          </section>
+
+          <section class="content-section main-content" *ngIf="hasExtendedBody">
+            <span class="section-eyebrow">متن کامل</span>
+            <p data-localization-skip>{{ blogPost.extendedBody }}</p>
+          </section>
+
+          <section class="content-section empty-content" *ngIf="!hasBody && !hasExtendedBody">
+            <span class="section-eyebrow">محتوا</span>
+            <p>برای این مطلب هنوز متنی ثبت نشده است.</p>
+          </section>
+
+          <section class="content-section post-gallery" *ngIf="blogPost.images?.length">
+            <span class="section-eyebrow">پیوست‌ها</span>
+            <div class="gallery-grid">
+              <a *ngFor="let image of blogPost.images" [href]="image.url" target="_blank" rel="noopener"
+                class="gallery-item">
+                <img [lazyLoad]="image.url" [alt]="image.fileName || 'post attachment'">
+              </a>
+            </div>
+          </section>
+        </div>
+      </section>
+    </article>
+  </div>
+</main>

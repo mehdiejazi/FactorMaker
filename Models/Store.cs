@@ -19,6 +19,8 @@ namespace Models
         public string Description { get; set; }
         public string ThemePalette { get; set; } = "forest";
         public bool IsPublic { get; set; } = true;
+        [System.ComponentModel.DataAnnotations.Schema.Column(TypeName = "decimal(5,2)")]
+        public decimal TaxPercent { get; set; } = 9;
         public virtual ICollection<Factor> Factors { get; set; }
         public virtual ICollection<Product> Products { get; set; }
         public virtual ICollection<Category> Categories { get; set; }

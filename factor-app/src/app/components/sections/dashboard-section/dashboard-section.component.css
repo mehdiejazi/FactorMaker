@@ -1,0 +1,231 @@
+﻿.dashboard-shell {
+  padding-bottom: 1rem;
+}
+
+.dashboard-shell .card {
+  background-color: var(--app-surface);
+  color: var(--app-text);
+  border: 1px solid var(--app-border-soft);
+  border-radius: 8px;
+  box-shadow: var(--app-shadow-sm);
+}
+
+.metric-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.metric-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--app-text-muted);
+  font-weight: 500;
+}
+
+.metric-head mat-icon,
+.panel-header mat-icon {
+  color: var(--app-primary);
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--app-text);
+}
+
+.metric-secondary .metric-head mat-icon {
+  color: var(--app-accent);
+}
+
+.panel-card {
+  overflow: hidden;
+}
+
+.panel-header {
+  background-color: var(--app-surface-muted);
+  border-bottom: 1px solid var(--app-border-soft);
+  font-weight: 500;
+}
+
+.chart-wrap {
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.bar-chart {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(64px, 1fr));
+  gap: 0.75rem;
+  align-items: end;
+  min-height: 220px;
+}
+
+.bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.bar-track {
+  width: 100%;
+  max-width: 56px;
+  height: 145px;
+  border-radius: 0.7rem;
+  padding: 0.25rem;
+  background-color: var(--app-bg-soft);
+  display: flex;
+  align-items: flex-end;
+}
+
+.bar {
+  width: 100%;
+  min-height: 8px;
+  border-radius: 0.55rem;
+  background-image: linear-gradient(180deg, #60a5fa 0%, var(--app-primary) 100%);
+}
+
+.bar-label {
+  font-size: 0.76rem;
+  color: var(--app-text-muted);
+}
+
+.bar-value {
+  font-size: 0.72rem;
+  color: var(--app-text);
+}
+
+.mini-chart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.mini-chart-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 100px;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.mini-chart-label,
+.mini-chart-value {
+  font-size: 0.8rem;
+  color: var(--app-text);
+}
+
+.mini-chart-track {
+  height: 10px;
+  border-radius: 999px;
+  background-color: var(--app-bg-soft);
+  overflow: hidden;
+}
+
+.mini-chart-bar {
+  height: 100%;
+  border-radius: 999px;
+  background-image: linear-gradient(90deg, #60a5fa 0%, var(--app-primary) 100%);
+}
+
+.mini-chart-bar.weekday {
+  background-image: linear-gradient(90deg, #fbbf24 0%, var(--app-warning) 100%);
+}
+
+.mini-chart-bar.accent {
+  background-image: linear-gradient(90deg, #2dd4bf 0%, var(--app-accent) 100%);
+}
+
+.empty-inline {
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  text-align: center;
+  color: var(--app-text-muted);
+}
+
+.empty-inline mat-icon {
+  font-size: 2rem;
+  width: auto;
+  height: auto;
+  color: var(--app-primary);
+}
+
+.low-stock-table {
+  --bs-table-bg: var(--app-surface);
+  --bs-table-color: var(--app-text);
+  --bs-table-hover-bg: var(--app-surface-muted);
+  --bs-table-border-color: var(--app-border-soft);
+  color: var(--app-text);
+}
+
+.low-stock-table thead th {
+  color: var(--app-text-muted);
+  border-bottom-color: var(--app-border);
+  background-color: var(--app-surface-muted);
+}
+
+.low-stock-table tbody td {
+  border-color: var(--app-border-soft);
+}
+
+@media (max-width: 991.98px) {
+  .mini-chart-row {
+    grid-template-columns: 90px 1fr 80px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .metric-value {
+    font-size: 1.25rem;
+  }
+
+  .bar-chart {
+    min-width: 520px;
+  }
+
+  .mini-chart-row {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+}
+
+.pie-track {
+  display: flex;
+  width: 100%;
+  height: 18px;
+  border-radius: 999px;
+  overflow: hidden;
+  background-color: var(--app-bg-soft);
+}
+
+.pie-segment {
+  height: 100%;
+  min-width: 2px;
+}
+
+.pie-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.pie-legend-item {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  gap: 0.6rem;
+  align-items: center;
+  color: var(--app-text);
+  font-size: 0.82rem;
+}
+
+.pie-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}

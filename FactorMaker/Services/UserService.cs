@@ -275,24 +275,36 @@ namespace FactorMaker.Services
                     LastName = viewModel.LastName,
                     UserName = viewModel.UserName,
                     Email = viewModel.Email?.Trim(),
-                    Password = Utilities.HashSHA1(viewModel.Password),
+                    Password = PasswordHasher.Hash(viewModel.Password),
                     RoleId = defaultRole.Id,
                     IsActive = true,
                 };
 
                 await UnitOfWork.UserRepository.InsertAsync(user);
 
+                var storeName = viewModel.StoreName?.Trim();
+                var description = viewModel.StoreDescription?.Trim();
                 var store = new Store()
                 {
-                    Name = viewModel.StoreName?.Trim(),
+                    Name = storeName,
                     StoreEnglishName = viewModel.StoreEnglishName?.Trim(),
-                    Url = viewModel.StoreUrl?.Trim(),
-                    Description = viewModel.StoreDescription?.Trim(),
+                    Description = description,
+                    Tagline = BuildSignupTagline(storeName, description),
+                    ThemePalette = "forest",
+                    IsPublic = true,
+                    TaxPercent = 9,
                     Owner = user,
                     OwnerId = user.Id,
+                    SocialLinks = new List<StoreSocialLink>()
                 };
 
                 await UnitOfWork.StoreRepository.InsertAsync(store);
+                foreach (var socialLink in BuildSignupSocialLinks(viewModel, store.Id))
+                {
+                    store.SocialLinks.Add(socialLink);
+                }
+                store.Url = store.SocialLinks.FirstOrDefault(link => link.IsPrimary)?.Url
+                    ?? NormalizeWebUrl(viewModel.StoreUrl);
                 await UnitOfWork.SaveAsync();
 
                 result.Data = user.Adapt<UserViewModel>();
@@ -303,6 +315,94 @@ namespace FactorMaker.Services
             {
                 throw ex;
             }
+        }
+
+        private static string BuildSignupTagline(string storeName, string description)
+        {
+            if (!string.IsNullOrWhiteSpace(description))
+            {
+                var compact = description.Replace("\r", " ").Replace("\n", " ").Trim();
+                return compact.Length <= 160 ? compact : compact.Substring(0, 160).Trim();
+            }
+
+            return string.IsNullOrWhiteSpace(storeName) ? null : storeName;
+        }
+
+        private static List<StoreSocialLink> BuildSignupSocialLinks(UserRegisterViewModel viewModel, Guid storeId)
+        {
+            var links = new List<StoreSocialLink>();
+            var website = NormalizeWebUrl(viewModel.StoreUrl);
+            var instagram = NormalizeInstagramUrl(viewModel.InstagramPage);
+
+            if (!string.IsNullOrWhiteSpace(website))
+            {
+                links.Add(new StoreSocialLink
+                {
+                    StoreId = storeId,
+                    Platform = "website",
+                    Url = website,
+                    Label = "وب‌سایت",
+                    IsPrimary = true
+                });
+            }
+
+            if (!string.IsNullOrWhiteSpace(instagram))
+            {
+                links.Add(new StoreSocialLink
+                {
+                    StoreId = storeId,
+                    Platform = "instagram",
+                    Url = instagram,
+                    Label = "اینستاگرام",
+                    IsPrimary = links.Count == 0
+                });
+            }
+
+            return links;
+        }
+
+        private static string NormalizeWebUrl(string value)
+        {
+            var raw = (value ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                return null;
+            }
+
+            if (raw.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                raw.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                return raw;
+            }
+
+            return "https://" + raw;
+        }
+
+        private static string NormalizeInstagramUrl(string value)
+        {
+            var raw = (value ?? string.Empty).Trim().Trim('/');
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                return null;
+            }
+
+            if (raw.StartsWith("@"))
+            {
+                return "https://instagram.com/" + raw.Substring(1);
+            }
+
+            if (raw.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                raw.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                return raw;
+            }
+
+            if (raw.IndexOf("instagram.com", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return "https://" + raw;
+            }
+
+            return "https://instagram.com/" + raw;
         }
 
         public async Task<User> GetByIdForLoginAsync(Guid id)
@@ -378,7 +478,7 @@ namespace FactorMaker.Services
 
                 if (result.IsSuccessful == false) return result;
 
-                user.Password = Utilities.HashSHA1(viewModel.Password);
+                user.Password = PasswordHasher.Hash(viewModel.Password);
                 user.IsForcedChangePassword = false;
 
                 await UnitOfWork.UserRepository.UpdateAsync(user);

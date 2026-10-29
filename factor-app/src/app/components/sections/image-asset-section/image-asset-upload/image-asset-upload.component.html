@@ -1,0 +1,27 @@
+<div class="card gallery-upload-card">
+    <div class="card-body">
+        <div class="gallery-upload-header mb-3">
+            <h6 class="mb-1">بارگذاری تصویر جدید</h6>
+            <p class="mb-0">برای افزودن تصویر، فایل را انتخاب و بارگذاری کنید.</p>
+        </div>
+
+        <app-alert *ngFor="let errorMessage of errorMessages" AlertType="Error" [TextMessage]="errorMessage" data-localization-skip></app-alert>
+        <app-alert *ngFor="let warningMessage of warningMessages" AlertType="Warning" [TextMessage]="warningMessage" data-localization-skip></app-alert>
+        <app-alert *ngFor="let informationMessage of informationMessages" AlertType="Info" [TextMessage]="informationMessage" data-localization-skip></app-alert>
+        <app-alert class="mb-3" *ngIf="formSuccessful" AlertType="Success" TextMessage="اطلاعات با موفقیت ثبت گردید"></app-alert>
+        <app-alert *ngIf="error?.message" AlertType="Error" TextMessage="خطا در بارگذاری اطلاعات"></app-alert>
+
+        <div class="gallery-upload-controls">
+            <label class="form-label mb-2">انتخاب تصویر</label>
+            <div class="gallery-upload-actions">
+                <input #fileUpload type="file" class="form-control" accept="image/*" aria-label="upload image"
+                    (change)="onChange($event)">
+                <button class="btn btn-success" type="button" [disabled]="!file" (click)="onUpload()">
+                    <mat-icon class="small me-1">cloud_upload</mat-icon>
+                    بارگذاری
+                </button>
+            </div>
+            <small class="gallery-upload-file" *ngIf="file">فایل انتخاب‌شده: <span data-localization-skip>{{ file.name }}</span></small>
+        </div>
+    </div>
+</div>

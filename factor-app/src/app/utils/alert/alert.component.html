@@ -1,0 +1,19 @@
+<div *ngIf="!isClosed" class="mb-2 alert alert-shell d-flex align-items-center"
+    [ngClass]="[alertBootstrapClass, alertToneClass]" [class.is-fading]="isFading">
+    <mat-icon>
+        <ng-container [ngSwitch]="alertType">
+            <ng-container *ngSwitchCase="'Download'">cloud_download</ng-container>
+            <ng-container *ngSwitchCase="'Error'">error</ng-container>
+            <ng-container *ngSwitchCase="'Success'">check_circle</ng-container>
+            <ng-container *ngSwitchCase="'Warning'">warning</ng-container>
+            <ng-container *ngSwitchCase="'Danger'">cancel</ng-container>
+            <ng-container *ngSwitchCase="'Info'">info_outline</ng-container>
+            <ng-container *ngSwitchDefault>info_outline</ng-container>
+        </ng-container>
+    </mat-icon>
+    <div class="ms-2 w-100 alert-message">
+        {{TextMessage}}
+    </div>
+    <button *ngIf="isClosable" type="button" class="btn-close flex-shrink-1"
+        aria-label="Close" (click)="onClickClose()"></button>
+</div>

@@ -1,0 +1,150 @@
+:host {
+  display: block;
+}
+
+.stores-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(37, 99, 235, .12), transparent 25rem),
+    radial-gradient(circle at 90% 10%, rgba(15, 118, 110, .1), transparent 24rem),
+    linear-gradient(180deg, var(--app-bg), #eef3f7);
+  color: var(--app-text);
+}
+
+.hero-card,
+.store-card {
+  border: 1px solid var(--app-border-soft);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .9);
+  box-shadow: var(--app-shadow-sm);
+}
+
+.hero-card {
+  padding: 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+}
+
+.hero-badge {
+  display: inline-flex;
+  padding: .4rem .75rem;
+  border-radius: 999px;
+  background: var(--app-primary-soft);
+  border: 1px solid rgba(37, 99, 235, 0.24);
+  color: var(--app-primary-hover);
+  font-size: .8rem;
+  font-weight: 700;
+  margin-bottom: .8rem;
+}
+
+h1,
+h2 {
+  color: var(--app-text);
+}
+
+h1 {
+  margin: 0 0 .7rem;
+  font-size: clamp(1.6rem, 2.8vw, 2.6rem);
+}
+
+h2 {
+  margin: 0 0 .2rem;
+  font-size: 1.06rem;
+}
+
+p {
+  margin: 0;
+  color: var(--app-text-muted);
+  line-height: 1.85;
+}
+
+.hero-actions,
+.store-actions {
+  display: flex;
+  gap: .65rem;
+  flex-wrap: wrap;
+}
+
+.store-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.store-card {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+}
+
+.store-top {
+  display: flex;
+  gap: .85rem;
+  align-items: center;
+}
+
+.store-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  background: var(--app-surface-muted);
+  border: 1px solid var(--app-border-soft);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.store-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.store-logo span {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--app-accent);
+}
+
+.store-slug {
+  font-size: .82rem;
+  color: var(--app-accent);
+}
+
+.store-tagline {
+  margin: .2rem 0 0;
+  font-size: .84rem;
+  font-weight: 700;
+  color: var(--app-text);
+}
+
+.store-desc {
+  min-height: 5rem;
+}
+
+@media (max-width: 992px) {
+  .store-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .store-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions .btn,
+  .store-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+}

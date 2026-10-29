@@ -1,0 +1,156 @@
+<main class="store-page" [ngClass]="paletteClass">
+  <div class="container-xl py-4">
+    <div *ngIf="isLoading" class="store-loading">
+      <span class="loading-dot"></span>
+      <span>در حال بارگذاری صفحه فروشگاه...</span>
+    </div>
+
+    <div *ngIf="!isLoading && errorMessages.length" class="alert alert-danger mb-3">
+      <div *ngFor="let msg of errorMessages" data-localization-skip>{{ msg }}</div>
+    </div>
+
+    <ng-container *ngIf="!isLoading && store">
+      <section class="hero mb-4">
+        <div class="hero-cover">
+          <img *ngIf="store.coverImage?.url" [src]="store.coverImage?.url" [alt]="store.name" data-localization-skip />
+        </div>
+
+        <div class="hero-inner">
+          <div class="logo-wrap">
+            <img *ngIf="store.logo?.url; else logoFallback" [src]="store.logo?.url" [alt]="store.name" data-localization-skip />
+            <ng-template #logoFallback>
+              <span data-localization-skip>{{ (store.name || '?').slice(0, 1) }}</span>
+            </ng-template>
+          </div>
+
+          <div class="hero-content">
+            <p class="hint">فروشگاه فعال فاکتورساز</p>
+            <h1 data-localization-skip>{{ store.name }}</h1>
+            <p class="tagline" *ngIf="store.tagline" data-localization-skip>{{ store.tagline }}</p>
+            <p class="desc">
+              <span *ngIf="store.description; else emptyStoreDescription" data-localization-skip>{{ store.description }}</span>
+              <ng-template #emptyStoreDescription>برای این فروشگاه هنوز توضیحی ثبت نشده است.</ng-template>
+            </p>
+            <div class="hero-actions">
+              <a *ngIf="primaryActionHref" [href]="primaryActionHref" target="_blank" rel="noopener" class="btn-store btn-store-primary">
+                {{ primaryActionLabel }}
+              </a>
+              <a routerLink="/stores/active" class="btn-store btn-store-secondary">همه فروشگاه‌ها</a>
+              <a routerLink="/home" class="btn-store btn-store-ghost">بازگشت</a>
+            </div>
+            <div class="social-links" *ngIf="store.socialLinks?.length">
+              <ng-container *ngFor="let link of store.socialLinks">
+                <a class="social-chip" *ngIf="getSocialHref(link.url) as href" [class.social-chip-primary]="link.isPrimary" [href]="href" target="_blank" rel="noopener">
+                  {{ socialLabel(link) }}
+                </a>
+              </ng-container>
+            </div>
+          </div>
+
+          <div class="hero-metrics">
+            <div class="metric-card">
+              <strong>{{ products.length | persianNumber }}</strong>
+              <span>محصول</span>
+            </div>
+            <div class="metric-card">
+              <strong>{{ categories.length | persianNumber }}</strong>
+              <span>دسته‌بندی</span>
+            </div>
+            <div class="metric-card">
+              <strong>{{ (slides.length + blogPosts.length) | persianNumber }}</strong>
+              <span>مطلب</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section mb-4" *ngIf="slides.length">
+        <div class="head">
+          <div>
+            <p class="section-kicker">پیشنهادهای ویژه</p>
+            <h2>اسلایدهای فعال فروشگاه</h2>
+          </div>
+          <span class="count-pill">{{ slides.length | persianNumber }} مورد</span>
+        </div>
+
+        <div class="slide-grid">
+          <a class="surface card-item card-link" *ngFor="let slide of slides" [routerLink]="getPostViewLink(slide)" [queryParams]="getPostViewQuery(slide)">
+            <img [src]="slide.coverImage?.url || 'assets/images/noimage.png'" [alt]="slide.title" class="thumb" data-localization-skip />
+            <div class="item-body">
+              <h3 data-localization-skip>{{ slide.title }}</h3>
+              <p data-localization-skip>{{ slide.body | slice:0:120 }}<span *ngIf="slide.body?.length > 120">...</span></p>
+              <small *ngIf="formatPublicDate(slide.publishDateTime || slide.insertDateTime)">{{ formatPublicDate(slide.publishDateTime || slide.insertDateTime) }}</small>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="catalog-section mb-4">
+        <div class="head">
+          <div>
+            <p class="section-kicker">کاتالوگ فروشگاه</p>
+            <h2>محصولات فروشگاه</h2>
+          </div>
+          <span class="count-pill">{{ products.length | persianNumber }} محصول</span>
+        </div>
+
+        <div *ngIf="!products.length" class="alert alert-secondary">محصولی برای نمایش در صفحه عمومی این فروشگاه ثبت نشده است.</div>
+
+        <div *ngIf="products.length" class="product-groups">
+          <section class="product-group" *ngFor="let group of productGroups">
+            <div class="product-group-head">
+              <div>
+                <h3 data-localization-skip>{{ group.name }}</h3>
+                <p>{{ group.products.length | persianNumber }} محصول در این دسته</p>
+              </div>
+              <span class="count-pill">{{ group.visibleProducts.length | persianNumber }} از {{ group.products.length | persianNumber }}</span>
+            </div>
+
+            <div class="product-grid">
+              <article class="surface product-card" *ngFor="let product of group.visibleProducts">
+                <div class="product-media">
+                  <img [src]="product.image?.url || 'assets/images/product.png'" [alt]="product.name" data-localization-skip />
+                </div>
+                <div class="item-body">
+                  <span class="product-category" data-localization-skip>{{ product.category?.name || group.name }}</span>
+                  <h3 data-localization-skip>{{ product.name }}</h3>
+                  <p *ngIf="product.shortDescription" class="product-desc" data-localization-skip>{{ product.shortDescription }}</p>
+                  <strong class="product-price">{{ product.price | rial }}</strong>
+                </div>
+              </article>
+            </div>
+
+            <div class="group-actions" *ngIf="hasMoreGroupProducts(group)">
+              <button type="button" class="btn-more-products" (click)="showMoreGroupProducts(group)">
+                ادامه محصولات
+              </button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="head">
+          <div>
+            <p class="section-kicker">تازه‌های فروشگاه</p>
+            <h2>وبلاگ <span data-localization-skip>{{ store.name }}</span></h2>
+          </div>
+          <span class="count-pill">{{ blogPosts.length | persianNumber }} مطلب</span>
+        </div>
+
+        <div *ngIf="!blogPosts.length" class="alert alert-secondary">مطلب منتشر شده ای برای این فروشگاه ثبت نشده است.</div>
+
+        <div *ngIf="blogPosts.length" class="post-grid">
+          <a class="surface card-item card-link" *ngFor="let post of blogPosts" [routerLink]="getPostViewLink(post)" [queryParams]="getPostViewQuery(post)">
+            <img [src]="post.coverImage?.url || 'assets/images/noimage.png'" [alt]="post.title" class="thumb" data-localization-skip />
+            <div class="item-body">
+              <h3 data-localization-skip>{{ post.title }}</h3>
+              <p data-localization-skip>{{ post.body | slice:0:160 }}<span *ngIf="post.body?.length > 160">...</span></p>
+              <small *ngIf="formatPublicDate(post.publishDateTime || post.insertDateTime)">{{ formatPublicDate(post.publishDateTime || post.insertDateTime) }}</small>
+            </div>
+          </a>
+        </div>
+      </section>
+    </ng-container>
+  </div>
+</main>

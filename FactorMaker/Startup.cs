@@ -1,5 +1,6 @@
-using Common;
+﻿using Common;
 using Data;
+using FactorMaker.Infrastructure;
 using FactorMaker.Infrastructure.ApplicationSettings;
 using FactorMaker.Infrastructure.MiddleWares;
 using FactorMaker.Infrastructure.Validators.Authentication;
@@ -121,6 +122,7 @@ namespace FactorMaker
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<AccessGuard>();
 
             services.AddMemoryCache();
 
@@ -156,9 +158,10 @@ namespace FactorMaker
         {
             using (var scope = app.ApplicationServices.CreateScope())
             {
-                scope.ServiceProvider
-                    .GetRequiredService<DatabaseContext>()
-                    .Database.Migrate();
+                var database = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+                database.Database.Migrate();
+                scope.ServiceProvider.GetRequiredService<IActionPermissionService>();
+                DefaultAccessBootstrap.EnsureStoreOwnerRole(database);
             }
 
             if (env.IsDevelopment())

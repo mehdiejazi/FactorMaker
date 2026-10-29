@@ -42,66 +42,74 @@ namespace Data.Repositories
 
         public async Task<ICollection<ProductSaleTotalQuantityDto>> GetTop10SaleByQuantityAsync(Guid storeId)
         {
-            var list = await DatabaseContext.Set<FactorItem>()
+            var list = (await DatabaseContext.Set<FactorItem>()
                 .Where(fi => fi.IsDeleted == false && fi.Factor.StoreId == storeId && fi.Factor.IsDeleted == false && fi.Factor.IsClosed)
-                .GroupBy(fi => fi.Product)
+                .Include(x => x.Product)
+                .ToListAsync())
+                .GroupBy(fi => fi.Product.Id)
                 .OrderByDescending(g => g.Sum(fi => fi.Quantity))
                 .Take(10)
                 .Select(g => new ProductSaleTotalQuantityDto
                 {
-                    Product = g.Key,
+                    Product = g.First().Product,
                     TotalQuantity = g.Sum(x => x.Quantity)
                 })
-                .ToListAsync();
+                .ToList();
 
             return list;
         }
 
         public async Task<ICollection<ProductSaleTotalPriceDto>> GetTop10SaleByPriceAsync(Guid storeId)
         {
-            var list = await DatabaseContext.Set<FactorItem>()
+            var list = (await DatabaseContext.Set<FactorItem>()
                 .Where(fi => fi.IsDeleted == false && fi.Factor.StoreId == storeId && fi.Factor.IsDeleted == false && fi.Factor.IsClosed)
-                .GroupBy(fi => fi.Product)
+                .Include(x => x.Product)
+                .ToListAsync())
+                .GroupBy(fi => fi.Product.Id)
                 .OrderByDescending(g => g.Sum(fi => fi.Price * fi.Quantity * (1 - (fi.OffPercent / 100m))))
                 .Take(10)
                 .Select(g => new ProductSaleTotalPriceDto
                 {
-                    Product = g.Key,
+                    Product = g.First().Product,
                     TotalPrice = g.Sum(x => x.Price * x.Quantity * (1 - (x.OffPercent / 100m)))
                 })
-                .ToListAsync();
+                .ToList();
 
             return list;
         }
 
         public async Task<ICollection<ProductSaleTotalQuantityDto>> GetSaleTotalByQuantityAsync(DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
-            var list = await DatabaseContext.Set<FactorItem>()
+            var list = (await DatabaseContext.Set<FactorItem>()
                 .Where(fi => fi.IsDeleted == false && fi.Factor.StoreId == storeId && fi.Factor.IsDeleted == false && fi.Factor.IsClosed && fi.Factor.SellDateTime >= dtFrom && fi.Factor.SellDateTime < dtTo)
-                .GroupBy(fi => fi.Product)
+                .Include(x => x.Product)
+                .ToListAsync())
+                .GroupBy(fi => fi.Product.Id)
                 .OrderByDescending(g => g.Sum(fi => fi.Quantity))
                 .Select(g => new ProductSaleTotalQuantityDto
                 {
-                    Product = g.Key,
+                    Product = g.First().Product,
                     TotalQuantity = g.Sum(x => x.Quantity)
                 })
-                .ToListAsync();
+                .ToList();
 
             return list;
         }
 
         public async Task<ICollection<ProductSaleTotalPriceDto>> GetSaleTotalByPriceAsync(DateTime dtFrom, DateTime dtTo, Guid storeId)
         {
-            var list = await DatabaseContext.Set<FactorItem>()
+            var list = (await DatabaseContext.Set<FactorItem>()
                .Where(fi => fi.IsDeleted == false && fi.Factor.StoreId == storeId && fi.Factor.IsDeleted == false && fi.Factor.IsClosed && fi.Factor.SellDateTime >= dtFrom && fi.Factor.SellDateTime < dtTo)
-               .GroupBy(fi => fi.Product)
+               .Include(x => x.Product)
+                .ToListAsync())
+                .GroupBy(fi => fi.Product.Id)
                .OrderByDescending(g => g.Sum(fi => fi.Price * fi.Quantity * (1 - (fi.OffPercent / 100m))))
                .Select(g => new ProductSaleTotalPriceDto
                {
-                   Product = g.Key,
+                   Product = g.First().Product,
                    TotalPrice = g.Sum(x => x.Price * x.Quantity * (1 - (x.OffPercent / 100m)))
                })
-               .ToListAsync();
+               .ToList();
 
             return list;
         }

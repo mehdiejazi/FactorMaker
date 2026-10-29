@@ -1,4 +1,6 @@
-﻿using Common;
+﻿using FactorMaker.Infrastructure;
+using FactorMaker.Infrastructure.Attributes;
+using Common;
 using FactorMaker.Services.ServiceIntefaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -10,17 +12,20 @@ using ViewModels.ImageAsset;
 
 namespace FactorMaker.Controllers
 {
+    [Authenticated]
     public class ImageAssetController : BaseApiControllerWithUser
     {
         private ImageAssetController() : base()
         {
 
         }
-        public ImageAssetController(IImageAssetService imageAssetService)
+        public ImageAssetController(IImageAssetService imageAssetService, AccessGuard accessGuard)
         {
             ImageAssetService = imageAssetService;
+            AccessGuard = accessGuard;
         }
         private IImageAssetService ImageAssetService { get; set; }
+        private AccessGuard AccessGuard { get; }
 
         [HttpGet("DeleteByIdAsync")]
         public async Task<IActionResult> DeleteByIdAsync(Guid id)
@@ -53,6 +58,7 @@ namespace FactorMaker.Controllers
         [HttpGet("GetByIdAsync")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
+            if (!await AccessGuard.CanAccessImageAssetAsync(User, id)) return Result(AccessGuard.Denied());
             var result = await ImageAssetService.GetByIdAsync(id);
             return Result(result);
         }
@@ -60,6 +66,7 @@ namespace FactorMaker.Controllers
         [HttpGet("GetAdminAsync")]
         public async Task<IActionResult> GetAdminAsync([FromQuery] ImageAssetAdminFilterRequestViewModel filter)
         {
+            if (!AccessGuard.IsAdmin(User)) return Result(AccessGuard.Denied());
             var result = await ImageAssetService.GetAdminAsync(filter);
             return Result(result);
         }

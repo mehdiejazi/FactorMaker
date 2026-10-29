@@ -503,6 +503,9 @@ namespace Data.Migrations
                     b.Property<string>("Tagline")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("TaxPercent")
+                        .HasColumnType("decimal(5,2)");
+
                     b.Property<string>("ThemePalette")
                         .HasColumnType("nvarchar(max)");
 
